@@ -1,0 +1,22 @@
+// lib/features/auth/domain/entities/user_entity.dart
+
+import 'package:equatable/equatable.dart';
+
+class UserEntity extends Equatable {
+  final String id;
+  final String email;
+  final String accountType;
+  final String? name;
+  final String? token;
+
+  const UserEntity({
+    required this.id,
+    required this.email,
+    required this.accountType,
+    this.name,
+    this.token,
+  });
+
+  @override
+  List<Object?> get props => [id, email, accountType, name, token];
+}
