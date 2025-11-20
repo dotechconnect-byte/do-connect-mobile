@@ -1,17 +1,29 @@
-
+import 'package:do_connect/features/auth/presentation/pages/signup_screen.dart';
 import 'package:flutter/material.dart';
 
 class NewUserSection extends StatelessWidget {
   const NewUserSection({super.key});
 
   void _handleGetDemo(BuildContext context) {
-    // TODO: Navigate to demo screen
-    print('Get Free Demo tapped');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SignupScreen(
+          signupType: SignupType.demo,
+        ),
+      ),
+    );
   }
 
   void _handleCreateProfile(BuildContext context) {
-    // TODO: Navigate to create profile screen
-    print('Create Profile with Access Code tapped');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SignupScreen(
+          signupType: SignupType.accessCode,
+        ),
+      ),
+    );
   }
 
   @override
@@ -20,7 +32,9 @@ class NewUserSection extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(maxWidth: 600),
+      constraints: const BoxConstraints(
+        maxWidth: 600,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -41,7 +55,9 @@ class NewUserSection extends StatelessWidget {
               fontSize: size.width * 0.055,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
-            ).copyWith(fontSize: (size.width * 0.055).clamp(20.0, 26.0)),
+            ).copyWith(
+              fontSize: (size.width * 0.055).clamp(20.0, 26.0),
+            ),
           ),
           SizedBox(height: size.height * 0.025),
 
@@ -82,7 +98,9 @@ class NewUserSection extends StatelessWidget {
                 fontSize: size.width * 0.04,
                 color: const Color(0xFFFF7A29),
                 fontWeight: FontWeight.w600,
-              ).copyWith(fontSize: (size.width * 0.04).clamp(14.0, 16.0)),
+              ).copyWith(
+                fontSize: (size.width * 0.04).clamp(14.0, 16.0),
+              ),
             ),
           ),
         ],
@@ -95,7 +113,10 @@ class _OutlineButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
 
-  const _OutlineButton({required this.text, required this.onPressed});
+  const _OutlineButton({
+    required this.text,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +128,10 @@ class _OutlineButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.grey[300]!, width: 1.5),
+          side: BorderSide(
+            color: Colors.grey[300]!,
+            width: 1.5,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -118,7 +142,9 @@ class _OutlineButton extends StatelessWidget {
             fontSize: size.width * 0.04,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
-          ).copyWith(fontSize: (size.width * 0.04).clamp(14.0, 18.0)),
+          ).copyWith(
+            fontSize: (size.width * 0.04).clamp(14.0, 18.0),
+          ),
         ),
       ),
     );

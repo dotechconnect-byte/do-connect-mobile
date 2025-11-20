@@ -1,4 +1,3 @@
-
 import 'package:do_connect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:do_connect/features/auth/presentation/bloc/auth_state.dart';
 import 'package:do_connect/features/auth/presentation/widgets/account_type_selecter.dart';

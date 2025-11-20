@@ -1,5 +1,3 @@
-// lib/features/auth/data/repositories/auth_repository_impl.dart
-
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/user_entity.dart';
@@ -29,7 +27,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('An unexpected error occurred'));
+      return const Left(ServerFailure('An unexpected error occurred'));
     }
   }
 
@@ -41,7 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to logout'));
+      return const Left(ServerFailure('Failed to logout'));
     }
   }
 
@@ -53,7 +51,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(CacheFailure('No user found'));
+      return const Left(CacheFailure('No user found'));
     }
   }
 
@@ -65,7 +63,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure('Failed to send reset email'));
+      return const Left(ServerFailure('Failed to send reset email'));
     }
   }
 }

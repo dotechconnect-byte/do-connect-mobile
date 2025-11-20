@@ -1,5 +1,3 @@
-// lib/features/auth/presentation/widgets/account_type_selector.dart
-
 import 'package:flutter/material.dart';
 
 class AccountTypeSelector extends StatelessWidget {

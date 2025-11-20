@@ -1,5 +1,3 @@
-// lib/features/auth/presentation/widgets/app_logo.dart
-
 import 'package:flutter/material.dart';
 
 class AppLogo extends StatelessWidget {
