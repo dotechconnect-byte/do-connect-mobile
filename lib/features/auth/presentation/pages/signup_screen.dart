@@ -43,42 +43,40 @@ class _SignupScreenState extends State<SignupScreen> {
                       children: [
                         Icon(
                           Icons.arrow_back,
-                          size: size.width * 0.06,
+                          size: (size.width * 0.055).clamp(20.0, 24.0),
                           color: Colors.black87,
                         ),
                         SizedBox(width: size.width * 0.02),
                         Text(
                           'Back to Login',
                           style: TextStyle(
-                            fontSize: size.width * 0.04,
+                            fontSize: (size.width * 0.035).clamp(13.0, 15.0),
                             fontWeight: FontWeight.w500,
                             color: Colors.black87,
-                          ).copyWith(
-                            fontSize: (size.width * 0.04).clamp(14.0, 18.0),
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  SizedBox(height: size.height * 0.03),
+                  SizedBox(height: size.height * 0.025),
 
                   // Logo and Title
                   Center(
                     child: Column(
                       children: [
                         Container(
-                          width: size.width * 0.2,
-                          height: size.width * 0.2,
+                          width: size.width * 0.18,
+                          height: size.width * 0.18,
                           constraints: const BoxConstraints(
-                            minWidth: 70,
-                            minHeight: 70,
-                            maxWidth: 100,
-                            maxHeight: 100,
+                            minWidth: 65,
+                            minHeight: 65,
+                            maxWidth: 90,
+                            maxHeight: 90,
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFF7A29),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(18),
                             boxShadow: [
                               BoxShadow(
                                 color: const Color(0xFFFF7A29).withOpacity(0.3),
@@ -91,52 +89,44 @@ class _SignupScreenState extends State<SignupScreen> {
                             child: Text(
                               'D',
                               style: TextStyle(
-                                fontSize: size.width * 0.1,
+                                fontSize: (size.width * 0.09).clamp(32.0, 45.0),
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
-                              ).copyWith(
-                                fontSize: (size.width * 0.1).clamp(35.0, 50.0),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: size.height * 0.02),
+                        SizedBox(height: size.height * 0.015),
                         Text(
                           widget.signupType == SignupType.demo
                               ? 'Get Free Demo'
                               : 'Create Profile',
                           style: TextStyle(
-                            fontSize: size.width * 0.065,
+                            fontSize: (size.width * 0.058).clamp(22.0, 28.0),
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
-                          ).copyWith(
-                            fontSize: (size.width * 0.065).clamp(24.0, 32.0),
                           ),
                         ),
-                        SizedBox(height: size.height * 0.005),
+                        SizedBox(height: size.height * 0.004),
                         Text(
                           widget.signupType == SignupType.demo
                               ? 'Experience Do Connect in action'
                               : 'Sign up with your access code',
                           style: TextStyle(
-                            fontSize: size.width * 0.04,
+                            fontSize: (size.width * 0.035).clamp(13.0, 14.5),
                             color: Colors.grey[600],
-                          ).copyWith(
-                            fontSize: (size.width * 0.04).clamp(14.0, 16.0),
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  SizedBox(height: size.height * 0.03),
+                  SizedBox(height: size.height * 0.025),
 
                   // Signup Form Card
                   Container(
                     width: double.infinity,
-                    constraints: const BoxConstraints(
-                      maxWidth: 600,
-                    ),
+                    constraints: const BoxConstraints(maxWidth: 600),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -148,10 +138,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ],
                     ),
-                    padding: EdgeInsets.all(size.width * 0.06),
-                    child: SignupForm(
-                      signupType: widget.signupType,
-                    ),
+                    padding: EdgeInsets.all(size.width * 0.05),
+                    child: SignupForm(signupType: widget.signupType),
                   ),
 
                   SizedBox(height: size.height * 0.02),

@@ -10,8 +10,8 @@ class AppLogo extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: size.width * 0.25,
-          height: size.width * 0.25,
+          width: size.width * 0.20,
+          height: size.width * 0.20,
           constraints: const BoxConstraints(
             minWidth: 80,
             minHeight: 80,
@@ -33,7 +33,7 @@ class AppLogo extends StatelessWidget {
             child: Text(
               'D',
               style: TextStyle(
-                fontSize: size.width * 0.12,
+                fontSize: size.width * 0.08,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ).copyWith(fontSize: (size.width * 0.12).clamp(40.0, 60.0)),
@@ -44,9 +44,10 @@ class AppLogo extends StatelessWidget {
         Text(
           'Do Connect',
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+                fontWeight: FontWeight.bold,
+                fontSize: (size.width * 0.03).clamp(26.0, 32.0),
+                color: Colors.black87,
+              ),
         ),
         SizedBox(height: size.height * 0.005),
         Text(

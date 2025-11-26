@@ -32,9 +32,7 @@ class NewUserSection extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(
-        maxWidth: 600,
-      ),
+      constraints: const BoxConstraints(maxWidth: 600),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -46,30 +44,23 @@ class NewUserSection extends StatelessWidget {
           ),
         ],
       ),
-      padding: EdgeInsets.all(size.width * 0.06),
+      padding: EdgeInsets.all(size.width * 0.05),
       child: Column(
         children: [
           Text(
             'New to Do Connect?',
             style: TextStyle(
-              fontSize: size.width * 0.055,
+              fontSize: (size.width * 0.048).clamp(18.0, 22.0),
               fontWeight: FontWeight.bold,
               color: Colors.black87,
-            ).copyWith(
-              fontSize: (size.width * 0.055).clamp(20.0, 26.0),
             ),
           ),
-          SizedBox(height: size.height * 0.025),
-
-          // Get Free Demo Button
+          SizedBox(height: size.height * 0.02),
           _OutlineButton(
             text: 'Get Free Demo',
             onPressed: () => _handleGetDemo(context),
           ),
-
-          SizedBox(height: size.height * 0.015),
-
-          // OR Divider
+          SizedBox(height: size.height * 0.012),
           Row(
             children: [
               const Expanded(child: Divider()),
@@ -79,27 +70,22 @@ class NewUserSection extends StatelessWidget {
                   'OR',
                   style: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: size.width * 0.035,
+                    fontSize: (size.width * 0.03).clamp(11.0, 13.0),
                   ),
                 ),
               ),
               const Expanded(child: Divider()),
             ],
           ),
-
-          SizedBox(height: size.height * 0.015),
-
-          // Create Profile Link
+          SizedBox(height: size.height * 0.012),
           TextButton(
             onPressed: () => _handleCreateProfile(context),
             child: Text(
               'Create Profile with Access Code',
               style: TextStyle(
-                fontSize: size.width * 0.04,
+                fontSize: (size.width * 0.035).clamp(13.0, 14.5),
                 color: const Color(0xFFFF7A29),
                 fontWeight: FontWeight.w600,
-              ).copyWith(
-                fontSize: (size.width * 0.04).clamp(14.0, 16.0),
               ),
             ),
           ),
@@ -124,7 +110,7 @@ class _OutlineButton extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: size.height * 0.06,
+      height: size.height * 0.055,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
@@ -139,11 +125,9 @@ class _OutlineButton extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-            fontSize: size.width * 0.04,
+            fontSize: (size.width * 0.035).clamp(13.0, 15.5),
             fontWeight: FontWeight.w600,
             color: Colors.black87,
-          ).copyWith(
-            fontSize: (size.width * 0.04).clamp(14.0, 18.0),
           ),
         ),
       ),

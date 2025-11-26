@@ -39,7 +39,7 @@ class _SignupFormState extends State<SignupForm> {
     _nameController.dispose();
     _contactController.dispose();
     _emailController.dispose();
-      _websiteController.dispose();
+    _websiteController.dispose();
     _positionController.dispose();
     _addressController.dispose();
     _passwordController.dispose();
@@ -59,31 +59,14 @@ class _SignupFormState extends State<SignupForm> {
         return;
       }
 
-      // TODO: Implement BLoC signup logic
       print('Signup attempt:');
       print('Name: ${_nameController.text}');
       print('Email: ${_emailController.text}');
       print('Type: ${widget.signupType}');
-
-      // BLoC event dispatch example:
-      // context.read<AuthBloc>().add(
-      //   SignupRequested(
-      //     name: _nameController.text,
-      //     email: _emailController.text,
-      //     password: _passwordController.text,
-      //     contactNumber: _contactController.text,
-      //     signupType: widget.signupType,
-      //     accessCode: _accessCodeController.text.isNotEmpty ? _accessCodeController.text : null,
-      //     position: _positionController.text.isNotEmpty ? _positionController.text : null,
-      //     address: _addressController.text.isNotEmpty ? _addressController.text : null,
-      //     accountType: _isDemoSignup ? _selectedAccountType : null,
-      //   ),
-      // );
     }
   }
 
   void _handleForgotPassword() {
-    // TODO: Navigate to forgot password screen
     print('Forgot password tapped');
   }
 
@@ -98,35 +81,30 @@ class _SignupFormState extends State<SignupForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
           Text(
             _isDemoSignup ? 'Request a Demo' : 'Sign Up',
             style: TextStyle(
-              fontSize: size.width * 0.055,
+              fontSize: (size.width * 0.048).clamp(18.0, 22.0),
               fontWeight: FontWeight.bold,
               color: Colors.black87,
-            ).copyWith(
-              fontSize: (size.width * 0.055).clamp(20.0, 26.0),
             ),
           ),
-          SizedBox(height: size.height * 0.005),
+          SizedBox(height: size.height * 0.004),
           Text(
             _isDemoSignup
                 ? "Fill in your details and we'll reach out to you"
                 : 'Create your Do Connect profile',
             style: TextStyle(
-              fontSize: size.width * 0.035,
+              fontSize: (size.width * 0.03).clamp(11.5, 13.0),
               color: Colors.grey[600],
-            ).copyWith(
-              fontSize: (size.width * 0.035).clamp(12.0, 14.0),
             ),
           ),
-          SizedBox(height: size.height * 0.025),
+          SizedBox(height: size.height * 0.02),
 
           // Access Code Field (only for accessCode signup)
           if (!_isDemoSignup) ...[
             _buildLabel('Access Code *', size),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.008),
             CustomTextField(
               controller: _accessCodeController,
               hintText: 'Enter your access code',
@@ -138,12 +116,12 @@ class _SignupFormState extends State<SignupForm> {
                 return null;
               },
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: size.height * 0.018),
           ],
 
           // Name Field
           _buildLabel('Name *', size),
-          SizedBox(height: size.height * 0.01),
+          SizedBox(height: size.height * 0.008),
           CustomTextField(
             controller: _nameController,
             hintText: 'Your full name',
@@ -155,13 +133,12 @@ class _SignupFormState extends State<SignupForm> {
               return null;
             },
           ),
-          SizedBox(height: size.height * 0.02),
+          SizedBox(height: size.height * 0.018),
 
-          // Email Field (position changes based on type)
+          // Email and Contact fields (position changes based on type)
           if (!_isDemoSignup) ...[
-            // For Access Code: show Contact first, then Email
             _buildLabel('Contact Number *', size),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.008),
             CustomTextField(
               controller: _contactController,
               hintText: 'Your contact number',
@@ -174,10 +151,9 @@ class _SignupFormState extends State<SignupForm> {
                 return null;
               },
             ),
-            SizedBox(height: size.height * 0.02),
-
+            SizedBox(height: size.height * 0.018),
             _buildLabel('Email *', size),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.008),
             CustomTextField(
               controller: _emailController,
               hintText: 'your@email.com',
@@ -193,11 +169,10 @@ class _SignupFormState extends State<SignupForm> {
                 return null;
               },
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: size.height * 0.018),
           ] else ...[
-            // For Demo: show Email first, then Contact
             _buildLabel('Email *', size),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.008),
             CustomTextField(
               controller: _emailController,
               hintText: 'your@email.com',
@@ -213,10 +188,9 @@ class _SignupFormState extends State<SignupForm> {
                 return null;
               },
             ),
-            SizedBox(height: size.height * 0.02),
-
+            SizedBox(height: size.height * 0.018),
             _buildLabel('Contact Number *', size),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.008),
             CustomTextField(
               controller: _contactController,
               hintText: 'Your contact number',
@@ -229,13 +203,13 @@ class _SignupFormState extends State<SignupForm> {
                 return null;
               },
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: size.height * 0.018),
           ],
 
           // Address Field (only for demo)
           if (_isDemoSignup) ...[
             _buildLabel('Address *', size),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.008),
             CustomTextField(
               controller: _addressController,
               hintText: 'Your address',
@@ -247,13 +221,13 @@ class _SignupFormState extends State<SignupForm> {
                 return null;
               },
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: size.height * 0.018),
           ],
 
           // Position Field (only for accessCode)
           if (!_isDemoSignup) ...[
             _buildLabel('Position *', size),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.008),
             CustomTextField(
               controller: _positionController,
               hintText: 'Your position',
@@ -265,13 +239,13 @@ class _SignupFormState extends State<SignupForm> {
                 return null;
               },
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: size.height * 0.018),
           ],
 
           // Account Type (only for demo)
           if (_isDemoSignup) ...[
             _buildLabel('Account Type *', size),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.008),
             Row(
               children: [
                 Expanded(
@@ -296,10 +270,8 @@ class _SignupFormState extends State<SignupForm> {
                         Text(
                           'Personal',
                           style: TextStyle(
-                            fontSize: size.width * 0.04,
+                            fontSize: (size.width * 0.035).clamp(13.0, 14.5),
                             color: Colors.black87,
-                          ).copyWith(
-                            fontSize: (size.width * 0.04).clamp(14.0, 16.0),
                           ),
                         ),
                       ],
@@ -328,10 +300,8 @@ class _SignupFormState extends State<SignupForm> {
                         Text(
                           'Company',
                           style: TextStyle(
-                            fontSize: size.width * 0.04,
+                            fontSize: (size.width * 0.035).clamp(13.0, 14.5),
                             color: Colors.black87,
-                          ).copyWith(
-                            fontSize: (size.width * 0.04).clamp(14.0, 16.0),
                           ),
                         ),
                       ],
@@ -341,24 +311,25 @@ class _SignupFormState extends State<SignupForm> {
               ],
             ),
             if (_selectedAccountType == 'Company') ...[
-              // Position Field
+              SizedBox(height: size.height * 0.018),
               _buildLabel('Position', size),
+              SizedBox(height: size.height * 0.008),
               CustomTextField(
                 controller: _positionController,
                 hintText: 'Your position',
                 prefixIcon: Icons.work_outline,
               ),
-
-              // Company Name Field
+              SizedBox(height: size.height * 0.018),
               _buildLabel('Company Name', size),
+              SizedBox(height: size.height * 0.008),
               CustomTextField(
                 controller: _companyNameController,
                 hintText: 'Your company name',
                 prefixIcon: Icons.business_outlined,
               ),
-
-              // Website Field
+              SizedBox(height: size.height * 0.018),
               _buildLabel('Website', size),
+              SizedBox(height: size.height * 0.008),
               CustomTextField(
                 controller: _websiteController,
                 hintText: 'https://yourcompany.com',
@@ -366,12 +337,12 @@ class _SignupFormState extends State<SignupForm> {
                 keyboardType: TextInputType.url,
               ),
             ],
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: size.height * 0.018),
           ],
 
           // Password Field
           _buildLabel('Password *', size),
-          SizedBox(height: size.height * 0.01),
+          SizedBox(height: size.height * 0.008),
           CustomTextField(
             controller: _passwordController,
             hintText: 'Enter your password',
@@ -400,11 +371,11 @@ class _SignupFormState extends State<SignupForm> {
               return null;
             },
           ),
-          SizedBox(height: size.height * 0.02),
+          SizedBox(height: size.height * 0.018),
 
           // Confirm Password Field
           _buildLabel('Confirm Password *', size),
-          SizedBox(height: size.height * 0.01),
+          SizedBox(height: size.height * 0.008),
           CustomTextField(
             controller: _confirmPasswordController,
             hintText: 'Confirm your password',
@@ -433,7 +404,7 @@ class _SignupFormState extends State<SignupForm> {
               return null;
             },
           ),
-          SizedBox(height: size.height * 0.025),
+          SizedBox(height: size.height * 0.02),
 
           // Terms and Conditions Checkbox
           Row(
@@ -456,23 +427,21 @@ class _SignupFormState extends State<SignupForm> {
                     text: TextSpan(
                       text: 'I accept the ',
                       style: TextStyle(
-                        fontSize: size.width * 0.035,
+                        fontSize: (size.width * 0.03).clamp(11.5, 13.0),
                         color: Colors.black87,
-                      ).copyWith(
-                        fontSize: (size.width * 0.035).clamp(12.0, 14.0),
                       ),
-                      children: [
+                      children: const [
                         TextSpan(
                           text: 'Terms and Conditions',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Color(0xFFFF7A29),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const TextSpan(text: ' and '),
+                        TextSpan(text: ' and '),
                         TextSpan(
                           text: 'Privacy Policy',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Color(0xFFFF7A29),
                             fontWeight: FontWeight.w600,
                           ),
@@ -484,7 +453,7 @@ class _SignupFormState extends State<SignupForm> {
               ),
             ],
           ),
-          SizedBox(height: size.height * 0.025),
+          SizedBox(height: size.height * 0.02),
 
           // Signup Button
           PrimaryButton(
@@ -492,7 +461,7 @@ class _SignupFormState extends State<SignupForm> {
             onPressed: _handleSignup,
           ),
 
-          SizedBox(height: size.height * 0.02),
+          SizedBox(height: size.height * 0.015),
 
           // Forgot Password Link
           Center(
@@ -501,11 +470,9 @@ class _SignupFormState extends State<SignupForm> {
               child: Text(
                 'Forgot password?',
                 style: TextStyle(
-                  fontSize: size.width * 0.04,
+                  fontSize: (size.width * 0.035).clamp(13.0, 14.5),
                   color: const Color(0xFFFF7A29),
                   fontWeight: FontWeight.w600,
-                ).copyWith(
-                  fontSize: (size.width * 0.04).clamp(14.0, 16.0),
                 ),
               ),
             ),
@@ -519,11 +486,9 @@ class _SignupFormState extends State<SignupForm> {
     return Text(
       text,
       style: TextStyle(
-        fontSize: size.width * 0.04,
+        fontSize: (size.width * 0.035).clamp(13.0, 15.0),
         fontWeight: FontWeight.w600,
         color: Colors.black87,
-      ).copyWith(
-        fontSize: (size.width * 0.04).clamp(14.0, 18.0),
       ),
     );
   }

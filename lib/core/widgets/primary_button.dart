@@ -34,23 +34,22 @@ class PrimaryButton extends StatelessWidget {
           ),
           disabledBackgroundColor: Colors.grey[300],
         ),
-        child:
-            isLoading
-                ? SizedBox(
-                  height: size.height * 0.03,
-                  width: size.height * 0.03,
-                  child: const CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-                : Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: size.width * 0.045,
-                    fontWeight: FontWeight.w600,
-                  ).copyWith(fontSize: (size.width * 0.045).clamp(16.0, 20.0)),
+        child: isLoading
+            ? SizedBox(
+                height: size.height * 0.03,
+                width: size.height * 0.03,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
+              )
+            : Text(
+                text,
+                style: TextStyle(
+                  fontSize: size.width * 0.10,
+                  fontWeight: FontWeight.w600,
+                ).copyWith(fontSize: (size.width * 0.040).clamp(16.0, 20.0)),
+              ),
       ),
     );
   }

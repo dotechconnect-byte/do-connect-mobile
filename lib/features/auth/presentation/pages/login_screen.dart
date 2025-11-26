@@ -28,14 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
-          // Navigate to home screen
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Login successful!'),
               backgroundColor: Colors.green,
             ),
           );
-          // TODO: Navigator.pushReplacementNamed(context, '/home');
         } else if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -63,23 +61,19 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             child: Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: size.width * 0.04,
+                horizontal: size.width * 0.05,
                 vertical: size.height * 0.02,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo and Title
                   const AppLogo(),
-
-                  SizedBox(height: size.height * 0.04),
+                  SizedBox(height: size.height * 0.03),
 
                   // Login Form Card
                   Container(
                     width: double.infinity,
-                    constraints: const BoxConstraints(
-                      maxWidth: 600,
-                    ),
+                    constraints: const BoxConstraints(maxWidth: 600),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -91,51 +85,39 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    padding: EdgeInsets.all(size.width * 0.06),
+                    padding: EdgeInsets.all(size.width * 0.05),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Welcome Back',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
+                          style: TextStyle(
+                            fontSize: (size.width * 0.055).clamp(20.0, 24.0),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
                         ),
-                        SizedBox(height: size.height * 0.01),
+                        SizedBox(height: size.height * 0.008),
                         Text(
                           'Sign in to your account',
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
+                          style: TextStyle(
+                            fontSize: (size.width * 0.035).clamp(13.0, 15.0),
+                            color: Colors.grey[600],
+                          ),
                         ),
-                        SizedBox(height: size.height * 0.03),
-
-                        // Account Type Selector
+                        SizedBox(height: size.height * 0.025),
                         AccountTypeSelector(
                           selectedType: _selectedAccountType,
                           onTypeChanged: _onAccountTypeChanged,
                         ),
-
-                        SizedBox(height: size.height * 0.03),
-
-                        // Login Form
-                        LoginForm(
-                          accountType: _selectedAccountType,
-                        ),
+                        SizedBox(height: size.height * 0.025),
+                        LoginForm(accountType: _selectedAccountType),
                       ],
                     ),
                   ),
 
-                  SizedBox(height: size.height * 0.03),
-
-                  // New User Section
+                  SizedBox(height: size.height * 0.025),
                   const NewUserSection(),
-
                   SizedBox(height: size.height * 0.02),
                 ],
               ),
