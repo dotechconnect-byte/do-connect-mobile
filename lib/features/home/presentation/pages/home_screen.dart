@@ -19,6 +19,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   final List<String> _titles = [
     'Analytics Dashboard',
@@ -35,6 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
     'Manage your profile',
     'Additional options',
   ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (_selectedIndex == 1) ...[
                     SizedBox(height: 16.h),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
                       decoration: BoxDecoration(
                         color: ColorManager.grey6,
                         borderRadius: BorderRadius.circular(10.r),
@@ -168,15 +176,46 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(width: 8.w),
                           Expanded(
-                            child: Text(
-                              'Search DOER, shifts, invoices...',
+                            child: TextField(
+                              controller: _searchController,
+                              onChanged: (value) {
+                                setState(() {
+                                  _searchQuery = value;
+                                });
+                              },
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s13,
                                 fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textSecondary,
+                                color: ColorManager.textPrimary,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Search DOER, shifts, invoices...',
+                                hintStyle: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s13,
+                                  fontWeight: FontWeightManager.regular,
+                                  color: ColorManager.textSecondary,
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(vertical: 10.h),
                               ),
                             ),
                           ),
+                          if (_searchQuery.isNotEmpty)
+                            IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                size: 20.sp,
+                                color: ColorManager.textSecondary,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _searchController.clear();
+                                  _searchQuery = '';
+                                });
+                              },
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
                         ],
                       ),
                     ),
@@ -191,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 index: _selectedIndex,
                 children: [
                   _DashboardTab(),
-                  _SlotsTab(),
+                  _SlotsTab(searchQuery: _searchQuery),
                   _PlaceholderTab(title: 'Status'),
                   _PlaceholderTab(title: 'Profile'),
                   _PlaceholderTab(title: 'More'),
@@ -305,9 +344,13 @@ class _DashboardTab extends StatelessWidget {
 
 // Slots Tab Content
 class _SlotsTab extends StatelessWidget {
+  final String searchQuery;
+
+  const _SlotsTab({this.searchQuery = ''});
+
   @override
   Widget build(BuildContext context) {
-    return const SlotsContent();
+    return SlotsContent(searchQuery: searchQuery);
   }
 }
 

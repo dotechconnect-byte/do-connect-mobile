@@ -7,7 +7,9 @@ import 'slot_card.dart';
 import 'slot_details_modal.dart';
 
 class SlotsContent extends StatefulWidget {
-  const SlotsContent({super.key});
+  final String searchQuery;
+
+  const SlotsContent({super.key, this.searchQuery = ''});
 
   @override
   State<SlotsContent> createState() => _SlotsContentState();
@@ -115,8 +117,23 @@ class _SlotsContentState extends State<SlotsContent> {
     ),
   ];
 
+  List<SlotModel> get _filteredSlots {
+    if (widget.searchQuery.isEmpty) {
+      return _slots;
+    }
+
+    final query = widget.searchQuery.toLowerCase();
+    return _slots.where((slot) {
+      return slot.position.toLowerCase().contains(query) ||
+             slot.location.toLowerCase().contains(query) ||
+             slot.timeRange.toLowerCase().contains(query);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final filteredSlots = _filteredSlots;
+
     return Column(
       children: [
         // Date Selector
@@ -172,39 +189,81 @@ class _SlotsContentState extends State<SlotsContent> {
                 color: ColorManager.primary,
               ),
               SizedBox(width: 8.w),
-              Text(
-                'Thursday, December 18, 2025',
-                style: FontConstants.getPoppinsStyle(
-                  fontSize: FontSize.s15,
-                  fontWeight: FontWeightManager.semiBold,
-                  color: ColorManager.textPrimary,
+              Expanded(
+                child: Text(
+                  'Thursday, December 18, 2025',
+                  style: FontConstants.getPoppinsStyle(
+                    fontSize: FontSize.s15,
+                    fontWeight: FontWeightManager.semiBold,
+                    color: ColorManager.textPrimary,
+                  ),
                 ),
               ),
+              if (widget.searchQuery.isNotEmpty)
+                Text(
+                  '${filteredSlots.length} result${filteredSlots.length != 1 ? 's' : ''}',
+                  style: FontConstants.getPoppinsStyle(
+                    fontSize: FontSize.s12,
+                    fontWeight: FontWeightManager.medium,
+                    color: ColorManager.primary,
+                  ),
+                ),
             ],
           ),
         ),
 
         // Slots List
         Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 16.w).copyWith(bottom: 80.h),
-            itemCount: _slots.length,
-            itemBuilder: (context, index) {
-              return SlotCard(
-                slot: _slots[index],
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) => SlotDetailsModal(
-                      slot: _slots[index],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
+          child: filteredSlots.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.search_off,
+                        size: 64.sp,
+                        color: ColorManager.grey3,
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        'No slots found',
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s16,
+                          fontWeight: FontWeightManager.semiBold,
+                          color: ColorManager.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Try adjusting your search',
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s13,
+                          fontWeight: FontWeightManager.regular,
+                          color: ColorManager.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w).copyWith(bottom: 80.h),
+                  itemCount: filteredSlots.length,
+                  itemBuilder: (context, index) {
+                    return SlotCard(
+                      slot: filteredSlots[index],
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => SlotDetailsModal(
+                            slot: filteredSlots[index],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
         ),
       ],
     );
