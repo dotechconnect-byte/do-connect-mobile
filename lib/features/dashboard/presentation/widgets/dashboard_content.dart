@@ -6,218 +6,82 @@ import '../../../../core/consts/font_manager.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_event.dart';
 import '../bloc/dashboard_state.dart';
-import '../widgets/promo_banner.dart';
-import '../widgets/stat_card.dart';
-import '../widgets/attendance_chart.dart';
-import '../widgets/position_distribution_chart.dart';
-import '../widgets/request_doer_bottom_sheet.dart';
-import '../widgets/notification_panel.dart';
-import '../../../slots/presentation/pages/slots_screen.dart';
+import 'promo_banner.dart';
+import 'stat_card.dart';
+import 'attendance_chart.dart';
+import 'position_distribution_chart.dart';
 
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+class DashboardContent extends StatelessWidget {
+  const DashboardContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => DashboardBloc()..add(const LoadDashboardData()),
-      child: const DashboardView(),
-    );
-  }
-}
+    return BlocBuilder<DashboardBloc, DashboardState>(
+      builder: (context, state) {
+        if (state is DashboardLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-class DashboardView extends StatelessWidget {
-  const DashboardView({super.key});
+        if (state is DashboardError) {
+          return Center(child: Text('Error: ${state.message}'));
+        }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
-      body: SafeArea(
-        child: BlocBuilder<DashboardBloc, DashboardState>(
-          builder: (context, state) {
-            if (state is DashboardLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (state is DashboardError) {
-              return Center(
-                child: Text(
-                  'Error: ${state.message}',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s14,
-                    color: ColorManager.error,
-                  ),
-                ),
-              );
-            }
-
-            if (state is DashboardLoaded) {
-              return RefreshIndicator(
-                onRefresh: () async {
-                  context.read<DashboardBloc>().add(const RefreshDashboardData());
-                },
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    children: [
-                      _TopBar(),
-                      SizedBox(height: 12.h),
-                      const PromoBanner(),
-                      SizedBox(height: 16.h),
-                      _StatsGrid(stats: state.stats),
-                      SizedBox(height: 16.h),
-                      _AIInsights(),
-                      SizedBox(height: 16.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        child: Column(
-                          children: [
-                            const AttendanceChart(),
-                            SizedBox(height: 12.h),
-                            const PositionDistributionChart(),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 16.h),
-                      _BottomTabs(
-                        shifts: state.shifts,
-                        selectedTab: state.selectedTab,
-                      ),
-                      SizedBox(height: 80.h),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            return const SizedBox();
-          },
-        ),
-      ),
-      bottomNavigationBar: const _BottomNavBar(),
-    );
-  }
-}
-
-class _TopBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: ColorManager.white,
-        border: Border(bottom: BorderSide(color: ColorManager.grey4, width: 1)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Analytics Dashboard',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s18,
-                    fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  'Real-time insights',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s11,
-                    fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_outlined, size: 22.sp),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) => const NotificationPanel(),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        const begin = Offset(1.0, 0.0);
-                        const end = Offset.zero;
-                        const curve = Curves.easeInOut;
-                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                        var offsetAnimation = animation.drive(tween);
-                        return SlideTransition(position: offsetAnimation, child: child);
-                      },
-                      transitionDuration: const Duration(milliseconds: 300),
-                    ),
-                  );
-                },
-                color: ColorManager.textPrimary,
-                padding: EdgeInsets.all(8.w),
-                constraints: const BoxConstraints(),
-              ),
-              Positioned(
-                right: 6,
-                top: 6,
-                child: Container(
-                  width: 6.w,
-                  height: 6.w,
-                  decoration: const BoxDecoration(
-                    color: ColorManager.error,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(width: 4.w),
-          SizedBox(
-            height: 36.h,
-            child: ElevatedButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) => Padding(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
-                    ),
-                    child: const RequestDoerBottomSheet(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorManager.primary,
-                foregroundColor: ColorManager.white,
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                textStyle: FontConstants.getPoppinsStyle(
-                  fontSize: FontSize.s12,
-                  fontWeight: FontWeightManager.semiBold,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+        if (state is DashboardLoaded) {
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<DashboardBloc>().add(const RefreshDashboardData());
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.add, size: 16.sp),
-                  SizedBox(width: 4.w),
-                  const Text('DOER'),
+                  SizedBox(height: 16.h),
+
+                  // Promo Banner
+                  const PromoBanner(),
+
+                  SizedBox(height: 20.h),
+
+                  // Stats Grid
+                  _StatsGrid(stats: state.stats),
+
+                  SizedBox(height: 20.h),
+
+                  // AI Insights
+                  _AIInsights(),
+
+                  SizedBox(height: 20.h),
+
+                  // Charts Column
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                    child: Column(
+                      children: [
+                        const AttendanceChart(),
+                        SizedBox(height: 16.h),
+                        const PositionDistributionChart(),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20.h),
+
+                  // Bottom Tabs
+                  _BottomTabs(
+                    shifts: state.shifts,
+                    selectedTab: state.selectedTab,
+                  ),
+
+                  SizedBox(height: 80.h), // Extra padding for FAB
                 ],
               ),
             ),
-          ),
-        ],
-      ),
+          );
+        }
+
+        return const SizedBox();
+      },
     );
   }
 }
@@ -273,8 +137,8 @@ class _AIInsights extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome, color: ColorManager.primary, size: 18.sp),
-              SizedBox(width: 6.w),
+              Icon(Icons.auto_awesome, size: 18.sp, color: ColorManager.primary),
+              SizedBox(width: 8.w),
               Expanded(
                 child: Text(
                   'AI-Powered Insights',
@@ -283,20 +147,21 @@ class _AIInsights extends StatelessWidget {
                     fontWeight: FontWeightManager.bold,
                     color: ColorManager.textPrimary,
                   ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               TextButton(
                 onPressed: () {},
                 style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  padding: EdgeInsets.zero,
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
                   'Ask AI',
                   style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s12,
+                    fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.semiBold,
                     color: ColorManager.primary,
                   ),
@@ -304,17 +169,28 @@ class _AIInsights extends StatelessWidget {
               ),
             ],
           ),
+          SizedBox(height: 6.h),
+          Text(
+            'Smart observations and suggestions for your workforce',
+            style: FontConstants.getPoppinsStyle(
+              fontSize: FontSize.s11,
+              fontWeight: FontWeightManager.regular,
+              color: ColorManager.textSecondary,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
           SizedBox(height: 12.h),
           _InsightItem(
-            Icons.people,
-            '80% of DOER have ratings above 4.5',
-            ColorManager.primary,
+            icon: Icons.trending_up,
+            iconColor: const Color(0xFF10B981),
+            text: '80% of your DOER today are repeat hires with ratings above 4.5',
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 8.h),
           _InsightItem(
-            Icons.schedule,
-            '3 DOER scanned in late yesterday',
-            const Color(0xFFFBBF24),
+            icon: Icons.info_outline,
+            iconColor: const Color(0xFF3B82F6),
+            text: '3 DOER scanned in late at Downtown Office yesterday',
           ),
         ],
       ),
@@ -324,22 +200,27 @@ class _AIInsights extends StatelessWidget {
 
 class _InsightItem extends StatelessWidget {
   final IconData icon;
+  final Color iconColor;
   final String text;
-  final Color color;
 
-  const _InsightItem(this.icon, this.text, this.color);
+  const _InsightItem({
+    required this.icon,
+    required this.iconColor,
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           padding: EdgeInsets.all(6.w),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(6.r),
           ),
-          child: Icon(icon, size: 14.sp, color: color),
+          child: Icon(icon, size: 14.sp, color: iconColor),
         ),
         SizedBox(width: 10.w),
         Expanded(
@@ -408,23 +289,25 @@ class _TabItem extends StatelessWidget {
   final String title;
   final int index;
   final int selectedTab;
-  final BuildContext context;
+  final BuildContext parentContext;
 
-  const _TabItem(this.title, this.index, this.selectedTab, this.context);
+  const _TabItem(this.title, this.index, this.selectedTab, this.parentContext);
 
   @override
   Widget build(BuildContext context) {
-    final isSelected = selectedTab == index;
+    final isActive = selectedTab == index;
     return Expanded(
       child: GestureDetector(
-        onTap: () => context.read<DashboardBloc>().add(ChangeTab(index)),
+        onTap: () {
+          parentContext.read<DashboardBloc>().add(ChangeTab(index));
+        },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          margin: EdgeInsets.all(3.w),
+          margin: EdgeInsets.all(4.w),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.white : Colors.transparent,
+            color: isActive ? ColorManager.white : Colors.transparent,
             borderRadius: BorderRadius.circular(6.r),
-            boxShadow: isSelected
+            boxShadow: isActive
                 ? [BoxShadow(color: ColorManager.black.withValues(alpha: 0.05), blurRadius: 4)]
                 : [],
           ),
@@ -432,9 +315,9 @@ class _TabItem extends StatelessWidget {
             child: Text(
               title,
               style: FontConstants.getPoppinsStyle(
-                fontSize: FontSize.s11,
-                fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-                color: isSelected ? ColorManager.textPrimary : ColorManager.textSecondary,
+                fontSize: FontSize.s12,
+                fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.medium,
+                color: isActive ? ColorManager.textPrimary : ColorManager.textSecondary,
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -462,12 +345,12 @@ class _ShiftItem extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(6.w),
+            padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
               color: ColorManager.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6.r),
             ),
-            child: Icon(Icons.access_time, size: 18.sp, color: ColorManager.primary),
+            child: Icon(Icons.calendar_today, size: 16.sp, color: ColorManager.primary),
           ),
           SizedBox(width: 10.w),
           Expanded(
@@ -475,31 +358,24 @@ class _ShiftItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  shift.time,
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s11,
-                    fontWeight: FontWeightManager.medium,
-                    color: ColorManager.textSecondary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 2.h),
-                Text(
                   shift.position,
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.semiBold,
                     color: ColorManager.textPrimary,
                   ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                SizedBox(height: 2.h),
                 Text(
-                  shift.assignedTo,
+                  '${shift.time} • ${shift.location}',
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.regular,
                     color: ColorManager.textSecondary,
                   ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -508,15 +384,15 @@ class _ShiftItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
             decoration: BoxDecoration(
-              color: ColorManager.success.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(4.r),
+              color: ColorManager.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6.r),
             ),
             child: Text(
-              'Confirmed',
+              shift.status,
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s10,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.success,
+                color: ColorManager.primary,
               ),
             ),
           ),
@@ -715,83 +591,6 @@ class _QuickExportItem extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: ColorManager.white,
-        boxShadow: [
-          BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _NavItem(Icons.dashboard_outlined, 'Dashboard', true),
-              _NavItem(Icons.calendar_today_outlined, 'Slots', false),
-              _NavItem(Icons.assessment_outlined, 'Status', false),
-              _NavItem(Icons.person_outline, 'Profile', false),
-              _NavItem(Icons.more_horiz, 'More', false),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-
-  const _NavItem(this.icon, this.label, this.isActive);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (!isActive && label == 'Slots') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SlotsScreen()),
-          );
-        }
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? ColorManager.primary : ColorManager.textSecondary,
-            size: 22.sp,
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            style: FontConstants.getPoppinsStyle(
-              fontSize: FontSize.s10,
-              fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.regular,
-              color: isActive ? ColorManager.primary : ColorManager.textSecondary,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
       ),
     );
   }

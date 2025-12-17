@@ -7,7 +7,7 @@ import '../widgets/auth_button.dart';
 import '../widgets/account_type_selector.dart';
 import 'get_demo_screen.dart';
 import 'access_code_registration_screen.dart';
-import '../../../dashboard/presentation/pages/dashboard_screen.dart';
+import '../../../home/presentation/pages/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -63,11 +63,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         if (!mounted) return;
         setState(() => _isLoading = false);
 
-        // Navigate to Dashboard
+        // Navigate to Home Screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const DashboardScreen(),
+            builder: (context) => const HomeScreen(),
           ),
         );
       });
