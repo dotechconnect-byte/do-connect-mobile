@@ -7,6 +7,7 @@ import '../widgets/auth_button.dart';
 import '../widgets/account_type_selector.dart';
 import 'get_demo_screen.dart';
 import 'access_code_registration_screen.dart';
+import '../../../dashboard/presentation/pages/dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -57,20 +58,16 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // TODO: Implement actual sign in logic
+      // TODO: Implement actual sign in logic with API
       Future.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Sign in as $_accountType: ${_emailController.text}',
-              style: FontConstants.getPoppinsStyle(
-                fontSize: FontSize.s14,
-                color: ColorManager.white,
-              ),
-            ),
-            backgroundColor: ColorManager.primary,
+
+        // Navigate to Dashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashboardScreen(),
           ),
         );
       });

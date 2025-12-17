@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'core/consts/color_manager.dart';
 import 'core/consts/font_manager.dart';
 import 'features/onboarding/presentation/pages/onboarding_screen.dart';
@@ -42,8 +43,23 @@ class MyApp extends StatelessWidget {
               secondary: ColorManager.primaryLight,
             ),
             scaffoldBackgroundColor: ColorManager.backgroundColor,
-            textTheme: FontConstants.poppinsTextTheme,
+            textTheme: GoogleFonts.poppinsTextTheme(
+              ThemeData.light().textTheme.apply(
+                bodyColor: ColorManager.textPrimary,
+                displayColor: ColorManager.textPrimary,
+              ),
+            ),
             fontFamily: FontConstants.fontFamily,
+            appBarTheme: AppBarTheme(
+              backgroundColor: ColorManager.white,
+              elevation: 0,
+              iconTheme: IconThemeData(color: ColorManager.textPrimary),
+              titleTextStyle: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: ColorManager.textPrimary,
+              ),
+            ),
           ),
           home: const OnboardingScreen(),
         );
