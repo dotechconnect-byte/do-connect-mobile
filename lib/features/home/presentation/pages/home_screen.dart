@@ -9,6 +9,7 @@ import '../../../dashboard/presentation/widgets/dashboard_content.dart';
 import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../../dashboard/presentation/bloc/dashboard_event.dart';
 import '../../../slots/presentation/widgets/slots_content.dart';
+import '../../../status/presentation/widgets/status_content.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -159,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Search Bar (only show for specific tabs)
-                  if (_selectedIndex == 1) ...[
+                  if (_selectedIndex == 1 || _selectedIndex == 2) ...[
                     SizedBox(height: 16.h),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -231,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   _DashboardTab(),
                   _SlotsTab(searchQuery: _searchQuery),
-                  _PlaceholderTab(title: 'Status'),
+                  _StatusTab(searchQuery: _searchQuery),
                   _PlaceholderTab(title: 'Profile'),
                   _PlaceholderTab(title: 'More'),
                 ],
@@ -351,6 +352,18 @@ class _SlotsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SlotsContent(searchQuery: searchQuery);
+  }
+}
+
+// Status Tab Content
+class _StatusTab extends StatelessWidget {
+  final String searchQuery;
+
+  const _StatusTab({this.searchQuery = ''});
+
+  @override
+  Widget build(BuildContext context) {
+    return StatusContent(searchQuery: searchQuery);
   }
 }
 

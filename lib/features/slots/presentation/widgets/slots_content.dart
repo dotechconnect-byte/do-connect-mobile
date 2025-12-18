@@ -6,6 +6,22 @@ import '../../data/models/slot_model.dart';
 import 'slot_card.dart';
 import 'slot_details_modal.dart';
 
+class DateItem {
+  final DateTime date;
+  final String label;
+  final bool isToday;
+  final bool isYesterday;
+  final bool isTomorrow;
+
+  DateItem({
+    required this.date,
+    required this.label,
+    this.isToday = false,
+    this.isYesterday = false,
+    this.isTomorrow = false,
+  });
+}
+
 class SlotsContent extends StatefulWidget {
   final String searchQuery;
 
@@ -16,33 +32,20 @@ class SlotsContent extends StatefulWidget {
 }
 
 class _SlotsContentState extends State<SlotsContent> {
-  final List<String> _dates = [
-    'Dec 14',
-    'Dec 15',
-    'Dec 16',
-    'Yesterday',
-    'Today',
-    'Tomorrow',
-    'Dec 20',
-    'Dec 21',
-    'Dec 22',
-    'Dec 23',
-    'Dec 24',
-    'Dec 25',
-    'Dec 26',
-    'Dec 27',
-  ];
-
-  int _selectedDateIndex = 4; // Today selected by default (index 4 is 'Today')
+  late final List<DateItem> _dates;
+  late int _selectedDateIndex;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _dates = _generateDates();
+    _selectedDateIndex = _dates.indexWhere((date) => date.isToday);
+
     // Auto-scroll to Today after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        final double itemWidth = 80.w; // Approximate width of each date item
+      if (_scrollController.hasClients && _selectedDateIndex >= 0) {
+        final double itemWidth = 80.w;
         final double offset = (_selectedDateIndex - 1) * itemWidth;
         _scrollController.animateTo(
           offset.clamp(0.0, _scrollController.position.maxScrollExtent),
@@ -51,6 +54,51 @@ class _SlotsContentState extends State<SlotsContent> {
         );
       }
     });
+  }
+
+  List<DateItem> _generateDates() {
+    final now = DateTime.now();
+    final List<DateItem> dates = [];
+
+    // Generate dates from 3 days ago to 7 days ahead
+    for (int i = -3; i <= 7; i++) {
+      final date = now.add(Duration(days: i));
+      String label;
+
+      if (i == -1) {
+        label = 'Yesterday';
+      } else if (i == 0) {
+        label = 'Today';
+      } else if (i == 1) {
+        label = 'Tomorrow';
+      } else {
+        label = '${_getMonthAbbr(date.month)} ${date.day}';
+      }
+
+      dates.add(DateItem(
+        date: date,
+        label: label,
+        isToday: i == 0,
+        isYesterday: i == -1,
+        isTomorrow: i == 1,
+      ));
+    }
+
+    return dates;
+  }
+
+  String _getMonthAbbr(int month) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month - 1];
+  }
+
+  String _getFullDate(DateTime date) {
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+
+    return '${weekdays[date.weekday % 7]}, ${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
   @override
@@ -163,7 +211,7 @@ class _SlotsContentState extends State<SlotsContent> {
                   ),
                   child: Center(
                     child: Text(
-                      _dates[index],
+                      _dates[index].label,
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s13,
                         fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
@@ -191,7 +239,7 @@ class _SlotsContentState extends State<SlotsContent> {
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
-                  'Thursday, December 18, 2025',
+                  _getFullDate(_dates[_selectedDateIndex].date),
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s15,
                     fontWeight: FontWeightManager.semiBold,
