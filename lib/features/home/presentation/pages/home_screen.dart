@@ -10,6 +10,7 @@ import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../../dashboard/presentation/bloc/dashboard_event.dart';
 import '../../../slots/presentation/widgets/slots_content.dart';
 import '../../../status/presentation/widgets/status_content.dart';
+import '../../../attendance/presentation/widgets/attendance_content.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,7 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> _titles = [
     'Analytics Dashboard',
     'Slots Management',
-    'Status',
+    'DOER Status',
+    'Attendance',
     'Profile',
     'More',
   ];
@@ -34,7 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> _subtitles = [
     'Real-time insights and workforce analytics',
     'Manage all current and upcoming shift slots',
-    'Track your work status',
+    'Monitor DOER attendance and shift status in real-time',
+    'Track and manage DOER attendance',
     'Manage your profile',
     'Additional options',
   ];
@@ -160,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Search Bar (only show for specific tabs)
-                  if (_selectedIndex == 1 || _selectedIndex == 2) ...[
+                  if (_selectedIndex == 1 || _selectedIndex == 2 || _selectedIndex == 3) ...[
                     SizedBox(height: 16.h),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -233,6 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _DashboardTab(),
                   _SlotsTab(searchQuery: _searchQuery),
                   _StatusTab(searchQuery: _searchQuery),
+                  _AttendanceTab(searchQuery: _searchQuery),
                   _PlaceholderTab(title: 'Profile'),
                   _PlaceholderTab(title: 'More'),
                 ],
@@ -295,8 +299,9 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildNavItem(Icons.dashboard_outlined, 'Dashboard', 0),
               _buildNavItem(Icons.calendar_today_outlined, 'Slots', 1),
               _buildNavItem(Icons.assessment_outlined, 'Status', 2),
-              _buildNavItem(Icons.person_outline, 'Profile', 3),
-              _buildNavItem(Icons.more_horiz, 'More', 4),
+              _buildNavItem(Icons.fact_check_outlined, 'Attendance', 3),
+              _buildNavItem(Icons.person_outline, 'Profile', 4),
+              _buildNavItem(Icons.more_horiz, 'More', 5),
             ],
           ),
         ),
@@ -364,6 +369,18 @@ class _StatusTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatusContent(searchQuery: searchQuery);
+  }
+}
+
+// Attendance Tab Content
+class _AttendanceTab extends StatelessWidget {
+  final String searchQuery;
+
+  const _AttendanceTab({this.searchQuery = ''});
+
+  @override
+  Widget build(BuildContext context) {
+    return AttendanceContent(searchQuery: searchQuery);
   }
 }
 
