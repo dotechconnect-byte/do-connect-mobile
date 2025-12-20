@@ -8,7 +8,9 @@
       "Bash(flutter pub add:*)",
       "Bash(flutter clean:*)",
       "Bash(flutter pub remove:*)",
-      "Bash(flutter build:*)"
+      "Bash(flutter build:*)",
+      "Bash(findstr:*)",
+      "Bash(mkdir:*)"
     ]
   }
 }

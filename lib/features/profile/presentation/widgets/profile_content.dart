@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/image_picker_utils.dart';
 import '../../data/models/company_model.dart';
 import 'edit_company_modal.dart';
 
@@ -21,6 +23,8 @@ class _ProfileContentState extends State<ProfileContent> {
     address: '123 Business St, City',
   );
 
+  String? _companyLogoPath;
+
   void _handleCompanyUpdate(CompanyModel updatedCompany) {
     setState(() {
       _company = updatedCompany;
@@ -35,13 +39,26 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Future<void> _handleLogoChange() async {
-    // TODO: Implement image picker when dependency issues are resolved
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Image picker feature coming soon'),
-        behavior: SnackBarBehavior.floating,
-      ),
+    final imagePath = await ImagePickerUtils.showImageSourceDialog(
+      context: context,
+      title: 'Select Company Logo',
     );
+
+    if (imagePath != null) {
+      setState(() {
+        _companyLogoPath = imagePath;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Company logo updated successfully'),
+            backgroundColor: Color(0xFF10B981),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   final UserRole _currentRole = UserRole(
@@ -145,17 +162,25 @@ class _ProfileContentState extends State<ProfileContent> {
                       decoration: BoxDecoration(
                         color: ColorManager.primary,
                         borderRadius: BorderRadius.circular(12.r),
+                        image: _companyLogoPath != null
+                            ? DecorationImage(
+                                image: FileImage(File(_companyLogoPath!)),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
                       ),
-                      child: Center(
-                        child: Text(
-                          'DC',
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s20,
-                            fontWeight: FontWeightManager.bold,
-                            color: ColorManager.white,
-                          ),
-                        ),
-                      ),
+                      child: _companyLogoPath == null
+                          ? Center(
+                              child: Text(
+                                'DC',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s20,
+                                  fontWeight: FontWeightManager.bold,
+                                  color: ColorManager.white,
+                                ),
+                              ),
+                            )
+                          : null,
                     ),
                     SizedBox(width: 12.w),
                     Column(
