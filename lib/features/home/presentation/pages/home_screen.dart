@@ -11,6 +11,7 @@ import '../../../dashboard/presentation/bloc/dashboard_event.dart';
 import '../../../slots/presentation/widgets/slots_content.dart';
 import '../../../status/presentation/widgets/status_content.dart';
 import '../../../attendance/presentation/widgets/attendance_content.dart';
+import '../../../profile/presentation/widgets/profile_content.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -237,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _SlotsTab(searchQuery: _searchQuery),
                   _StatusTab(searchQuery: _searchQuery),
                   _AttendanceTab(searchQuery: _searchQuery),
-                  _PlaceholderTab(title: 'Profile'),
+                  const ProfileContent(),
                   _PlaceholderTab(title: 'More'),
                 ],
               ),
