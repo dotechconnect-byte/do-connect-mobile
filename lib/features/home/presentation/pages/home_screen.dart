@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/navigation_service.dart';
 import '../../../dashboard/presentation/widgets/notification_panel.dart';
 import '../../../dashboard/presentation/widgets/request_doer_bottom_sheet.dart';
 import '../../../dashboard/presentation/widgets/dashboard_content.dart';
@@ -25,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  String? _attendanceFilterDate;
 
   final List<String> _titles = [
     'Analytics Dashboard',
@@ -45,9 +47,53 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+
+    // Listen for tab switch requests
+    NavigationService().tabSwitchNotifier.addListener(_handleTabSwitch);
+  }
+
+  @override
   void dispose() {
+    NavigationService().tabSwitchNotifier.removeListener(_handleTabSwitch);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _handleTabSwitch() {
+    final tabData = NavigationService().tabSwitchNotifier.value;
+    if (tabData != null && tabData['tab'] != null) {
+      setState(() {
+        _selectedIndex = tabData['tab'] as int;
+        // Set the attendance filter date if provided
+        if (tabData['date'] != null) {
+          _attendanceFilterDate = tabData['date'] as String;
+        }
+      });
+
+      // Show snackbar with the date
+      if (tabData['date'] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Viewing attendance for ${tabData['date']}',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s13,
+                fontWeight: FontWeightManager.medium,
+                color: ColorManager.white,
+              ),
+            ),
+            backgroundColor: ColorManager.success,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+
+      // Clear the notification
+      NavigationService().clearTabSwitch();
+    }
   }
 
   @override
@@ -238,7 +284,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   _DashboardTab(),
                   _SlotsTab(searchQuery: _searchQuery),
                   _StatusTab(searchQuery: _searchQuery),
-                  _AttendanceTab(searchQuery: _searchQuery),
+                  _AttendanceTab(
+                    searchQuery: _searchQuery,
+                    initialDate: _attendanceFilterDate,
+                  ),
                   const ProfileContent(),
                   const MoreContent(),
                 ],
@@ -377,12 +426,19 @@ class _StatusTab extends StatelessWidget {
 // Attendance Tab Content
 class _AttendanceTab extends StatelessWidget {
   final String searchQuery;
+  final String? initialDate;
 
-  const _AttendanceTab({this.searchQuery = ''});
+  const _AttendanceTab({
+    this.searchQuery = '',
+    this.initialDate,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return AttendanceContent(searchQuery: searchQuery);
+    return AttendanceContent(
+      searchQuery: searchQuery,
+      initialDate: initialDate,
+    );
   }
 }
 

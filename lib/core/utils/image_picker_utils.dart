@@ -29,7 +29,7 @@ class ImagePickerUtils {
     } else {
       // For gallery, handle both old and new Android permission models
       if (Platform.isAndroid) {
-        // Try photos permission first (Android 13+)
+        // Try photos permission first (Android 13+)/
         var status = await Permission.photos.request();
         debugPrint('Photos permission status: $status');
 

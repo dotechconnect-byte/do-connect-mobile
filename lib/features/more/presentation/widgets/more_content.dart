@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/navigation_service.dart';
+import '../../../invoices/presentation/pages/invoices_screen.dart';
 
 class MoreContent extends StatelessWidget {
   const MoreContent({super.key});
@@ -17,22 +19,25 @@ class MoreContent extends StatelessWidget {
           _buildSectionTitle('Main Options'),
           SizedBox(height: 12.h),
           _buildOptionCard(
-            icon: Icons.pending_actions,
-            iconColor: ColorManager.warning,
-            title: 'Pending',
-            subtitle: 'View pending requests and approvals',
-            onTap: () {
-              // Navigate to Pending screen
-            },
-          ),
-          SizedBox(height: 12.h),
-          _buildOptionCard(
             icon: Icons.receipt_long,
             iconColor: ColorManager.primary,
             title: 'Invoices',
             subtitle: 'Manage invoices and billing',
-            onTap: () {
-              // Navigate to Invoices screen
+            onTap: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const InvoicesScreen(),
+                ),
+              );
+
+              // Handle navigation result
+              if (result != null && result is Map) {
+                if (result['action'] == 'view_attendance') {
+                  // Use NavigationService to switch to attendance tab
+                  NavigationService().switchToAttendanceTab(result['date']);
+                }
+              }
             },
           ),
           SizedBox(height: 12.h),

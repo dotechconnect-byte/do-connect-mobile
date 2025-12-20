@@ -24,8 +24,13 @@ class DateItem {
 
 class AttendanceContent extends StatefulWidget {
   final String searchQuery;
+  final String? initialDate;
 
-  const AttendanceContent({super.key, this.searchQuery = ''});
+  const AttendanceContent({
+    super.key,
+    this.searchQuery = '',
+    this.initialDate,
+  });
 
   @override
   State<AttendanceContent> createState() => _AttendanceContentState();
@@ -49,9 +54,19 @@ class _AttendanceContentState extends State<AttendanceContent> {
   void initState() {
     super.initState();
     _dates = _generateDates();
-    _selectedDateIndex = _dates.indexWhere((date) => date.isToday);
 
-    // Auto-scroll to Today after the widget is built
+    // If initialDate is provided, try to find and select that date
+    if (widget.initialDate != null) {
+      _selectedDateIndex = _findDateIndexByString(widget.initialDate!);
+      if (_selectedDateIndex == -1) {
+        // If date not found, default to today
+        _selectedDateIndex = _dates.indexWhere((date) => date.isToday);
+      }
+    } else {
+      _selectedDateIndex = _dates.indexWhere((date) => date.isToday);
+    }
+
+    // Auto-scroll to selected date after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients && _selectedDateIndex >= 0) {
         final double itemWidth = 80.w;
@@ -63,6 +78,35 @@ class _AttendanceContentState extends State<AttendanceContent> {
         );
       }
     });
+  }
+
+  int _findDateIndexByString(String dateString) {
+    // Try to match the date string (e.g., "Wednesday, November 5, 2025")
+    // Parse and compare dates
+    try {
+      // Extract date components from the string
+      // This is a simplified version - you may need more robust parsing
+      for (int i = 0; i < _dates.length; i++) {
+        final date = _dates[i].date;
+        // Check if the date label matches or the formatted date matches
+        if (dateString.contains(date.day.toString()) &&
+            dateString.contains(_getMonthName(date.month))) {
+          return i;
+        }
+      }
+    } catch (e) {
+      // If parsing fails, return -1
+      return -1;
+    }
+    return -1;
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      '', 'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return months[month];
   }
 
   List<DateItem> _generateDates() {
