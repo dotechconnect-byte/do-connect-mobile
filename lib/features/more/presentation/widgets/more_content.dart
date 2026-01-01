@@ -5,6 +5,7 @@ import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/navigation_service.dart';
 import '../../../invoices/presentation/pages/invoices_screen.dart';
 import '../../../groups/presentation/pages/groups_screen.dart';
+import '../../../manage/presentation/pages/manage_screen.dart';
 
 class MoreContent extends StatelessWidget {
   const MoreContent({super.key});
@@ -63,7 +64,12 @@ class MoreContent extends StatelessWidget {
             title: 'Manage',
             subtitle: 'System settings and configuration',
             onTap: () {
-              // Navigate to Manage screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ManageScreen(),
+                ),
+              );
             },
           ),
 
