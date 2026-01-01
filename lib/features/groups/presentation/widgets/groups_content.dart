@@ -216,7 +216,7 @@ class _GroupsContentState extends State<GroupsContent> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: _filters.map((filter) {
+              children: _allFilters.map((filter) {
                 final isSelected = _selectedFilter == filter;
                 return Padding(
                   padding: EdgeInsets.only(right: 8.w),
@@ -518,11 +518,16 @@ class _GroupsContentState extends State<GroupsContent> {
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: SizedBox(
                 height: 24.h,
-                child: user.tags.isNotEmpty
+                child: user.tags.isNotEmpty || (_customGroups.contains(user.group))
                     ? Wrap(
                         spacing: 6.w,
                         runSpacing: 6.h,
-                        children: user.tags.map((tag) => _buildTag(tag)).toList(),
+                        children: [
+                          ...user.tags.map((tag) => _buildTag(tag)),
+                          // Show custom group tag if user is in a custom group
+                          if (_customGroups.contains(user.group))
+                            _buildTag(user.group!, isCustomGroup: true),
+                        ],
                       )
                     : const SizedBox(),
               ),
@@ -606,32 +611,39 @@ class _GroupsContentState extends State<GroupsContent> {
     );
   }
 
-  Widget _buildTag(String tag) {
+  Widget _buildTag(String tag, {bool isCustomGroup = false}) {
     Color backgroundColor;
     Color textColor;
     String displayText;
 
-    switch (tag.toLowerCase()) {
-      case 'favourite':
-      case 'favorite':
-        backgroundColor = ColorManager.error.withValues(alpha: 0.1);
-        textColor = ColorManager.error;
-        displayText = 'favourite';
-        break;
-      case 'priority':
-        backgroundColor = ColorManager.warning.withValues(alpha: 0.1);
-        textColor = ColorManager.warning;
-        displayText = 'priority';
-        break;
-      case 'regular':
-        backgroundColor = ColorManager.info.withValues(alpha: 0.1);
-        textColor = ColorManager.info;
-        displayText = 'regular';
-        break;
-      default:
-        backgroundColor = ColorManager.grey5;
-        textColor = ColorManager.textSecondary;
-        displayText = tag;
+    if (isCustomGroup) {
+      // Custom group tags - use purple/violet theme
+      backgroundColor = ColorManager.primary.withValues(alpha: 0.1);
+      textColor = ColorManager.primary;
+      displayText = tag;
+    } else {
+      switch (tag.toLowerCase()) {
+        case 'favourite':
+        case 'favorite':
+          backgroundColor = ColorManager.error.withValues(alpha: 0.1);
+          textColor = ColorManager.error;
+          displayText = 'favourite';
+          break;
+        case 'priority':
+          backgroundColor = ColorManager.warning.withValues(alpha: 0.1);
+          textColor = ColorManager.warning;
+          displayText = 'priority';
+          break;
+        case 'regular':
+          backgroundColor = ColorManager.info.withValues(alpha: 0.1);
+          textColor = ColorManager.info;
+          displayText = 'regular';
+          break;
+        default:
+          backgroundColor = ColorManager.grey5;
+          textColor = ColorManager.textSecondary;
+          displayText = tag;
+      }
     }
 
     return Container(
