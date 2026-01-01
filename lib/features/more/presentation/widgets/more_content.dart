@@ -4,6 +4,7 @@ import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/navigation_service.dart';
 import '../../../invoices/presentation/pages/invoices_screen.dart';
+import '../../../groups/presentation/pages/groups_screen.dart';
 
 class MoreContent extends StatelessWidget {
   const MoreContent({super.key});
@@ -47,7 +48,12 @@ class MoreContent extends StatelessWidget {
             title: 'Groups & Users',
             subtitle: 'Manage user groups and permissions',
             onTap: () {
-              // Navigate to Groups screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const GroupsScreen(),
+                ),
+              );
             },
           ),
           SizedBox(height: 12.h),
