@@ -821,59 +821,10 @@ class _TransportContentState extends State<TransportContent> {
                     children: [
                       InkWell(
                         onTap: () {
-                          if (currentSeats > 0) {
-                            // Toggle expand/collapse
-                            setModalState(() {
-                              expandedUnit = isExpanded ? null : unitName;
-                            });
-                          } else {
-                            // Assign staff if no one is assigned
-                            _assignStaffToTransport(staff, unitName);
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${staff.name} assigned to $unitName',
-                                  style: FontConstants.getPoppinsStyle(
-                                    fontSize: FontSize.s13,
-                                    fontWeight: FontWeightManager.medium,
-                                    color: ColorManager.white,
-                                  ),
-                                ),
-                                backgroundColor: unit['color'] as Color,
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                margin: EdgeInsets.all(16.w),
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                        },
-                        onLongPress: () {
-                          // Always assign on long press
-                          _assignStaffToTransport(staff, unitName);
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${staff.name} assigned to $unitName',
-                                style: FontConstants.getPoppinsStyle(
-                                  fontSize: FontSize.s13,
-                                  fontWeight: FontWeightManager.medium,
-                                  color: ColorManager.white,
-                                ),
-                              ),
-                              backgroundColor: unit['color'] as Color,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              margin: EdgeInsets.all(16.w),
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
+                          // Toggle expand/collapse
+                          setModalState(() {
+                            expandedUnit = isExpanded ? null : unitName;
+                          });
                         },
                         borderRadius: BorderRadius.circular(16.r),
                     child: Container(
@@ -1093,8 +1044,8 @@ class _TransportContentState extends State<TransportContent> {
                     ),
                   ),
 
-                  // Assigned Staff List (Expandable)
-                  if (isExpanded && assignedStaff.isNotEmpty)
+                  // Assigned Staff List & Assign Button (Expandable)
+                  if (isExpanded)
                     Container(
                       margin: EdgeInsets.only(top: 8.h),
                       padding: EdgeInsets.all(12.w),
@@ -1108,61 +1059,116 @@ class _TransportContentState extends State<TransportContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.people,
-                                size: 14.sp,
-                                color: unit['color'] as Color,
-                              ),
-                              SizedBox(width: 6.w),
-                              Text(
-                                'Assigned Staff (${assignedStaff.length})',
-                                style: FontConstants.getPoppinsStyle(
-                                  fontSize: FontSize.s12,
-                                  fontWeight: FontWeightManager.semiBold,
+                          // Assigned Staff List
+                          if (assignedStaff.isNotEmpty) ...[
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.people,
+                                  size: 14.sp,
                                   color: unit['color'] as Color,
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.h),
-                          ...assignedStaff.map((s) => Padding(
-                            padding: EdgeInsets.only(bottom: 4.h),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 6.w,
-                                  height: 6.h,
-                                  decoration: BoxDecoration(
-                                    color: unit['color'] as Color,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                SizedBox(width: 8.w),
-                                Expanded(
-                                  child: Text(
-                                    s.name,
-                                    style: FontConstants.getPoppinsStyle(
-                                      fontSize: FontSize.s11,
-                                      fontWeight: FontWeightManager.medium,
-                                      color: ColorManager.textPrimary,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
+                                SizedBox(width: 6.w),
                                 Text(
-                                  s.transportTiming,
+                                  'Assigned Staff (${assignedStaff.length})',
                                   style: FontConstants.getPoppinsStyle(
-                                    fontSize: FontSize.s10,
-                                    fontWeight: FontWeightManager.regular,
-                                    color: ColorManager.textSecondary,
+                                    fontSize: FontSize.s12,
+                                    fontWeight: FontWeightManager.semiBold,
+                                    color: unit['color'] as Color,
                                   ),
                                 ),
                               ],
                             ),
-                          )),
+                            SizedBox(height: 8.h),
+                            ...assignedStaff.map((s) => Padding(
+                              padding: EdgeInsets.only(bottom: 4.h),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 6.w,
+                                    height: 6.h,
+                                    decoration: BoxDecoration(
+                                      color: unit['color'] as Color,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Expanded(
+                                    child: Text(
+                                      s.name,
+                                      style: FontConstants.getPoppinsStyle(
+                                        fontSize: FontSize.s11,
+                                        fontWeight: FontWeightManager.medium,
+                                        color: ColorManager.textPrimary,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  Text(
+                                    s.transportTiming,
+                                    style: FontConstants.getPoppinsStyle(
+                                      fontSize: FontSize.s10,
+                                      fontWeight: FontWeightManager.regular,
+                                      color: ColorManager.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                            SizedBox(height: 12.h),
+                          ],
+
+                          // Assign Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                _assignStaffToTransport(staff, unitName);
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '${staff.name} assigned to $unitName',
+                                      style: FontConstants.getPoppinsStyle(
+                                        fontSize: FontSize.s13,
+                                        fontWeight: FontWeightManager.medium,
+                                        color: ColorManager.white,
+                                      ),
+                                    ),
+                                    backgroundColor: unit['color'] as Color,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    margin: EdgeInsets.all(16.w),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: unit['color'] as Color,
+                                foregroundColor: ColorManager.white,
+                                padding: EdgeInsets.symmetric(vertical: 10.h),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                elevation: 0,
+                              ),
+                              icon: Icon(
+                                isCurrentlyAssigned ? Icons.swap_horiz : Icons.add,
+                                size: 18.sp,
+                              ),
+                              label: Text(
+                                isCurrentlyAssigned ? 'Move ${staff.name} Here' : 'Assign ${staff.name} Here',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s12,
+                                  fontWeight: FontWeightManager.semiBold,
+                                  color: ColorManager.white,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
