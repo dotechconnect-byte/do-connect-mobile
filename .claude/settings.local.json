@@ -10,7 +10,9 @@
       "Bash(flutter pub remove:*)",
       "Bash(flutter build:*)",
       "Bash(findstr:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(git restore:*)"
     ]
   }
 }

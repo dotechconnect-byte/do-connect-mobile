@@ -6,22 +6,6 @@ import '../../data/models/attendance_model.dart';
 import 'attendance_card.dart';
 import 'attendance_detail_modal.dart';
 
-class DateItem {
-  final DateTime date;
-  final String label;
-  final bool isToday;
-  final bool isYesterday;
-  final bool isTomorrow;
-
-  DateItem({
-    required this.date,
-    required this.label,
-    this.isToday = false,
-    this.isYesterday = false,
-    this.isTomorrow = false,
-  });
-}
-
 class AttendanceContent extends StatefulWidget {
   final String searchQuery;
   final String? initialDate;
@@ -37,9 +21,7 @@ class AttendanceContent extends StatefulWidget {
 }
 
 class _AttendanceContentState extends State<AttendanceContent> {
-  late final List<DateItem> _dates;
-  late int _selectedDateIndex;
-  final ScrollController _scrollController = ScrollController();
+  DateTime _selectedDate = DateTime.now();
 
   // Shift filtering
   String _selectedShift = 'All Shifts';
@@ -50,107 +32,6 @@ class _AttendanceContentState extends State<AttendanceContent> {
     '18:00 - 02:00',
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _dates = _generateDates();
-
-    // If initialDate is provided, try to find and select that date
-    if (widget.initialDate != null) {
-      _selectedDateIndex = _findDateIndexByString(widget.initialDate!);
-      if (_selectedDateIndex == -1) {
-        // If date not found, default to today
-        _selectedDateIndex = _dates.indexWhere((date) => date.isToday);
-      }
-    } else {
-      _selectedDateIndex = _dates.indexWhere((date) => date.isToday);
-    }
-
-    // Auto-scroll to selected date after the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients && _selectedDateIndex >= 0) {
-        final double itemWidth = 80.w;
-        final double offset = (_selectedDateIndex - 1) * itemWidth;
-        _scrollController.animateTo(
-          offset.clamp(0.0, _scrollController.position.maxScrollExtent),
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-  }
-
-  int _findDateIndexByString(String dateString) {
-    // Try to match the date string (e.g., "Wednesday, November 5, 2025")
-    // Parse and compare dates
-    try {
-      // Extract date components from the string
-      // This is a simplified version - you may need more robust parsing
-      for (int i = 0; i < _dates.length; i++) {
-        final date = _dates[i].date;
-        // Check if the date label matches or the formatted date matches
-        if (dateString.contains(date.day.toString()) &&
-            dateString.contains(_getMonthName(date.month))) {
-          return i;
-        }
-      }
-    } catch (e) {
-      // If parsing fails, return -1
-      return -1;
-    }
-    return -1;
-  }
-
-  String _getMonthName(int month) {
-    const months = [
-      '', 'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return months[month];
-  }
-
-  List<DateItem> _generateDates() {
-    final now = DateTime.now();
-    final List<DateItem> dates = [];
-
-    // Generate dates from 3 days ago to 7 days ahead
-    for (int i = -3; i <= 7; i++) {
-      final date = now.add(Duration(days: i));
-      String label;
-
-      if (i == -1) {
-        label = 'Yesterday';
-      } else if (i == 0) {
-        label = 'Today';
-      } else if (i == 1) {
-        label = 'Tomorrow';
-      } else {
-        label = '${_getMonthAbbr(date.month)} ${date.day}';
-      }
-
-      dates.add(DateItem(
-        date: date,
-        label: label,
-        isToday: i == 0,
-        isYesterday: i == -1,
-        isTomorrow: i == 1,
-      ));
-    }
-
-    return dates;
-  }
-
-  String _getMonthAbbr(int month) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months[month - 1];
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
 
   final List<AttendanceModel> _attendances = [
     AttendanceModel(
@@ -266,46 +147,8 @@ class _AttendanceContentState extends State<AttendanceContent> {
             ),
           ),
 
-          // Date Selector
-          Container(
-            height: 50.h,
-            color: ColorManager.white,
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              scrollDirection: Axis.horizontal,
-              itemCount: _dates.length,
-              itemBuilder: (context, index) {
-                final isSelected = _selectedDateIndex == index;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedDateIndex = index),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    decoration: BoxDecoration(
-                      color: isSelected ? ColorManager.primary : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(
-                        color: isSelected ? ColorManager.primary : ColorManager.grey3,
-                        width: 1,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        _dates[index].label,
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s13,
-                          fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-                          color: isSelected ? ColorManager.white : ColorManager.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          // Date Filter
+          _buildDateFilter(),
 
           // Shift Filter Dropdown
           Container(
@@ -442,6 +285,172 @@ class _AttendanceContentState extends State<AttendanceContent> {
         ],
       ),
     );
+  }
+
+  Widget _buildDateFilter() {
+    return Container(
+      color: ColorManager.white,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      child: Row(
+        children: [
+          // Previous Day Button
+          InkWell(
+            onTap: () {
+              setState(() {
+                _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+              });
+            },
+            borderRadius: BorderRadius.circular(8.r),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: ColorManager.grey6,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: ColorManager.grey4),
+              ),
+              child: Icon(
+                Icons.chevron_left,
+                size: 20.sp,
+                color: ColorManager.textPrimary,
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+
+          // Date Display with Calendar Picker
+          Expanded(
+            child: InkWell(
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: _selectedDate,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2030),
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        colorScheme: ColorScheme.light(
+                          primary: ColorManager.primary,
+                          onPrimary: ColorManager.white,
+                          surface: ColorManager.white,
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+                if (picked != null && picked != _selectedDate) {
+                  setState(() {
+                    _selectedDate = picked;
+                  });
+                }
+              },
+              borderRadius: BorderRadius.circular(12.r),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: ColorManager.primary),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 18.sp,
+                      color: ColorManager.primary,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      _formatDate(_selectedDate),
+                      style: FontConstants.getPoppinsStyle(
+                        fontSize: FontSize.s14,
+                        fontWeight: FontWeightManager.semiBold,
+                        color: ColorManager.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+
+          // Next Day Button
+          InkWell(
+            onTap: () {
+              setState(() {
+                _selectedDate = _selectedDate.add(const Duration(days: 1));
+              });
+            },
+            borderRadius: BorderRadius.circular(8.r),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: ColorManager.grey6,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: ColorManager.grey4),
+              ),
+              child: Icon(
+                Icons.chevron_right,
+                size: 20.sp,
+                color: ColorManager.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final tomorrow = today.add(const Duration(days: 1));
+    final selectedDay = DateTime(date.year, date.month, date.day);
+
+    if (selectedDay == today) {
+      return 'Today, ${_getMonthName(date.month)} ${date.day}';
+    } else if (selectedDay == yesterday) {
+      return 'Yesterday, ${_getMonthName(date.month)} ${date.day}';
+    } else if (selectedDay == tomorrow) {
+      return 'Tomorrow, ${_getMonthName(date.month)} ${date.day}';
+    } else {
+      return '${_getDayName(date.weekday)}, ${_getMonthName(date.month)} ${date.day}, ${date.year}';
+    }
+  }
+
+  String _getDayName(int weekday) {
+    switch (weekday) {
+      case 1: return 'Monday';
+      case 2: return 'Tuesday';
+      case 3: return 'Wednesday';
+      case 4: return 'Thursday';
+      case 5: return 'Friday';
+      case 6: return 'Saturday';
+      case 7: return 'Sunday';
+      default: return '';
+    }
+  }
+
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1: return 'Jan';
+      case 2: return 'Feb';
+      case 3: return 'Mar';
+      case 4: return 'Apr';
+      case 5: return 'May';
+      case 6: return 'Jun';
+      case 7: return 'Jul';
+      case 8: return 'Aug';
+      case 9: return 'Sep';
+      case 10: return 'Oct';
+      case 11: return 'Nov';
+      case 12: return 'Dec';
+      default: return '';
+    }
   }
 
   Widget _buildStatCard(String label, String value, Color color) {
