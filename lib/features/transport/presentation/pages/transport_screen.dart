@@ -14,7 +14,6 @@ class TransportScreen extends StatefulWidget {
 class _TransportScreenState extends State<TransportScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  bool _showUnassignedView = false;
 
   @override
   void dispose() {
@@ -128,74 +127,48 @@ class _TransportScreenState extends State<TransportScreen> {
       ),
       body: TransportContent(
         searchQuery: _searchQuery,
-        showUnassignedOnly: _showUnassignedView,
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: 16.h),
-        child: Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
-          alignment: WrapAlignment.end,
-          crossAxisAlignment: WrapCrossAlignment.end,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-          // Download List Button
-          FloatingActionButton.extended(
-            heroTag: 'transport_download_fab',
-            onPressed: () {},
-            backgroundColor: ColorManager.white,
-            foregroundColor: ColorManager.textPrimary,
-            elevation: 2,
-            icon: Icon(Icons.download, size: 18.sp),
-            label: Text(
-              'Download',
-              style: FontConstants.getPoppinsStyle(
-                fontSize: FontSize.s12,
-                fontWeight: FontWeightManager.semiBold,
+            // Download List Button
+            FloatingActionButton.extended(
+              heroTag: 'transport_download_fab',
+              onPressed: () {},
+              backgroundColor: ColorManager.white,
+              foregroundColor: ColorManager.textPrimary,
+              elevation: 2,
+              icon: Icon(Icons.download, size: 18.sp),
+              label: Text(
+                'Download',
+                style: FontConstants.getPoppinsStyle(
+                  fontSize: FontSize.s12,
+                  fontWeight: FontWeightManager.semiBold,
+                ),
               ),
             ),
-          ),
+            SizedBox(height: 12.h),
 
-          // Add External Staff Button
-          FloatingActionButton.extended(
-            heroTag: 'transport_add_staff_fab',
-            onPressed: () {},
-            backgroundColor: ColorManager.textPrimary,
-            foregroundColor: ColorManager.white,
-            elevation: 2,
-            icon: Icon(Icons.person_add, size: 18.sp),
-            label: Text(
-              'Add Staff',
-              style: FontConstants.getPoppinsStyle(
-                fontSize: FontSize.s12,
-                fontWeight: FontWeightManager.semiBold,
+            // Add External Staff Button
+            FloatingActionButton.extended(
+              heroTag: 'transport_add_staff_fab',
+              onPressed: () {},
+              backgroundColor: ColorManager.primary,
+              foregroundColor: ColorManager.white,
+              elevation: 4,
+              icon: Icon(Icons.person_add, size: 18.sp),
+              label: Text(
+                'Add Staff',
+                style: FontConstants.getPoppinsStyle(
+                  fontSize: FontSize.s12,
+                  fontWeight: FontWeightManager.semiBold,
+                ),
               ),
             ),
-          ),
-
-          // Assign Transport Button
-          FloatingActionButton.extended(
-            heroTag: 'transport_assign_fab',
-            onPressed: () {
-              setState(() {
-                _showUnassignedView = !_showUnassignedView;
-              });
-            },
-            backgroundColor: ColorManager.primary,
-            foregroundColor: ColorManager.white,
-            elevation: 4,
-            icon: Icon(
-              _showUnassignedView ? Icons.list : Icons.local_shipping,
-              size: 18.sp,
-            ),
-            label: Text(
-              _showUnassignedView ? 'View All' : 'Assign',
-              style: FontConstants.getPoppinsStyle(
-                fontSize: FontSize.s12,
-                fontWeight: FontWeightManager.semiBold,
-              ),
-            ),
-          ),
-        ],
+          ],
         ),
       ),
     );

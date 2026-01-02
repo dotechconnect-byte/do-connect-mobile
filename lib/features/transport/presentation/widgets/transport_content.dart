@@ -7,12 +7,10 @@ import 'transport_staff_card.dart';
 
 class TransportContent extends StatefulWidget {
   final String searchQuery;
-  final bool showUnassignedOnly;
 
   const TransportContent({
     super.key,
     this.searchQuery = '',
-    this.showUnassignedOnly = false,
   });
 
   @override
@@ -136,164 +134,141 @@ class _TransportContentState extends State<TransportContent> {
   int get _totalStaff => _allStaff.length;
   int get _externalStaff => 0;
   int get _transportUnits => 3;
-  int get _unassigned => _allStaff.length;
 
   @override
   Widget build(BuildContext context) {
     final filteredStaff = _filteredStaff;
 
-    return Stack(
-      children: [
-        // Main scrollable content
-        CustomScrollView(
-          slivers: [
-            // Date Filter
-            SliverToBoxAdapter(
-              child: _buildDateFilter(),
-            ),
+    return CustomScrollView(
+      slivers: [
+        // Date Filter
+        SliverToBoxAdapter(
+          child: _buildDateFilter(),
+        ),
 
-            // Filters Section
-            SliverToBoxAdapter(
-              child: _buildFilters(),
-            ),
+        // Filters Section
+        SliverToBoxAdapter(
+          child: _buildFilters(),
+        ),
 
-            // Stats Cards - Simplified
-            if (!widget.showUnassignedOnly)
-              SliverToBoxAdapter(
-                child: Container(
-                  padding: EdgeInsets.all(16.w),
-                  color: ColorManager.backgroundColor,
-                  child: Row(
+        // Stats Cards - Simplified
+        SliverToBoxAdapter(
+          child: Container(
+            padding: EdgeInsets.all(16.w),
+            color: ColorManager.backgroundColor,
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    'Total Staff',
+                    _totalStaff.toString(),
+                    Icons.people,
+                    ColorManager.primary,
+                    '$_externalStaff external',
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: _buildStatCard(
+                    'Transport Units',
+                    _transportUnits.toString(),
+                    Icons.local_shipping,
+                    const Color(0xFF3B82F6),
+                    '0 assigned',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Staff Section Header
+        SliverToBoxAdapter(
+          child: Container(
+            color: ColorManager.backgroundColor,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          'Total Staff',
-                          _totalStaff.toString(),
-                          Icons.people,
-                          ColorManager.primary,
-                          '$_externalStaff external',
+                      Text(
+                        'All Staff',
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s18,
+                          fontWeight: FontWeightManager.bold,
+                          color: ColorManager.textPrimary,
                         ),
                       ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _buildStatCard(
-                          'Transport Units',
-                          _transportUnits.toString(),
-                          Icons.local_shipping,
-                          const Color(0xFF3B82F6),
-                          '0 assigned',
+                      SizedBox(height: 2.h),
+                      Text(
+                        '${filteredStaff.length} total',
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s12,
+                          fontWeight: FontWeightManager.regular,
+                          color: ColorManager.textSecondary,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-
-            // Staff Section Header
-            SliverToBoxAdapter(
-              child: Container(
-                color: ColorManager.backgroundColor,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.showUnassignedOnly ? 'Unassigned Staff' : 'All Staff',
-                            style: FontConstants.getPoppinsStyle(
-                              fontSize: FontSize.s18,
-                              fontWeight: FontWeightManager.bold,
-                              color: ColorManager.textPrimary,
-                            ),
-                          ),
-                          SizedBox(height: 2.h),
-                          Text(
-                            widget.showUnassignedOnly
-                                ? '${filteredStaff.length} need transport'
-                                : '${filteredStaff.length} total',
-                            style: FontConstants.getPoppinsStyle(
-                              fontSize: FontSize.s12,
-                              fontWeight: FontWeightManager.regular,
-                              color: ColorManager.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ],
             ),
-
-            // Staff List
-            filteredStaff.isEmpty
-                ? SliverFillRemaining(
-                    child: Container(
-                      color: ColorManager.backgroundColor,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 64.sp,
-                              color: ColorManager.grey3,
-                            ),
-                            SizedBox(height: 16.h),
-                            Text(
-                              'No staff found',
-                              style: FontConstants.getPoppinsStyle(
-                                fontSize: FontSize.s16,
-                                fontWeight: FontWeightManager.semiBold,
-                                color: ColorManager.textPrimary,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              'Try adjusting your filters',
-                              style: FontConstants.getPoppinsStyle(
-                                fontSize: FontSize.s13,
-                                fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : SliverPadding(
-                    padding: EdgeInsets.fromLTRB(
-                      16.w,
-                      0,
-                      16.w,
-                      widget.showUnassignedOnly ? 340.h : 100.h,
-                    ),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          return TransportStaffCard(
-                            staff: filteredStaff[index],
-                            onTap: () => _showStaffDetails(filteredStaff[index]),
-                          );
-                        },
-                        childCount: filteredStaff.length,
-                      ),
-                    ),
-                  ),
-          ],
+          ),
         ),
 
-        // Transport Units Bottom Panel (only shown in unassigned view)
-        if (widget.showUnassignedOnly)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildTransportUnitsPanel(),
-          ),
+        // Staff List
+        filteredStaff.isEmpty
+            ? SliverFillRemaining(
+                child: Container(
+                  color: ColorManager.backgroundColor,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 64.sp,
+                          color: ColorManager.grey3,
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          'No staff found',
+                          style: FontConstants.getPoppinsStyle(
+                            fontSize: FontSize.s16,
+                            fontWeight: FontWeightManager.semiBold,
+                            color: ColorManager.textPrimary,
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          'Try adjusting your filters',
+                          style: FontConstants.getPoppinsStyle(
+                            fontSize: FontSize.s13,
+                            fontWeight: FontWeightManager.regular,
+                            color: ColorManager.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : SliverPadding(
+                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 100.h),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return TransportStaffCard(
+                        staff: filteredStaff[index],
+                        onTap: () => _showStaffDetails(filteredStaff[index]),
+                      );
+                    },
+                    childCount: filteredStaff.length,
+                  ),
+                ),
+              ),
       ],
     );
   }
@@ -674,7 +649,7 @@ class _TransportContentState extends State<TransportContent> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        // Handle change action
+                        _showTransportSelectionSheet(staff);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorManager.primary,
@@ -685,7 +660,7 @@ class _TransportContentState extends State<TransportContent> {
                         ),
                       ),
                       child: Text(
-                        'Change',
+                        'Assign Transport',
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s15,
                           fontWeight: FontWeightManager.semiBold,
@@ -697,6 +672,315 @@ class _TransportContentState extends State<TransportContent> {
               ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTransportSelectionSheet(TransportStaffModel staff) {
+    final transportUnits = [
+      {
+        'name': 'Bus A',
+        'route': 'North Zone',
+        'capacity': '8/16',
+        'seats': 8,
+        'total': 16,
+        'color': const Color(0xFFFF6B00),
+        'icon': Icons.directions_bus_rounded,
+      },
+      {
+        'name': 'Shuttle B',
+        'route': 'East Zone',
+        'capacity': '6/12',
+        'seats': 6,
+        'total': 12,
+        'color': const Color(0xFF3B82F6),
+        'icon': Icons.airport_shuttle_rounded,
+      },
+      {
+        'name': 'Van C',
+        'route': 'West Zone',
+        'capacity': '4/8',
+        'seats': 4,
+        'total': 8,
+        'color': const Color(0xFF10B981),
+        'icon': Icons.local_shipping_outlined,
+      },
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+        ),
+        decoration: BoxDecoration(
+          color: ColorManager.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Drag Handle
+            Container(
+              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: ColorManager.grey3,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+
+            // Header
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Select Transport',
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s20,
+                      fontWeight: FontWeightManager.bold,
+                      color: ColorManager.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    'Choose transport for ${staff.name}',
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s13,
+                      fontWeight: FontWeightManager.regular,
+                      color: ColorManager.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Divider(height: 1.h, color: ColorManager.grey4),
+
+            // Transport Units List
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                padding: EdgeInsets.all(16.w),
+                itemCount: transportUnits.length,
+                separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                itemBuilder: (context, index) {
+                  final unit = transportUnits[index];
+                  final currentSeats = unit['seats'] as int;
+                  final totalSeats = unit['total'] as int;
+                  final fillPercentage = currentSeats / totalSeats;
+
+                  return InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${staff.name} assigned to ${unit['name']}',
+                            style: FontConstants.getPoppinsStyle(
+                              fontSize: FontSize.s13,
+                              fontWeight: FontWeightManager.medium,
+                              color: ColorManager.white,
+                            ),
+                          ),
+                          backgroundColor: unit['color'] as Color,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          margin: EdgeInsets.all(16.w),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(16.r),
+                    child: Container(
+                      padding: EdgeInsets.all(14.w),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            ColorManager.white,
+                            (unit['color'] as Color).withValues(alpha: 0.03),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          color: (unit['color'] as Color).withValues(alpha: 0.2),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              // Icon
+                              Container(
+                                width: 48.w,
+                                height: 48.h,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      (unit['color'] as Color).withValues(alpha: 0.2),
+                                      (unit['color'] as Color).withValues(alpha: 0.1),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(14.r),
+                                  border: Border.all(
+                                    color: (unit['color'] as Color).withValues(alpha: 0.3),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Icon(
+                                  unit['icon'] as IconData,
+                                  color: unit['color'] as Color,
+                                  size: 24.sp,
+                                ),
+                              ),
+                              SizedBox(width: 14.w),
+
+                              // Info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      unit['name'] as String,
+                                      style: FontConstants.getPoppinsStyle(
+                                        fontSize: FontSize.s15,
+                                        fontWeight: FontWeightManager.bold,
+                                        color: ColorManager.textPrimary,
+                                      ),
+                                    ),
+                                    SizedBox(height: 3.h),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on_rounded,
+                                          size: 13.sp,
+                                          color: ColorManager.textSecondary,
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          unit['route'] as String,
+                                          style: FontConstants.getPoppinsStyle(
+                                            fontSize: FontSize.s12,
+                                            fontWeight: FontWeightManager.medium,
+                                            color: ColorManager.textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Capacity badge
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      unit['color'] as Color,
+                                      (unit['color'] as Color).withValues(alpha: 0.85),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: (unit['color'] as Color).withValues(alpha: 0.4),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.people_rounded,
+                                      size: 14.sp,
+                                      color: ColorManager.white,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      unit['capacity'] as String,
+                                      style: FontConstants.getPoppinsStyle(
+                                        fontSize: FontSize.s12,
+                                        fontWeight: FontWeightManager.bold,
+                                        color: ColorManager.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // Progress bar
+                          SizedBox(height: 10.h),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 6.h,
+                                  decoration: BoxDecoration(
+                                    color: (unit['color'] as Color).withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(10.r),
+                                  ),
+                                  child: FractionallySizedBox(
+                                    alignment: Alignment.centerLeft,
+                                    widthFactor: fillPercentage,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            unit['color'] as Color,
+                                            (unit['color'] as Color).withValues(alpha: 0.7),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.r),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: (unit['color'] as Color).withValues(alpha: 0.3),
+                                            blurRadius: 4,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                '${(fillPercentage * 100).toInt()}%',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s10,
+                                  fontWeight: FontWeightManager.bold,
+                                  color: unit['color'] as Color,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            SizedBox(height: 16.h),
           ],
         ),
       ),
@@ -741,438 +1025,6 @@ class _TransportContentState extends State<TransportContent> {
     );
   }
 
-  Widget _buildTransportUnitsPanel() {
-    final transportUnits = [
-      {
-        'name': 'Bus A',
-        'route': 'North Zone',
-        'capacity': '8/16',
-        'seats': 8,
-        'total': 16,
-        'color': const Color(0xFFFF6B00),
-        'icon': Icons.directions_bus_rounded,
-      },
-      {
-        'name': 'Shuttle B',
-        'route': 'East Zone',
-        'capacity': '6/12',
-        'seats': 6,
-        'total': 12,
-        'color': const Color(0xFF3B82F6),
-        'icon': Icons.airport_shuttle_rounded,
-      },
-      {
-        'name': 'Van C',
-        'route': 'West Zone',
-        'capacity': '4/8',
-        'seats': 4,
-        'total': 8,
-        'color': const Color(0xFF10B981),
-        'icon': Icons.local_shipping_outlined,
-      },
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            ColorManager.white,
-            ColorManager.grey6.withValues(alpha: 0.3),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.15),
-            blurRadius: 30,
-            spreadRadius: 0,
-            offset: const Offset(0, -8),
-          ),
-          BoxShadow(
-            color: ColorManager.primary.withValues(alpha: 0.05),
-            blurRadius: 60,
-            spreadRadius: -10,
-            offset: const Offset(0, -20),
-          ),
-        ],
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Premium drag handle with glow
-          Container(
-            margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-            child: Column(
-              children: [
-                Container(
-                  width: 48.w,
-                  height: 5.h,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        ColorManager.primary.withValues(alpha: 0.3),
-                        ColorManager.primary.withValues(alpha: 0.6),
-                        ColorManager.primary.withValues(alpha: 0.3),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(10.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ColorManager.primary.withValues(alpha: 0.2),
-                        blurRadius: 8,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Premium Header
-          Container(
-            padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 16.h),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(10.w),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        ColorManager.primary,
-                        ColorManager.primary.withValues(alpha: 0.8),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(12.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: ColorManager.primary.withValues(alpha: 0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.local_shipping_rounded,
-                    size: 20.sp,
-                    color: ColorManager.white,
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Transport Units',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s17,
-                          fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        'Tap to assign staff',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s11,
-                          fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    color: ColorManager.success.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(
-                      color: ColorManager.success.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 6.w,
-                        height: 6.h,
-                        decoration: BoxDecoration(
-                          color: ColorManager.success,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: ColorManager.success.withValues(alpha: 0.5),
-                              blurRadius: 4,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        'Active',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s10,
-                          fontWeight: FontWeightManager.semiBold,
-                          color: ColorManager.success,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Premium Transport Units List
-          Container(
-            constraints: BoxConstraints(maxHeight: 200.h),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 100.h),
-              child: Column(
-                children: transportUnits.map((unit) {
-                  final currentSeats = unit['seats'] as int;
-                  final totalSeats = unit['total'] as int;
-                  final fillPercentage = currentSeats / totalSeats;
-
-                  return DragTarget<TransportStaffModel>(
-                    onAcceptWithDetails: (details) {
-                      // Handle staff assignment
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '${details.data.name} assigned to ${unit['name']}',
-                            style: FontConstants.getPoppinsStyle(
-                              fontSize: FontSize.s13,
-                              fontWeight: FontWeightManager.medium,
-                              color: ColorManager.white,
-                            ),
-                          ),
-                          backgroundColor: unit['color'] as Color,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          margin: EdgeInsets.all(16.w),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    builder: (context, candidateData, rejectedData) {
-                      final isHovering = candidateData.isNotEmpty;
-
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        margin: EdgeInsets.only(bottom: 12.h),
-                        padding: EdgeInsets.all(14.w),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: isHovering
-                                ? [
-                                    (unit['color'] as Color).withValues(alpha: 0.15),
-                                    (unit['color'] as Color).withValues(alpha: 0.08),
-                                  ]
-                                : [
-                                    ColorManager.white,
-                                    (unit['color'] as Color).withValues(alpha: 0.03),
-                                  ],
-                          ),
-                          borderRadius: BorderRadius.circular(16.r),
-                          border: Border.all(
-                            color: isHovering
-                                ? (unit['color'] as Color).withValues(alpha: 0.6)
-                                : (unit['color'] as Color).withValues(alpha: 0.2),
-                            width: isHovering ? 2 : 1.5,
-                          ),
-                          boxShadow: isHovering
-                              ? [
-                                  BoxShadow(
-                                    color: (unit['color'] as Color).withValues(alpha: 0.25),
-                                    blurRadius: 16,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ]
-                              : [
-                                  BoxShadow(
-                                    color: ColorManager.black.withValues(alpha: 0.04),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                // Premium Icon
-                                Container(
-                                  width: 48.w,
-                                  height: 48.h,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        (unit['color'] as Color).withValues(alpha: 0.2),
-                                        (unit['color'] as Color).withValues(alpha: 0.1),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(14.r),
-                                    border: Border.all(
-                                      color: (unit['color'] as Color).withValues(alpha: 0.3),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    unit['icon'] as IconData,
-                                    color: unit['color'] as Color,
-                                    size: 24.sp,
-                                  ),
-                                ),
-                                SizedBox(width: 14.w),
-
-                                // Info
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        unit['name'] as String,
-                                        style: FontConstants.getPoppinsStyle(
-                                          fontSize: FontSize.s15,
-                                          fontWeight: FontWeightManager.bold,
-                                          color: ColorManager.textPrimary,
-                                        ),
-                                      ),
-                                      SizedBox(height: 3.h),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.location_on_rounded,
-                                            size: 13.sp,
-                                            color: ColorManager.textSecondary,
-                                          ),
-                                          SizedBox(width: 4.w),
-                                          Text(
-                                            unit['route'] as String,
-                                            style: FontConstants.getPoppinsStyle(
-                                              fontSize: FontSize.s12,
-                                              fontWeight: FontWeightManager.medium,
-                                              color: ColorManager.textSecondary,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                // Capacity badge with glow
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        unit['color'] as Color,
-                                        (unit['color'] as Color).withValues(alpha: 0.85),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(20.r),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: (unit['color'] as Color).withValues(alpha: 0.4),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.people_rounded,
-                                        size: 14.sp,
-                                        color: ColorManager.white,
-                                      ),
-                                      SizedBox(width: 4.w),
-                                      Text(
-                                        unit['capacity'] as String,
-                                        style: FontConstants.getPoppinsStyle(
-                                          fontSize: FontSize.s12,
-                                          fontWeight: FontWeightManager.bold,
-                                          color: ColorManager.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            // Progress bar
-                            SizedBox(height: 10.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    height: 6.h,
-                                    decoration: BoxDecoration(
-                                      color: (unit['color'] as Color).withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(10.r),
-                                    ),
-                                    child: FractionallySizedBox(
-                                      alignment: Alignment.centerLeft,
-                                      widthFactor: fillPercentage,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              unit['color'] as Color,
-                                              (unit['color'] as Color).withValues(alpha: 0.7),
-                                            ],
-                                          ),
-                                          borderRadius: BorderRadius.circular(10.r),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: (unit['color'] as Color).withValues(alpha: 0.3),
-                                              blurRadius: 4,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  '${(fillPercentage * 100).toInt()}%',
-                                  style: FontConstants.getPoppinsStyle(
-                                    fontSize: FontSize.s10,
-                                    fontWeight: FontWeightManager.bold,
-                                    color: unit['color'] as Color,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();

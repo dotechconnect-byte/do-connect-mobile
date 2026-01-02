@@ -16,29 +16,22 @@ class TransportStaffCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LongPressDraggable<TransportStaffModel>(
-      data: staff,
-      feedback: Material(
-        elevation: 8,
+    return Card(
+      margin: EdgeInsets.only(bottom: 12.h),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.r),
-        child: Container(
-          width: 320.w,
+        side: BorderSide(color: ColorManager.grey4, width: 1),
+      ),
+      color: ColorManager.white,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12.r),
+        child: Padding(
           padding: EdgeInsets.all(14.w),
-          decoration: BoxDecoration(
-            color: ColorManager.white,
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: ColorManager.primary, width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: ColorManager.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
+              // Avatar/Icon
               Container(
                 width: 48.w,
                 height: 48.h,
@@ -60,138 +53,9 @@ class TransportStaffCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 12.w),
-              Expanded(
-                child: Text(
-                  staff.name,
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s15,
-                    fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      childWhenDragging: Opacity(
-        opacity: 0.3,
-        child: Card(
-          margin: EdgeInsets.only(bottom: 12.h),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            side: BorderSide(color: ColorManager.grey4, width: 1),
-          ),
-          color: ColorManager.white,
-          child: Padding(
-            padding: EdgeInsets.all(14.w),
-            child: Row(
-              children: [
-                Container(
-                  width: 48.w,
-                  height: 48.h,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        ColorManager.primary.withValues(alpha: 0.8),
-                        ColorManager.primary,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    color: ColorManager.white,
-                    size: 24.sp,
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        staff.name,
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s15,
-                          fontWeight: FontWeightManager.semiBold,
-                          color: ColorManager.textPrimary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 4.h),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 14.sp,
-                            color: ColorManager.primary,
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            'Region: ${staff.region}',
-                            style: FontConstants.getPoppinsStyle(
-                              fontSize: FontSize.s12,
-                              fontWeight: FontWeightManager.medium,
-                              color: ColorManager.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      child: Card(
-        margin: EdgeInsets.only(bottom: 12.h),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          side: BorderSide(color: ColorManager.grey4, width: 1),
-        ),
-        color: ColorManager.white,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12.r),
-          child: Padding(
-            padding: EdgeInsets.all(14.w),
-            child: Row(
-              children: [
-                // Avatar/Icon
-                Container(
-                width: 48.w,
-                height: 48.h,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      ColorManager.primary.withValues(alpha: 0.8),
-                      ColorManager.primary,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(
-                  Icons.person,
-                  color: ColorManager.white,
-                  size: 24.sp,
-                ),
-                ),
-                SizedBox(width: 12.w),
 
-                // Staff Info
-                Expanded(
+              // Staff Info
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -310,32 +174,37 @@ class TransportStaffCard extends StatelessWidget {
                     ],
                   ],
                 ),
-                ),
-                SizedBox(width: 8.w),
+              ),
+              SizedBox(width: 8.w),
 
-                // Change Button
-                TextButton(
-                  onPressed: onTap,
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                    backgroundColor: ColorManager.primary,
-                    foregroundColor: ColorManager.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    'Change',
-                    style: FontConstants.getPoppinsStyle(
-                      fontSize: FontSize.s12,
-                      fontWeight: FontWeightManager.semiBold,
-                    ),
-                  ),
+              // Assign Button
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: ColorManager.primary,
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
-              ],
-            ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.local_shipping,
+                      size: 16.sp,
+                      color: ColorManager.white,
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      'Assign',
+                      style: FontConstants.getPoppinsStyle(
+                        fontSize: FontSize.s12,
+                        fontWeight: FontWeightManager.semiBold,
+                        color: ColorManager.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
