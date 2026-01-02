@@ -739,11 +739,14 @@ class _TransportContentState extends State<TransportContent> {
       },
     ];
 
+    String? expandedUnit;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.6,
         ),
@@ -808,32 +811,71 @@ class _TransportContentState extends State<TransportContent> {
                   final totalSeats = _transportCapacity[unitName] ?? 0;
                   final fillPercentage = totalSeats > 0 ? currentSeats / totalSeats : 0.0;
                   final isCurrentlyAssigned = staff.assignedTransport == unitName;
+                  final isExpanded = expandedUnit == unitName;
 
-                  return InkWell(
-                    onTap: () {
-                      _assignStaffToTransport(staff, unitName);
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '${staff.name} assigned to $unitName',
-                            style: FontConstants.getPoppinsStyle(
-                              fontSize: FontSize.s13,
-                              fontWeight: FontWeightManager.medium,
-                              color: ColorManager.white,
+                  // Get assigned staff for this transport
+                  final assignedStaffIds = _transportAssignments[unitName] ?? [];
+                  final assignedStaff = _allStaff.where((s) => assignedStaffIds.contains(s.id)).toList();
+
+                  return Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          if (currentSeats > 0) {
+                            // Toggle expand/collapse
+                            setModalState(() {
+                              expandedUnit = isExpanded ? null : unitName;
+                            });
+                          } else {
+                            // Assign staff if no one is assigned
+                            _assignStaffToTransport(staff, unitName);
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '${staff.name} assigned to $unitName',
+                                  style: FontConstants.getPoppinsStyle(
+                                    fontSize: FontSize.s13,
+                                    fontWeight: FontWeightManager.medium,
+                                    color: ColorManager.white,
+                                  ),
+                                ),
+                                backgroundColor: unit['color'] as Color,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                margin: EdgeInsets.all(16.w),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        },
+                        onLongPress: () {
+                          // Always assign on long press
+                          _assignStaffToTransport(staff, unitName);
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${staff.name} assigned to $unitName',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s13,
+                                  fontWeight: FontWeightManager.medium,
+                                  color: ColorManager.white,
+                                ),
+                              ),
+                              backgroundColor: unit['color'] as Color,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              margin: EdgeInsets.all(16.w),
+                              duration: const Duration(seconds: 2),
                             ),
-                          ),
-                          backgroundColor: unit['color'] as Color,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          margin: EdgeInsets.all(16.w),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(16.r),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(16.r),
                     child: Container(
                       padding: EdgeInsets.all(14.w),
                       decoration: BoxDecoration(
@@ -926,65 +968,78 @@ class _TransportContentState extends State<TransportContent> {
                               ),
 
                               // Capacity badge or checkmark
-                              if (isCurrentlyAssigned)
-                                Container(
-                                  padding: EdgeInsets.all(8.w),
-                                  decoration: BoxDecoration(
-                                    color: unit['color'] as Color,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: (unit['color'] as Color).withValues(alpha: 0.4),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (isCurrentlyAssigned)
+                                    Container(
+                                      padding: EdgeInsets.all(8.w),
+                                      decoration: BoxDecoration(
+                                        color: unit['color'] as Color,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: (unit['color'] as Color).withValues(alpha: 0.4),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    Icons.check,
-                                    size: 16.sp,
-                                    color: ColorManager.white,
-                                  ),
-                                )
-                              else
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        unit['color'] as Color,
-                                        (unit['color'] as Color).withValues(alpha: 0.85),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(20.r),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: (unit['color'] as Color).withValues(alpha: 0.4),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.people_rounded,
-                                        size: 14.sp,
+                                      child: Icon(
+                                        Icons.check,
+                                        size: 16.sp,
                                         color: ColorManager.white,
                                       ),
-                                      SizedBox(width: 4.w),
-                                      Text(
-                                        '$currentSeats/$totalSeats',
-                                        style: FontConstants.getPoppinsStyle(
-                                          fontSize: FontSize.s12,
-                                          fontWeight: FontWeightManager.bold,
-                                          color: ColorManager.white,
+                                    )
+                                  else
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            unit['color'] as Color,
+                                            (unit['color'] as Color).withValues(alpha: 0.85),
+                                          ],
                                         ),
+                                        borderRadius: BorderRadius.circular(20.r),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: (unit['color'] as Color).withValues(alpha: 0.4),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.people_rounded,
+                                            size: 14.sp,
+                                            color: ColorManager.white,
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            '$currentSeats/$totalSeats',
+                                            style: FontConstants.getPoppinsStyle(
+                                              fontSize: FontSize.s12,
+                                              fontWeight: FontWeightManager.bold,
+                                              color: ColorManager.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  if (currentSeats > 0) ...[
+                                    SizedBox(width: 8.w),
+                                    Icon(
+                                      isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                                      size: 20.sp,
+                                      color: unit['color'] as Color,
+                                    ),
+                                  ],
+                                ],
+                              ),
                             ],
                           ),
 
@@ -1036,6 +1091,82 @@ class _TransportContentState extends State<TransportContent> {
                         ],
                       ),
                     ),
+                  ),
+
+                  // Assigned Staff List (Expandable)
+                  if (isExpanded && assignedStaff.isNotEmpty)
+                    Container(
+                      margin: EdgeInsets.only(top: 8.h),
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: (unit['color'] as Color).withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: (unit['color'] as Color).withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.people,
+                                size: 14.sp,
+                                color: unit['color'] as Color,
+                              ),
+                              SizedBox(width: 6.w),
+                              Text(
+                                'Assigned Staff (${assignedStaff.length})',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s12,
+                                  fontWeight: FontWeightManager.semiBold,
+                                  color: unit['color'] as Color,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          ...assignedStaff.map((s) => Padding(
+                            padding: EdgeInsets.only(bottom: 4.h),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 6.w,
+                                  height: 6.h,
+                                  decoration: BoxDecoration(
+                                    color: unit['color'] as Color,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Expanded(
+                                  child: Text(
+                                    s.name,
+                                    style: FontConstants.getPoppinsStyle(
+                                      fontSize: FontSize.s11,
+                                      fontWeight: FontWeightManager.medium,
+                                      color: ColorManager.textPrimary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  s.transportTiming,
+                                  style: FontConstants.getPoppinsStyle(
+                                    fontSize: FontSize.s10,
+                                    fontWeight: FontWeightManager.regular,
+                                    color: ColorManager.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                        ],
+                      ),
+                    ),
+                  ],
                   );
                 },
               ),
@@ -1043,6 +1174,7 @@ class _TransportContentState extends State<TransportContent> {
 
             SizedBox(height: 16.h),
           ],
+        ),
         ),
       ),
     );
