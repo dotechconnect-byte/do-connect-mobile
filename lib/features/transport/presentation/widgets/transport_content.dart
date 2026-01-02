@@ -1,0 +1,1225 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/consts/color_manager.dart';
+import '../../../../core/consts/font_manager.dart';
+import '../../data/models/transport_staff_model.dart';
+import 'transport_staff_card.dart';
+
+class TransportContent extends StatefulWidget {
+  final String searchQuery;
+  final bool showUnassignedOnly;
+
+  const TransportContent({
+    super.key,
+    this.searchQuery = '',
+    this.showUnassignedOnly = false,
+  });
+
+  @override
+  State<TransportContent> createState() => _TransportContentState();
+}
+
+class _TransportContentState extends State<TransportContent> {
+  DateTime _selectedDate = DateTime.now();
+
+  // Filter states
+  String _selectedZone = 'All Zones';
+  String _selectedShift = 'All Shifts';
+  String _selectedDepartment = 'All Departments';
+
+  final List<String> _zones = [
+    'All Zones',
+    'North',
+    'South',
+    'East',
+    'West',
+    'Central',
+  ];
+
+  final List<String> _shifts = [
+    'All Shifts',
+    '08:00 - 16:00',
+    '14:00 - 22:00',
+    '18:00 - 02:00',
+  ];
+
+  final List<String> _departments = [
+    'All Departments',
+    'Security',
+    'Reception',
+    'Maintenance',
+    'Customer Service',
+  ];
+
+  // Sample transport staff data
+  final List<TransportStaffModel> _allStaff = [
+    TransportStaffModel(
+      id: '1',
+      name: 'John Smith',
+      region: 'North',
+      pickUpDropOff: 'Station A',
+      transportTiming: '08:00 AM',
+    ),
+    TransportStaffModel(
+      id: '2',
+      name: 'Sarah Johnson',
+      region: 'North',
+      pickUpDropOff: 'Mall B',
+      transportTiming: '08:30 AM',
+      notes: 'Prefers early pickup',
+    ),
+    TransportStaffModel(
+      id: '3',
+      name: 'Michael Chen',
+      region: 'South',
+      pickUpDropOff: 'Station C',
+      transportTiming: '09:00 AM',
+    ),
+    TransportStaffModel(
+      id: '4',
+      name: 'Emily Rodriguez',
+      region: 'East',
+      pickUpDropOff: 'Hub D',
+      transportTiming: '08:15 AM',
+    ),
+    TransportStaffModel(
+      id: '5',
+      name: 'David Wilson',
+      region: 'West',
+      pickUpDropOff: 'Station E',
+      transportTiming: '08:45 AM',
+    ),
+    TransportStaffModel(
+      id: '6',
+      name: 'Lisa Brown',
+      region: 'Central',
+      pickUpDropOff: 'Mall F',
+      transportTiming: '09:15 AM',
+    ),
+    TransportStaffModel(
+      id: '7',
+      name: 'James Taylor',
+      region: 'North',
+      pickUpDropOff: 'Hub G',
+      transportTiming: '08:00 AM',
+    ),
+    TransportStaffModel(
+      id: '8',
+      name: 'Emma Davis',
+      region: 'South',
+      pickUpDropOff: 'Station H',
+      transportTiming: '08:30 AM',
+    ),
+  ];
+
+  List<TransportStaffModel> get _filteredStaff {
+    var filtered = _allStaff;
+
+    // Filter by zone
+    if (_selectedZone != 'All Zones') {
+      filtered = filtered.where((staff) => staff.region == _selectedZone).toList();
+    }
+
+    // Filter by search query
+    if (widget.searchQuery.isNotEmpty) {
+      final query = widget.searchQuery.toLowerCase();
+      filtered = filtered.where((staff) {
+        return staff.name.toLowerCase().contains(query) ||
+               staff.region.toLowerCase().contains(query) ||
+               staff.pickUpDropOff.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    return filtered;
+  }
+
+  int get _totalStaff => _allStaff.length;
+  int get _externalStaff => 0;
+  int get _transportUnits => 3;
+  int get _unassigned => _allStaff.length;
+
+  @override
+  Widget build(BuildContext context) {
+    final filteredStaff = _filteredStaff;
+
+    return Stack(
+      children: [
+        // Main scrollable content
+        CustomScrollView(
+          slivers: [
+            // Date Filter
+            SliverToBoxAdapter(
+              child: _buildDateFilter(),
+            ),
+
+            // Filters Section
+            SliverToBoxAdapter(
+              child: _buildFilters(),
+            ),
+
+            // Stats Cards - Simplified
+            if (!widget.showUnassignedOnly)
+              SliverToBoxAdapter(
+                child: Container(
+                  padding: EdgeInsets.all(16.w),
+                  color: ColorManager.backgroundColor,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          'Total Staff',
+                          _totalStaff.toString(),
+                          Icons.people,
+                          ColorManager.primary,
+                          '$_externalStaff external',
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: _buildStatCard(
+                          'Transport Units',
+                          _transportUnits.toString(),
+                          Icons.local_shipping,
+                          const Color(0xFF3B82F6),
+                          '0 assigned',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            // Staff Section Header
+            SliverToBoxAdapter(
+              child: Container(
+                color: ColorManager.backgroundColor,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.showUnassignedOnly ? 'Unassigned Staff' : 'All Staff',
+                            style: FontConstants.getPoppinsStyle(
+                              fontSize: FontSize.s18,
+                              fontWeight: FontWeightManager.bold,
+                              color: ColorManager.textPrimary,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            widget.showUnassignedOnly
+                                ? '${filteredStaff.length} need transport'
+                                : '${filteredStaff.length} total',
+                            style: FontConstants.getPoppinsStyle(
+                              fontSize: FontSize.s12,
+                              fontWeight: FontWeightManager.regular,
+                              color: ColorManager.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Staff List
+            filteredStaff.isEmpty
+                ? SliverFillRemaining(
+                    child: Container(
+                      color: ColorManager.backgroundColor,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 64.sp,
+                              color: ColorManager.grey3,
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              'No staff found',
+                              style: FontConstants.getPoppinsStyle(
+                                fontSize: FontSize.s16,
+                                fontWeight: FontWeightManager.semiBold,
+                                color: ColorManager.textPrimary,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'Try adjusting your filters',
+                              style: FontConstants.getPoppinsStyle(
+                                fontSize: FontSize.s13,
+                                fontWeight: FontWeightManager.regular,
+                                color: ColorManager.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                : SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                      16.w,
+                      0,
+                      16.w,
+                      widget.showUnassignedOnly ? 340.h : 100.h,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          return TransportStaffCard(
+                            staff: filteredStaff[index],
+                            onTap: () => _showStaffDetails(filteredStaff[index]),
+                          );
+                        },
+                        childCount: filteredStaff.length,
+                      ),
+                    ),
+                  ),
+          ],
+        ),
+
+        // Transport Units Bottom Panel (only shown in unassigned view)
+        if (widget.showUnassignedOnly)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildTransportUnitsPanel(),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildDateFilter() {
+    return Container(
+      color: ColorManager.white,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      child: Row(
+        children: [
+          // Previous Day Button
+          InkWell(
+            onTap: () {
+              setState(() {
+                _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+              });
+            },
+            borderRadius: BorderRadius.circular(8.r),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: ColorManager.grey6,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: ColorManager.grey4),
+              ),
+              child: Icon(
+                Icons.chevron_left,
+                size: 20.sp,
+                color: ColorManager.textPrimary,
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+
+          // Date Display with Calendar Picker
+          Expanded(
+            child: InkWell(
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: _selectedDate,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2030),
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        colorScheme: ColorScheme.light(
+                          primary: ColorManager.primary,
+                          onPrimary: ColorManager.white,
+                          surface: ColorManager.white,
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+                if (picked != null && picked != _selectedDate) {
+                  setState(() {
+                    _selectedDate = picked;
+                  });
+                }
+              },
+              borderRadius: BorderRadius.circular(12.r),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: ColorManager.primary),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 18.sp,
+                      color: ColorManager.primary,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      _formatDate(_selectedDate),
+                      style: FontConstants.getPoppinsStyle(
+                        fontSize: FontSize.s14,
+                        fontWeight: FontWeightManager.semiBold,
+                        color: ColorManager.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+
+          // Next Day Button
+          InkWell(
+            onTap: () {
+              setState(() {
+                _selectedDate = _selectedDate.add(const Duration(days: 1));
+              });
+            },
+            borderRadius: BorderRadius.circular(8.r),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: ColorManager.grey6,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: ColorManager.grey4),
+              ),
+              child: Icon(
+                Icons.chevron_right,
+                size: 20.sp,
+                color: ColorManager.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilters() {
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      color: ColorManager.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.filter_list, size: 18.sp, color: ColorManager.textPrimary),
+              SizedBox(width: 8.w),
+              Text(
+                'Filters',
+                style: FontConstants.getPoppinsStyle(
+                  fontSize: FontSize.s16,
+                  fontWeight: FontWeightManager.semiBold,
+                  color: ColorManager.textPrimary,
+                ),
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: () {
+                  // Save current filter view
+                },
+                child: Text(
+                  'Save View',
+                  style: FontConstants.getPoppinsStyle(
+                    fontSize: FontSize.s12,
+                    fontWeight: FontWeightManager.semiBold,
+                    color: ColorManager.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+
+          // Filter dropdowns
+          Row(
+            children: [
+              Expanded(child: _buildFilterDropdown('Zone', _zones, _selectedZone, (value) {
+                setState(() => _selectedZone = value!);
+              })),
+              SizedBox(width: 12.w),
+              Expanded(child: _buildFilterDropdown('Shift Time', _shifts, _selectedShift, (value) {
+                setState(() => _selectedShift = value!);
+              })),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          _buildFilterDropdown('Department', _departments, _selectedDepartment, (value) {
+            setState(() => _selectedDepartment = value!);
+          }),
+
+          // Saved Views
+          SizedBox(height: 16.h),
+          Wrap(
+            spacing: 8.w,
+            runSpacing: 8.h,
+            children: [
+              _buildSavedViewChip('East Morning'),
+              _buildSavedViewChip('Central Urgent'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterDropdown(String label, List<String> items, String value, Function(String?) onChanged) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: ColorManager.grey6,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: ColorManager.grey4),
+      ),
+      child: DropdownButton<String>(
+        value: value,
+        isExpanded: true,
+        underline: const SizedBox(),
+        isDense: true,
+        icon: Icon(Icons.keyboard_arrow_down, size: 20.sp, color: ColorManager.textPrimary),
+        style: FontConstants.getPoppinsStyle(
+          fontSize: FontSize.s13,
+          fontWeight: FontWeightManager.medium,
+          color: ColorManager.textPrimary,
+        ),
+        items: items.map((item) {
+          return DropdownMenuItem(
+            value: item,
+            child: Text(
+              item,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+        }).toList(),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildSavedViewChip(String label) {
+    return InkWell(
+      onTap: () {
+        // Apply saved view filters
+      },
+      borderRadius: BorderRadius.circular(8.r),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: ColorManager.grey6,
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: ColorManager.grey4),
+        ),
+        child: Text(
+          label,
+          style: FontConstants.getPoppinsStyle(
+            fontSize: FontSize.s12,
+            fontWeight: FontWeightManager.medium,
+            color: ColorManager.textPrimary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String label, String value, IconData icon, Color color, String subtitle) {
+    return Container(
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: ColorManager.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: ColorManager.grey4),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10.w),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Icon(icon, size: 20.sp, color: color),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: FontConstants.getPoppinsStyle(
+                    fontSize: FontSize.s11,
+                    fontWeight: FontWeightManager.medium,
+                    color: ColorManager.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4.h),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        value,
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s20,
+                          fontWeight: FontWeightManager.bold,
+                          color: color,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: 6.w),
+                    Flexible(
+                      child: Text(
+                        subtitle,
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s11,
+                          fontWeight: FontWeightManager.regular,
+                          color: ColorManager.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showStaffDetails(TransportStaffModel staff) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        decoration: BoxDecoration(
+          color: ColorManager.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Column(
+          children: [
+            // Drag Handle
+            Container(
+              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: ColorManager.grey3,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+
+            // Staff Info
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(20.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      staff.name,
+                      style: FontConstants.getPoppinsStyle(
+                        fontSize: FontSize.s20,
+                        fontWeight: FontWeightManager.bold,
+                        color: ColorManager.textPrimary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  SizedBox(height: 8.h),
+                  _buildDetailRow(Icons.location_on, 'Region', staff.region),
+                  SizedBox(height: 8.h),
+                  _buildDetailRow(Icons.pin_drop, 'Pick Up/Drop Off', staff.pickUpDropOff),
+                  SizedBox(height: 8.h),
+                  _buildDetailRow(Icons.access_time, 'Transport Timing', staff.transportTiming),
+                  if (staff.notes != null) ...[
+                    SizedBox(height: 8.h),
+                    _buildDetailRow(Icons.note, 'Notes', staff.notes!),
+                  ],
+
+                  SizedBox(height: 24.h),
+
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        // Handle change action
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorManager.primary,
+                        foregroundColor: ColorManager.white,
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                      ),
+                      child: Text(
+                        'Change',
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s15,
+                          fontWeight: FontWeightManager.semiBold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 18.sp, color: ColorManager.primary),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: FontConstants.getPoppinsStyle(
+                  fontSize: FontSize.s12,
+                  fontWeight: FontWeightManager.medium,
+                  color: ColorManager.textSecondary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 2.h),
+              Text(
+                value,
+                style: FontConstants.getPoppinsStyle(
+                  fontSize: FontSize.s14,
+                  fontWeight: FontWeightManager.semiBold,
+                  color: ColorManager.textPrimary,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTransportUnitsPanel() {
+    final transportUnits = [
+      {
+        'name': 'Bus A',
+        'route': 'North Zone',
+        'capacity': '8/16',
+        'seats': 8,
+        'total': 16,
+        'color': const Color(0xFFFF6B00),
+        'icon': Icons.directions_bus_rounded,
+      },
+      {
+        'name': 'Shuttle B',
+        'route': 'East Zone',
+        'capacity': '6/12',
+        'seats': 6,
+        'total': 12,
+        'color': const Color(0xFF3B82F6),
+        'icon': Icons.airport_shuttle_rounded,
+      },
+      {
+        'name': 'Van C',
+        'route': 'West Zone',
+        'capacity': '4/8',
+        'seats': 4,
+        'total': 8,
+        'color': const Color(0xFF10B981),
+        'icon': Icons.local_shipping_outlined,
+      },
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            ColorManager.white,
+            ColorManager.grey6.withValues(alpha: 0.3),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: ColorManager.black.withValues(alpha: 0.15),
+            blurRadius: 30,
+            spreadRadius: 0,
+            offset: const Offset(0, -8),
+          ),
+          BoxShadow(
+            color: ColorManager.primary.withValues(alpha: 0.05),
+            blurRadius: 60,
+            spreadRadius: -10,
+            offset: const Offset(0, -20),
+          ),
+        ],
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Premium drag handle with glow
+          Container(
+            margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+            child: Column(
+              children: [
+                Container(
+                  width: 48.w,
+                  height: 5.h,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        ColorManager.primary.withValues(alpha: 0.3),
+                        ColorManager.primary.withValues(alpha: 0.6),
+                        ColorManager.primary.withValues(alpha: 0.3),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(10.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: ColorManager.primary.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Premium Header
+          Container(
+            padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 16.h),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10.w),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        ColorManager.primary,
+                        ColorManager.primary.withValues(alpha: 0.8),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: ColorManager.primary.withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.local_shipping_rounded,
+                    size: 20.sp,
+                    color: ColorManager.white,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Transport Units',
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s17,
+                          fontWeight: FontWeightManager.bold,
+                          color: ColorManager.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        'Tap to assign staff',
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s11,
+                          fontWeight: FontWeightManager.medium,
+                          color: ColorManager.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  decoration: BoxDecoration(
+                    color: ColorManager.success.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(
+                      color: ColorManager.success.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 6.w,
+                        height: 6.h,
+                        decoration: BoxDecoration(
+                          color: ColorManager.success,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: ColorManager.success.withValues(alpha: 0.5),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      Text(
+                        'Active',
+                        style: FontConstants.getPoppinsStyle(
+                          fontSize: FontSize.s10,
+                          fontWeight: FontWeightManager.semiBold,
+                          color: ColorManager.success,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Premium Transport Units List
+          Container(
+            constraints: BoxConstraints(maxHeight: 200.h),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 100.h),
+              child: Column(
+                children: transportUnits.map((unit) {
+                  final currentSeats = unit['seats'] as int;
+                  final totalSeats = unit['total'] as int;
+                  final fillPercentage = currentSeats / totalSeats;
+
+                  return DragTarget<TransportStaffModel>(
+                    onAcceptWithDetails: (details) {
+                      // Handle staff assignment
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${details.data.name} assigned to ${unit['name']}',
+                            style: FontConstants.getPoppinsStyle(
+                              fontSize: FontSize.s13,
+                              fontWeight: FontWeightManager.medium,
+                              color: ColorManager.white,
+                            ),
+                          ),
+                          backgroundColor: unit['color'] as Color,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          margin: EdgeInsets.all(16.w),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    builder: (context, candidateData, rejectedData) {
+                      final isHovering = candidateData.isNotEmpty;
+
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        margin: EdgeInsets.only(bottom: 12.h),
+                        padding: EdgeInsets.all(14.w),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: isHovering
+                                ? [
+                                    (unit['color'] as Color).withValues(alpha: 0.15),
+                                    (unit['color'] as Color).withValues(alpha: 0.08),
+                                  ]
+                                : [
+                                    ColorManager.white,
+                                    (unit['color'] as Color).withValues(alpha: 0.03),
+                                  ],
+                          ),
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(
+                            color: isHovering
+                                ? (unit['color'] as Color).withValues(alpha: 0.6)
+                                : (unit['color'] as Color).withValues(alpha: 0.2),
+                            width: isHovering ? 2 : 1.5,
+                          ),
+                          boxShadow: isHovering
+                              ? [
+                                  BoxShadow(
+                                    color: (unit['color'] as Color).withValues(alpha: 0.25),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ]
+                              : [
+                                  BoxShadow(
+                                    color: ColorManager.black.withValues(alpha: 0.04),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                // Premium Icon
+                                Container(
+                                  width: 48.w,
+                                  height: 48.h,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        (unit['color'] as Color).withValues(alpha: 0.2),
+                                        (unit['color'] as Color).withValues(alpha: 0.1),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(14.r),
+                                    border: Border.all(
+                                      color: (unit['color'] as Color).withValues(alpha: 0.3),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    unit['icon'] as IconData,
+                                    color: unit['color'] as Color,
+                                    size: 24.sp,
+                                  ),
+                                ),
+                                SizedBox(width: 14.w),
+
+                                // Info
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        unit['name'] as String,
+                                        style: FontConstants.getPoppinsStyle(
+                                          fontSize: FontSize.s15,
+                                          fontWeight: FontWeightManager.bold,
+                                          color: ColorManager.textPrimary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 3.h),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.location_on_rounded,
+                                            size: 13.sp,
+                                            color: ColorManager.textSecondary,
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            unit['route'] as String,
+                                            style: FontConstants.getPoppinsStyle(
+                                              fontSize: FontSize.s12,
+                                              fontWeight: FontWeightManager.medium,
+                                              color: ColorManager.textSecondary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // Capacity badge with glow
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        unit['color'] as Color,
+                                        (unit['color'] as Color).withValues(alpha: 0.85),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: (unit['color'] as Color).withValues(alpha: 0.4),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.people_rounded,
+                                        size: 14.sp,
+                                        color: ColorManager.white,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        unit['capacity'] as String,
+                                        style: FontConstants.getPoppinsStyle(
+                                          fontSize: FontSize.s12,
+                                          fontWeight: FontWeightManager.bold,
+                                          color: ColorManager.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            // Progress bar
+                            SizedBox(height: 10.h),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 6.h,
+                                    decoration: BoxDecoration(
+                                      color: (unit['color'] as Color).withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(10.r),
+                                    ),
+                                    child: FractionallySizedBox(
+                                      alignment: Alignment.centerLeft,
+                                      widthFactor: fillPercentage,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              unit['color'] as Color,
+                                              (unit['color'] as Color).withValues(alpha: 0.7),
+                                            ],
+                                          ),
+                                          borderRadius: BorderRadius.circular(10.r),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: (unit['color'] as Color).withValues(alpha: 0.3),
+                                              blurRadius: 4,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  '${(fillPercentage * 100).toInt()}%',
+                                  style: FontConstants.getPoppinsStyle(
+                                    fontSize: FontSize.s10,
+                                    fontWeight: FontWeightManager.bold,
+                                    color: unit['color'] as Color,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final tomorrow = today.add(const Duration(days: 1));
+    final selectedDay = DateTime(date.year, date.month, date.day);
+
+    if (selectedDay == today) {
+      return 'Today, ${_getMonthName(date.month)} ${date.day}';
+    } else if (selectedDay == yesterday) {
+      return 'Yesterday, ${_getMonthName(date.month)} ${date.day}';
+    } else if (selectedDay == tomorrow) {
+      return 'Tomorrow, ${_getMonthName(date.month)} ${date.day}';
+    } else {
+      return '${_getDayName(date.weekday)}, ${_getMonthName(date.month)} ${date.day}, ${date.year}';
+    }
+  }
+
+  String _getDayName(int weekday) {
+    switch (weekday) {
+      case 1: return 'Monday';
+      case 2: return 'Tuesday';
+      case 3: return 'Wednesday';
+      case 4: return 'Thursday';
+      case 5: return 'Friday';
+      case 6: return 'Saturday';
+      case 7: return 'Sunday';
+      default: return '';
+    }
+  }
+
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1: return 'Jan';
+      case 2: return 'Feb';
+      case 3: return 'Mar';
+      case 4: return 'Apr';
+      case 5: return 'May';
+      case 6: return 'Jun';
+      case 7: return 'Jul';
+      case 8: return 'Aug';
+      case 9: return 'Sep';
+      case 10: return 'Oct';
+      case 11: return 'Nov';
+      case 12: return 'Dec';
+      default: return '';
+    }
+  }
+}

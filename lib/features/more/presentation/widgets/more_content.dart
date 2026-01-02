@@ -6,6 +6,7 @@ import '../../../../core/utils/navigation_service.dart';
 import '../../../invoices/presentation/pages/invoices_screen.dart';
 import '../../../groups/presentation/pages/groups_screen.dart';
 import '../../../manage/presentation/pages/manage_screen.dart';
+import '../../../transport/presentation/pages/transport_screen.dart';
 
 class MoreContent extends StatelessWidget {
   const MoreContent({super.key});
@@ -68,6 +69,30 @@ class MoreContent extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const ManageScreen(),
+                ),
+              );
+            },
+          ),
+          SizedBox(height: 12.h),
+          _buildOptionCard(
+            icon: Icons.local_shipping,
+            iconColor: const Color(0xFFFF6B00),
+            title: 'Transport Management',
+            subtitle: 'Zone-based staff assignment with drag-and-drop',
+            onTap: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => const TransportScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(1.0, 0.0);
+                    const end = Offset.zero;
+                    const curve = Curves.easeInOut;
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var offsetAnimation = animation.drive(tween);
+                    return SlideTransition(position: offsetAnimation, child: child);
+                  },
+                  transitionDuration: const Duration(milliseconds: 300),
                 ),
               );
             },
