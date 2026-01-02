@@ -58,56 +58,36 @@ class TransportStaffCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Name
                     Text(
                       staff.name,
                       style: FontConstants.getPoppinsStyle(
-                        fontSize: FontSize.s15,
+                        fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
                         color: ColorManager.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 3.h),
 
                     // Region
                     Row(
                       children: [
                         Icon(
                           Icons.location_on,
-                          size: 14.sp,
+                          size: 12.sp,
                           color: ColorManager.primary,
                         ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          'Region: ${staff.region}',
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s12,
-                            fontWeight: FontWeightManager.medium,
-                            color: ColorManager.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 2.h),
-
-                    // Pick Up/Drop Off
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.pin_drop,
-                          size: 14.sp,
-                          color: ColorManager.textSecondary,
-                        ),
-                        SizedBox(width: 4.w),
-                        Expanded(
+                        SizedBox(width: 3.w),
+                        Flexible(
                           child: Text(
-                            'Pick Up/Drop Off: ${staff.pickUpDropOff}',
+                            staff.region,
                             style: FontConstants.getPoppinsStyle(
-                              fontSize: FontSize.s12,
-                              fontWeight: FontWeightManager.regular,
+                              fontSize: FontSize.s11,
+                              fontWeight: FontWeightManager.medium,
                               color: ColorManager.textSecondary,
                             ),
                             maxLines: 1,
@@ -123,49 +103,52 @@ class TransportStaffCard extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.access_time,
-                          size: 14.sp,
+                          size: 12.sp,
                           color: ColorManager.textSecondary,
                         ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          'Transport Timing: ${staff.transportTiming}',
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s12,
-                            fontWeight: FontWeightManager.regular,
-                            color: ColorManager.textSecondary,
+                        SizedBox(width: 3.w),
+                        Flexible(
+                          child: Text(
+                            staff.transportTiming,
+                            style: FontConstants.getPoppinsStyle(
+                              fontSize: FontSize.s11,
+                              fontWeight: FontWeightManager.regular,
+                              color: ColorManager.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
 
-                    // Notes if available
-                    if (staff.notes != null && staff.notes!.isNotEmpty) ...[
-                      SizedBox(height: 6.h),
+                    // Assigned Transport
+                    if (staff.assignedTransport != null) ...[
+                      SizedBox(height: 4.h),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                         decoration: BoxDecoration(
-                          color: ColorManager.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(6.r),
+                          color: ColorManager.success.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4.r),
+                          border: Border.all(
+                            color: ColorManager.success.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.note,
-                              size: 12.sp,
-                              color: ColorManager.primary,
+                              Icons.check_circle,
+                              size: 10.sp,
+                              color: ColorManager.success,
                             ),
-                            SizedBox(width: 4.w),
-                            Flexible(
-                              child: Text(
-                                'Notes: ${staff.notes}',
-                                style: FontConstants.getPoppinsStyle(
-                                  fontSize: FontSize.s11,
-                                  fontWeight: FontWeightManager.medium,
-                                  color: ColorManager.primary,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                            SizedBox(width: 3.w),
+                            Text(
+                              staff.assignedTransport!,
+                              style: FontConstants.getPoppinsStyle(
+                                fontSize: FontSize.s10,
+                                fontWeight: FontWeightManager.semiBold,
+                                color: ColorManager.success,
                               ),
                             ),
                           ],
@@ -177,26 +160,30 @@ class TransportStaffCard extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
 
-              // Assign Button
+              // Assign/Change Button
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: ColorManager.primary,
+                  color: staff.assignedTransport != null
+                      ? ColorManager.info
+                      : ColorManager.primary,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.local_shipping,
-                      size: 16.sp,
+                      staff.assignedTransport != null
+                          ? Icons.edit
+                          : Icons.local_shipping,
+                      size: 14.sp,
                       color: ColorManager.white,
                     ),
-                    SizedBox(width: 6.w),
+                    SizedBox(width: 4.w),
                     Text(
-                      'Assign',
+                      staff.assignedTransport != null ? 'Change' : 'Assign',
                       style: FontConstants.getPoppinsStyle(
-                        fontSize: FontSize.s12,
+                        fontSize: FontSize.s11,
                         fontWeight: FontWeightManager.semiBold,
                         color: ColorManager.white,
                       ),

@@ -134,6 +134,15 @@ class _TransportContentState extends State<TransportContent> {
   int get _totalStaff => _allStaff.length;
   int get _externalStaff => 0;
   int get _transportUnits => 3;
+  int get _totalAssigned {
+    int count = 0;
+    for (var staff in _allStaff) {
+      if (staff.assignedTransport != null) {
+        count++;
+      }
+    }
+    return count;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +183,7 @@ class _TransportContentState extends State<TransportContent> {
                     _transportUnits.toString(),
                     Icons.local_shipping,
                     const Color(0xFF3B82F6),
-                    '0 assigned',
+                    '$_totalAssigned assigned',
                   ),
                 ),
               ],
@@ -678,32 +687,53 @@ class _TransportContentState extends State<TransportContent> {
     );
   }
 
+  // Transport units with their current assignments
+  final Map<String, List<String>> _transportAssignments = {
+    'Bus A': [],
+    'Shuttle B': [],
+    'Van C': [],
+  };
+
+  final Map<String, int> _transportCapacity = {
+    'Bus A': 16,
+    'Shuttle B': 12,
+    'Van C': 8,
+  };
+
+  void _assignStaffToTransport(TransportStaffModel staff, String transportName) {
+    setState(() {
+      // Remove from previous transport if assigned
+      if (staff.assignedTransport != null) {
+        _transportAssignments[staff.assignedTransport]?.remove(staff.id);
+      }
+
+      // Assign to new transport
+      staff.assignedTransport = transportName;
+      _transportAssignments[transportName]?.add(staff.id);
+    });
+  }
+
+  int _getAssignedCount(String transportName) {
+    return _transportAssignments[transportName]?.length ?? 0;
+  }
+
   void _showTransportSelectionSheet(TransportStaffModel staff) {
     final transportUnits = [
       {
         'name': 'Bus A',
         'route': 'North Zone',
-        'capacity': '8/16',
-        'seats': 8,
-        'total': 16,
         'color': const Color(0xFFFF6B00),
         'icon': Icons.directions_bus_rounded,
       },
       {
         'name': 'Shuttle B',
         'route': 'East Zone',
-        'capacity': '6/12',
-        'seats': 6,
-        'total': 12,
         'color': const Color(0xFF3B82F6),
         'icon': Icons.airport_shuttle_rounded,
       },
       {
         'name': 'Van C',
         'route': 'West Zone',
-        'capacity': '4/8',
-        'seats': 4,
-        'total': 8,
         'color': const Color(0xFF10B981),
         'icon': Icons.local_shipping_outlined,
       },
@@ -773,17 +803,20 @@ class _TransportContentState extends State<TransportContent> {
                 separatorBuilder: (context, index) => SizedBox(height: 12.h),
                 itemBuilder: (context, index) {
                   final unit = transportUnits[index];
-                  final currentSeats = unit['seats'] as int;
-                  final totalSeats = unit['total'] as int;
-                  final fillPercentage = currentSeats / totalSeats;
+                  final unitName = unit['name'] as String;
+                  final currentSeats = _getAssignedCount(unitName);
+                  final totalSeats = _transportCapacity[unitName] ?? 0;
+                  final fillPercentage = totalSeats > 0 ? currentSeats / totalSeats : 0.0;
+                  final isCurrentlyAssigned = staff.assignedTransport == unitName;
 
                   return InkWell(
                     onTap: () {
+                      _assignStaffToTransport(staff, unitName);
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            '${staff.name} assigned to ${unit['name']}',
+                            '${staff.name} assigned to $unitName',
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s13,
                               fontWeight: FontWeightManager.medium,
@@ -807,15 +840,22 @@ class _TransportContentState extends State<TransportContent> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            ColorManager.white,
-                            (unit['color'] as Color).withValues(alpha: 0.03),
-                          ],
+                          colors: isCurrentlyAssigned
+                              ? [
+                                  (unit['color'] as Color).withValues(alpha: 0.15),
+                                  (unit['color'] as Color).withValues(alpha: 0.05),
+                                ]
+                              : [
+                                  ColorManager.white,
+                                  (unit['color'] as Color).withValues(alpha: 0.03),
+                                ],
                         ),
                         borderRadius: BorderRadius.circular(16.r),
                         border: Border.all(
-                          color: (unit['color'] as Color).withValues(alpha: 0.2),
-                          width: 1.5,
+                          color: isCurrentlyAssigned
+                              ? (unit['color'] as Color).withValues(alpha: 0.5)
+                              : (unit['color'] as Color).withValues(alpha: 0.2),
+                          width: isCurrentlyAssigned ? 2 : 1.5,
                         ),
                       ),
                       child: Column(
@@ -885,45 +925,66 @@ class _TransportContentState extends State<TransportContent> {
                                 ),
                               ),
 
-                              // Capacity badge
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      unit['color'] as Color,
-                                      (unit['color'] as Color).withValues(alpha: 0.85),
+                              // Capacity badge or checkmark
+                              if (isCurrentlyAssigned)
+                                Container(
+                                  padding: EdgeInsets.all(8.w),
+                                  decoration: BoxDecoration(
+                                    color: unit['color'] as Color,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: (unit['color'] as Color).withValues(alpha: 0.4),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
                                     ],
                                   ),
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: (unit['color'] as Color).withValues(alpha: 0.4),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
+                                  child: Icon(
+                                    Icons.check,
+                                    size: 16.sp,
+                                    color: ColorManager.white,
+                                  ),
+                                )
+                              else
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        unit['color'] as Color,
+                                        (unit['color'] as Color).withValues(alpha: 0.85),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.people_rounded,
-                                      size: 14.sp,
-                                      color: ColorManager.white,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      unit['capacity'] as String,
-                                      style: FontConstants.getPoppinsStyle(
-                                        fontSize: FontSize.s12,
-                                        fontWeight: FontWeightManager.bold,
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: (unit['color'] as Color).withValues(alpha: 0.4),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.people_rounded,
+                                        size: 14.sp,
                                         color: ColorManager.white,
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        '$currentSeats/$totalSeats',
+                                        style: FontConstants.getPoppinsStyle(
+                                          fontSize: FontSize.s12,
+                                          fontWeight: FontWeightManager.bold,
+                                          color: ColorManager.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
 

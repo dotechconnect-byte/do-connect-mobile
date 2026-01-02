@@ -5,6 +5,7 @@ class TransportStaffModel {
   final String pickUpDropOff;
   final String transportTiming;
   final String? notes;
+  String? assignedTransport;
 
   TransportStaffModel({
     required this.id,
@@ -13,5 +14,6 @@ class TransportStaffModel {
     required this.pickUpDropOff,
     required this.transportTiming,
     this.notes,
+    this.assignedTransport,
   });
 }
