@@ -15,6 +15,10 @@ class AppTheme {
         secondary: ColorManager.primaryLight,
         error: ColorManager.error,
         surface: ColorManager.white,
+        onSurface: ColorManager.textPrimary,
+        onPrimary: ColorManager.white,
+        onSecondary: ColorManager.white,
+        onError: ColorManager.white,
       ),
       scaffoldBackgroundColor: ColorManager.backgroundColor,
       textTheme: GoogleFonts.poppinsTextTheme(
@@ -54,6 +58,33 @@ class AppTheme {
         ),
       ),
       dividerColor: ColorManager.grey4,
+      iconTheme: const IconThemeData(
+        color: ColorManager.textPrimary,
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: ColorManager.primary,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorManager.primary,
+          foregroundColor: ColorManager.white,
+        ),
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: ColorManager.primary,
+        foregroundColor: ColorManager.white,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: ColorManager.grey6,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        hintStyle: const TextStyle(color: ColorManager.textSecondary),
+      ),
     );
   }
 
@@ -69,6 +100,10 @@ class AppTheme {
         secondary: ColorManager.darkPrimaryLight,
         error: ColorManager.darkError,
         surface: ColorManager.darkCardBackground,
+        onSurface: ColorManager.darkTextPrimary,
+        onPrimary: ColorManager.darkTextOnPrimary,
+        onSecondary: ColorManager.darkTextOnPrimary,
+        onError: ColorManager.darkTextOnPrimary,
       ),
       scaffoldBackgroundColor: ColorManager.darkBackground,
       textTheme: GoogleFonts.poppinsTextTheme(
@@ -108,6 +143,37 @@ class AppTheme {
         ),
       ),
       dividerColor: ColorManager.darkGrey4,
+      iconTheme: const IconThemeData(
+        color: ColorManager.darkTextPrimary,
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: ColorManager.darkPrimary,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorManager.darkPrimary,
+          foregroundColor: ColorManager.darkTextOnPrimary,
+        ),
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: ColorManager.darkPrimary,
+        foregroundColor: ColorManager.darkTextOnPrimary,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: ColorManager.darkGrey6,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        hintStyle: const TextStyle(color: ColorManager.darkTextSecondary),
+      ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: ColorManager.darkCardBackground,
+        contentTextStyle: TextStyle(color: ColorManager.darkTextPrimary),
+      ),
     );
   }
 }
