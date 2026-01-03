@@ -66,4 +66,38 @@ class ColorManager {
   // Auth Secondary Actions
   static const Color authSecondary = Color(0xFFF3F4F6); // Light grey for inactive states
   static const Color authSecondaryText = Color(0xFF6B7280); // Grey text
+
+  // ========== DARK MODE COLORS ==========
+
+  // Dark Mode - Brand Colors (Keep orange vibrant)
+  static const Color darkPrimary = Color(0xFFFF7A4D); // Slightly lighter orange for dark bg
+  static const Color darkPrimaryDark = Color(0xFFFF6B35);
+  static const Color darkPrimaryLight = Color(0xFFFF9A70);
+
+  // Dark Mode - Background Colors
+  static const Color darkBackground = Color(0xFF0F0F0F); // Deep dark background
+  static const Color darkCardBackground = Color(0xFF1A1A1A); // Card background
+  static const Color darkSurfaceVariant = Color(0xFF242424); // Alternative surface
+  static const Color darkOverlayBackground = Color(0x80000000);
+
+  // Dark Mode - Grey Scale
+  static const Color darkGrey = Color(0xFF9CA3AF);
+  static const Color darkGrey1 = Color(0xFFB5BCC5);
+  static const Color darkGrey2 = Color(0xFF6B7280);
+  static const Color darkGrey3 = Color(0xFF4B5563);
+  static const Color darkGrey4 = Color(0xFF374151);
+  static const Color darkGrey5 = Color(0xFF2A2F38);
+  static const Color darkGrey6 = Color(0xFF1F2937);
+
+  // Dark Mode - Text Colors
+  static const Color darkTextPrimary = Color(0xFFF3F4F6); // Very light grey
+  static const Color darkTextSecondary = Color(0xFFD1D5DB); // Medium light grey
+  static const Color darkTextTertiary = Color(0xFF9CA3AF); // Medium grey
+  static const Color darkTextOnPrimary = Color(0xFF0F0F0F); // Dark text on orange
+
+  // Dark Mode - Functional Colors (Adjusted for dark background)
+  static const Color darkError = Color(0xFFF87171); // Lighter red
+  static const Color darkSuccess = Color(0xFF34D399); // Lighter green
+  static const Color darkWarning = Color(0xFFFBBF24); // Lighter amber
+  static const Color darkInfo = Color(0xFF60A5FA); // Lighter blue
 }
