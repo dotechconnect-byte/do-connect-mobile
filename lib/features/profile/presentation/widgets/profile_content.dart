@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/image_picker_utils.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/company_model.dart';
 import 'edit_company_modal.dart';
 
@@ -94,13 +95,15 @@ class _ProfileContentState extends State<ProfileContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Company Information Section
           Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +116,7 @@ class _ProfileContentState extends State<ProfileContent> {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s16,
                         fontWeight: FontWeightManager.bold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     TextButton.icon(
@@ -128,13 +131,13 @@ class _ProfileContentState extends State<ProfileContent> {
                           ),
                         );
                       },
-                      icon: Icon(Icons.edit, size: 16.sp, color: ColorManager.textSecondary),
+                      icon: Icon(Icons.edit, size: 16.sp, color: colors.textSecondary),
                       label: Text(
                         'Edit',
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                       style: TextButton.styleFrom(
@@ -148,7 +151,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
                 SizedBox(height: 16.h),
