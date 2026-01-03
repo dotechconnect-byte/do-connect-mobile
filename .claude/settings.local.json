@@ -12,7 +12,8 @@
       "Bash(findstr:*)",
       "Bash(mkdir:*)",
       "Bash(git add:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

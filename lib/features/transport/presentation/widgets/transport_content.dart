@@ -25,6 +25,13 @@ class _TransportContentState extends State<TransportContent> {
   String _selectedShift = 'All Shifts';
   String _selectedDepartment = 'All Departments';
 
+  // Saved filter views
+  final List<Map<String, String>> _savedViews = [
+    {'name': 'East Morning', 'zone': 'East', 'shift': '08:00 - 16:00'},
+    {'name': 'Central Urgent', 'zone': 'Central', 'shift': 'All Shifts'},
+  ];
+  static const int maxSavedViews = 3;
+
   final List<String> _zones = [
     'All Zones',
     'North',
@@ -420,9 +427,7 @@ class _TransportContentState extends State<TransportContent> {
               ),
               const Spacer(),
               TextButton(
-                onPressed: () {
-                  // Save current filter view
-                },
+                onPressed: _saveCurrentView,
                 child: Text(
                   'Save View',
                   style: FontConstants.getPoppinsStyle(
@@ -454,15 +459,14 @@ class _TransportContentState extends State<TransportContent> {
           }),
 
           // Saved Views
-          SizedBox(height: 16.h),
-          Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
-            children: [
-              _buildSavedViewChip('East Morning'),
-              _buildSavedViewChip('Central Urgent'),
-            ],
-          ),
+          if (_savedViews.isNotEmpty) ...[
+            SizedBox(height: 16.h),
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: _savedViews.map((view) => _buildSavedViewChip(view)).toList(),
+            ),
+          ],
         ],
       ),
     );
@@ -502,27 +506,321 @@ class _TransportContentState extends State<TransportContent> {
     );
   }
 
-  Widget _buildSavedViewChip(String label) {
+  Widget _buildSavedViewChip(Map<String, String> view) {
+    final viewName = view['name'] ?? '';
+    final isActive = _selectedZone == view['zone'] && _selectedShift == view['shift'];
+
     return InkWell(
       onTap: () {
         // Apply saved view filters
+        setState(() {
+          _selectedZone = view['zone'] ?? 'All Zones';
+          _selectedShift = view['shift'] ?? 'All Shifts';
+        });
+
+        // Show feedback to user
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Applied "$viewName" filter',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s13,
+                fontWeight: FontWeightManager.medium,
+                color: ColorManager.white,
+              ),
+            ),
+            backgroundColor: ColorManager.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            margin: EdgeInsets.all(16.w),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      },
+      onLongPress: () {
+        // Delete saved view on long press
+        _deleteSavedView(view);
       },
       borderRadius: BorderRadius.circular(8.r),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: ColorManager.grey6,
+          color: isActive ? ColorManager.primary.withValues(alpha: 0.1) : ColorManager.grey6,
           borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: ColorManager.grey4),
+          border: Border.all(
+            color: isActive ? ColorManager.primary : ColorManager.grey4,
+            width: isActive ? 1.5 : 1,
+          ),
         ),
-        child: Text(
-          label,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.filter_alt,
+              size: 14.sp,
+              color: isActive ? ColorManager.primary : ColorManager.textSecondary,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              viewName,
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s12,
+                fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.medium,
+                color: isActive ? ColorManager.primary : ColorManager.textPrimary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _saveCurrentView() {
+    // Check if current filters are default (nothing to save)
+    if (_selectedZone == 'All Zones' && _selectedShift == 'All Shifts') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please select filters before saving',
+            style: FontConstants.getPoppinsStyle(
+              fontSize: FontSize.s13,
+              fontWeight: FontWeightManager.medium,
+              color: ColorManager.white,
+            ),
+          ),
+          backgroundColor: ColorManager.warning,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          margin: EdgeInsets.all(16.w),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    // Show dialog to name the saved view
+    final TextEditingController nameController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: ColorManager.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Text(
+          'Save Filter View',
           style: FontConstants.getPoppinsStyle(
-            fontSize: FontSize.s12,
-            fontWeight: FontWeightManager.medium,
+            fontSize: FontSize.s18,
+            fontWeight: FontWeightManager.semiBold,
             color: ColorManager.textPrimary,
           ),
         ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Current filters:',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s13,
+                fontWeight: FontWeightManager.medium,
+                color: ColorManager.textSecondary,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              '• Zone: $_selectedZone',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s13,
+                fontWeight: FontWeightManager.regular,
+                color: ColorManager.textPrimary,
+              ),
+            ),
+            Text(
+              '• Shift: $_selectedShift',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s13,
+                fontWeight: FontWeightManager.regular,
+                color: ColorManager.textPrimary,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            TextField(
+              controller: nameController,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: 'View Name',
+                hintText: 'e.g., East Morning',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+              ),
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s14,
+                fontWeight: FontWeightManager.regular,
+                color: ColorManager.textPrimary,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s14,
+                fontWeight: FontWeightManager.medium,
+                color: ColorManager.textSecondary,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              final name = nameController.text.trim();
+              if (name.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Please enter a name for the view',
+                      style: FontConstants.getPoppinsStyle(
+                        fontSize: FontSize.s13,
+                        fontWeight: FontWeightManager.medium,
+                        color: ColorManager.white,
+                      ),
+                    ),
+                    backgroundColor: ColorManager.warning,
+                  ),
+                );
+                return;
+              }
+
+              setState(() {
+                // Remove oldest saved view if we've reached the limit
+                if (_savedViews.length >= maxSavedViews) {
+                  _savedViews.removeAt(0);
+                }
+
+                // Add new saved view
+                _savedViews.add({
+                  'name': name,
+                  'zone': _selectedZone,
+                  'shift': _selectedShift,
+                });
+              });
+
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Saved view "$name"',
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s13,
+                      fontWeight: FontWeightManager.medium,
+                      color: ColorManager.white,
+                    ),
+                  ),
+                  backgroundColor: ColorManager.success,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  margin: EdgeInsets.all(16.w),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+            child: Text(
+              'Save',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s14,
+                fontWeight: FontWeightManager.semiBold,
+                color: ColorManager.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteSavedView(Map<String, String> view) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: ColorManager.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Text(
+          'Delete Saved View',
+          style: FontConstants.getPoppinsStyle(
+            fontSize: FontSize.s18,
+            fontWeight: FontWeightManager.semiBold,
+            color: ColorManager.textPrimary,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete "${view['name']}"?',
+          style: FontConstants.getPoppinsStyle(
+            fontSize: FontSize.s14,
+            fontWeight: FontWeightManager.regular,
+            color: ColorManager.textSecondary,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s14,
+                fontWeight: FontWeightManager.medium,
+                color: ColorManager.textSecondary,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _savedViews.remove(view);
+              });
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Deleted "${view['name']}"',
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s13,
+                      fontWeight: FontWeightManager.medium,
+                      color: ColorManager.white,
+                    ),
+                  ),
+                  backgroundColor: ColorManager.error,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  margin: EdgeInsets.all(16.w),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+            child: Text(
+              'Delete',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s14,
+                fontWeight: FontWeightManager.semiBold,
+                color: ColorManager.error,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -603,85 +901,92 @@ class _TransportContentState extends State<TransportContent> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        decoration: BoxDecoration(
-          color: ColorManager.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-        ),
-        child: Column(
-          children: [
-            // Drag Handle
-            Container(
-              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: ColorManager.grey3,
-                borderRadius: BorderRadius.circular(2.r),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          decoration: BoxDecoration(
+            color: ColorManager.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          ),
+          child: Column(
+            children: [
+              // Drag Handle
+              Container(
+                margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: ColorManager.grey3,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
               ),
-            ),
 
-            // Staff Info
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(20.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      staff.name,
-                      style: FontConstants.getPoppinsStyle(
-                        fontSize: FontSize.s20,
-                        fontWeight: FontWeightManager.bold,
-                        color: ColorManager.textPrimary,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  SizedBox(height: 8.h),
-                  _buildDetailRow(Icons.location_on, 'Region', staff.region),
-                  SizedBox(height: 8.h),
-                  _buildDetailRow(Icons.pin_drop, 'Pick Up/Drop Off', staff.pickUpDropOff),
-                  SizedBox(height: 8.h),
-                  _buildDetailRow(Icons.access_time, 'Transport Timing', staff.transportTiming),
-                  if (staff.notes != null) ...[
-                    SizedBox(height: 8.h),
-                    _buildDetailRow(Icons.note, 'Notes', staff.notes!),
-                  ],
-
-                  SizedBox(height: 24.h),
-
-                  // Action Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _showTransportSelectionSheet(staff);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorManager.primary,
-                        foregroundColor: ColorManager.white,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                      ),
-                      child: Text(
-                        'Assign Transport',
+              // Staff Info
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        staff.name,
                         style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s15,
-                          fontWeight: FontWeightManager.semiBold,
+                          fontSize: FontSize.s20,
+                          fontWeight: FontWeightManager.bold,
+                          color: ColorManager.textPrimary,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 8.h),
+                      _buildDetailRow(Icons.location_on, 'Region', staff.region),
+                      SizedBox(height: 8.h),
+                      _buildDetailRow(Icons.pin_drop, 'Pick Up/Drop Off', staff.pickUpDropOff),
+                      SizedBox(height: 8.h),
+                      _buildEditableDetailRow(
+                        Icons.access_time,
+                        'Transport Timing',
+                        staff.transportTiming,
+                        () => _editTransportTiming(staff, setModalState),
+                      ),
+                      if (staff.notes != null) ...[
+                        SizedBox(height: 8.h),
+                        _buildDetailRow(Icons.note, 'Notes', staff.notes!),
+                      ],
+
+                      SizedBox(height: 24.h),
+
+                      // Action Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _showTransportSelectionSheet(staff);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorManager.primary,
+                            foregroundColor: ColorManager.white,
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: Text(
+                            'Assign Transport',
+                            style: FontConstants.getPoppinsStyle(
+                              fontSize: FontSize.s15,
+                              fontWeight: FontWeightManager.semiBold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1222,6 +1527,150 @@ class _TransportContentState extends State<TransportContent> {
         ),
       ],
     );
+  }
+
+  Widget _buildEditableDetailRow(IconData icon, String label, String value, VoidCallback onEdit) {
+    return InkWell(
+      onTap: onEdit,
+      borderRadius: BorderRadius.circular(8.r),
+      child: Container(
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: ColorManager.grey6,
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: ColorManager.grey4),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 18.sp, color: ColorManager.primary),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s12,
+                      fontWeight: FontWeightManager.medium,
+                      color: ColorManager.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    value,
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s14,
+                      fontWeight: FontWeightManager.semiBold,
+                      color: ColorManager.textPrimary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Icon(
+              Icons.edit,
+              size: 16.sp,
+              color: ColorManager.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _editTransportTiming(TransportStaffModel staff, StateSetter setModalState) async {
+    // Parse current time or default to 8:00 AM
+    TimeOfDay initialTime = const TimeOfDay(hour: 8, minute: 0);
+    try {
+      final timeParts = staff.transportTiming.split(':');
+      if (timeParts.length == 2) {
+        final hour = int.tryParse(timeParts[0]) ?? 8;
+        final minutePart = timeParts[1].replaceAll(RegExp(r'[^0-9]'), '');
+        final minute = int.tryParse(minutePart) ?? 0;
+        initialTime = TimeOfDay(hour: hour, minute: minute);
+      }
+    } catch (e) {
+      // Use default time if parsing fails
+    }
+
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: ColorManager.primary,
+              onPrimary: ColorManager.white,
+              surface: ColorManager.white,
+            ),
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: ColorManager.white,
+              hourMinuteTextColor: ColorManager.textPrimary,
+              dayPeriodTextColor: ColorManager.textPrimary,
+              dialHandColor: ColorManager.primary,
+              dialBackgroundColor: ColorManager.grey6,
+              hourMinuteColor: ColorManager.grey6,
+              dayPeriodColor: ColorManager.grey6,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null && mounted) {
+      // Format time as 12-hour format with AM/PM
+      final hour = picked.hourOfPeriod == 0 ? 12 : picked.hourOfPeriod;
+      final minute = picked.minute.toString().padLeft(2, '0');
+      final period = picked.period == DayPeriod.am ? 'AM' : 'PM';
+      final formattedTime = '$hour:$minute $period';
+
+      setState(() {
+        final staffIndex = _allStaff.indexWhere((s) => s.id == staff.id);
+        if (staffIndex != -1) {
+          _allStaff[staffIndex] = TransportStaffModel(
+            id: staff.id,
+            name: staff.name,
+            region: staff.region,
+            pickUpDropOff: staff.pickUpDropOff,
+            transportTiming: formattedTime,
+            notes: staff.notes,
+            assignedTransport: staff.assignedTransport,
+          );
+        }
+      });
+      setModalState(() {});
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Transport timing updated to $formattedTime',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s13,
+                fontWeight: FontWeightManager.medium,
+                color: ColorManager.white,
+              ),
+            ),
+            backgroundColor: ColorManager.success,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            margin: EdgeInsets.all(16.w),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 
 
