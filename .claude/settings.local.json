@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub add:*)",
+      "Bash(flutter clean:*)",
+      "Bash(flutter pub remove:*)",
+      "Bash(flutter build:*)",
+      "Bash(findstr:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(git restore:*)"
+    ]
+  }
+}

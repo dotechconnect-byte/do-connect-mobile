@@ -1,50 +1,17 @@
 import 'package:flutter/material.dart';
 
 class ColorManager {
-  // Premium Brand Colors
-  static const Color primary = Color(0xFF10B981); // Emerald Green
-  static const Color primaryDark = Color(0xFF059669);
-  static const Color primaryLight = Color(0xFF34D399);
+  // Premium Brand Colors - Orange Theme
+  static const Color primary = Color(0xFFFF6B35); // Vibrant Orange
+  static const Color primaryDark = Color(0xFFE85A2B);
+  static const Color primaryLight = Color(0xFFFF8C5F);
 
-  // Onboarding Gradient Colors
-  // Screen 1 - Green
-  static const Color onboardingGreen1 = Color(0xFF10B981);
-  static const Color onboardingGreen2 = Color(0xFF34D399);
-
-  // Screen 2 - Pink/Orange
-  static const Color onboardingPink1 = Color(0xFFEC4899);
-  static const Color onboardingPink2 = Color(0xFFF97316);
-  static const Color onboardingOrange = Color(0xFFFBBF24);
-
-  // Screen 3 - Blue
-  static const Color onboardingBlue1 = Color(0xFF3B82F6);
-  static const Color onboardingBlue2 = Color(0xFF06B6D4);
-
-  // Screen 4 - Purple
-  static const Color onboardingPurple1 = Color(0xFF8B5CF6);
-  static const Color onboardingPurple2 = Color(0xFFA855F7);
-
-  // Gradient Lists for Onboarding
-  static const List<Color> trackingGradient = [
-    onboardingGreen1,
-    onboardingGreen2,
-  ];
-
-  static const List<Color> earningsGradient = [
-    onboardingPink1,
-    onboardingPink2,
-    onboardingOrange,
-  ];
-
-  static const List<Color> jobsGradient = [
-    onboardingBlue1,
-    onboardingBlue2,
-  ];
-
-  static const List<Color> welcomeGradient = [
-    onboardingPurple1,
-    onboardingPurple2,
-  ];
+  // Onboarding Colors - Orange Theme
+  static const Color onboardingIconBg = Color(0xFFFFF4ED); // Light peach
+  static const Color onboardingIconColor = Color(0xFFFF6B35); // Primary Orange
+  static const Color onboardingAccent = Color(0xFFFFE5D9); // Very light orange
+  static const Color onboardingDot = Color(0xFFFFD4C0); // Inactive dot
+  static const Color onboardingDotActive = Color(0xFFFF6B35); // Active dot
 
   // Core Colors
   static const Color white = Color(0xFFFFFFFF);
