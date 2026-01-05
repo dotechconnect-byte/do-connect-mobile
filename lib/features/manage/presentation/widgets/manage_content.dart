@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class ManageContent extends StatefulWidget {
   final String selectedTab;
@@ -235,22 +236,25 @@ class ManageContentState extends State<ManageContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Column(
       children: [
         // Date Filter
-        _buildDateFilter(),
+        _buildDateFilter(colors),
 
         // Content based on selected tab
         Expanded(
-          child: _buildTabContent(),
+          child: _buildTabContent(colors),
         ),
       ],
     );
   }
 
-  Widget _buildDateFilter() {
+  Widget _buildDateFilter(ThemeHelper colors) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      color: ColorManager.white,
+      color: colors.background,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
@@ -265,14 +269,14 @@ class ManageContentState extends State<ManageContent> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 20.sp,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -282,6 +286,7 @@ class ManageContentState extends State<ManageContent> {
           Expanded(
             child: InkWell(
               onTap: () async {
+                final pickerColors = ThemeHelper.of(context);
                 final DateTime? picked = await showDatePicker(
                   context: context,
                   initialDate: _selectedDate,
@@ -290,11 +295,19 @@ class ManageContentState extends State<ManageContent> {
                   builder: (context, child) {
                     return Theme(
                       data: Theme.of(context).copyWith(
-                        colorScheme: ColorScheme.light(
-                          primary: ColorManager.primary,
-                          onPrimary: ColorManager.white,
-                          surface: ColorManager.white,
-                        ),
+                        colorScheme: isDark
+                            ? ColorScheme.dark(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              )
+                            : ColorScheme.light(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              ),
                       ),
                       child: child!,
                     );
@@ -310,9 +323,9 @@ class ManageContentState extends State<ManageContent> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: ColorManager.primary),
+                  border: Border.all(color: colors.primary),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -320,7 +333,7 @@ class ManageContentState extends State<ManageContent> {
                     Icon(
                       Icons.calendar_today,
                       size: 18.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     SizedBox(width: 8.w),
                     Text(
@@ -328,7 +341,7 @@ class ManageContentState extends State<ManageContent> {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                   ],
@@ -349,14 +362,14 @@ class ManageContentState extends State<ManageContent> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: Icon(
                 Icons.chevron_right,
                 size: 20.sp,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -414,40 +427,40 @@ class ManageContentState extends State<ManageContent> {
     }
   }
 
-  Widget _buildTabContent() {
+  Widget _buildTabContent(ThemeHelper colors) {
     switch (widget.selectedTab) {
       case 'Locations':
-        return _buildLocationsList();
+        return _buildLocationsList(colors);
       case 'Stations':
-        return _buildStationsList();
+        return _buildStationsList(colors);
       case 'Managers':
-        return _buildManagersList();
+        return _buildManagersList(colors);
       case 'Events':
-        return _buildEventsList();
+        return _buildEventsList(colors);
       default:
-        return _buildLocationsList();
+        return _buildLocationsList(colors);
     }
   }
 
-  Widget _buildLocationsList() {
+  Widget _buildLocationsList(ThemeHelper colors) {
     return ListView.builder(
       padding: EdgeInsets.all(16.w),
       itemCount: _locations.length,
       itemBuilder: (context, index) {
-        return _buildModernLocationCard(_locations[index]);
+        return _buildModernLocationCard(_locations[index], colors);
       },
     );
   }
 
-  Widget _buildModernLocationCard(LocationItem location) {
+  Widget _buildModernLocationCard(LocationItem location, ThemeHelper colors) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
+            color: colors.grey3.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -504,7 +517,7 @@ class ManageContentState extends State<ManageContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s15,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -513,7 +526,7 @@ class ManageContentState extends State<ManageContent> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: ColorManager.warning.withValues(alpha: 0.1),
+                          color: colors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Row(
@@ -522,7 +535,7 @@ class ManageContentState extends State<ManageContent> {
                             Icon(
                               Icons.person_outline,
                               size: 14.sp,
-                              color: ColorManager.warning,
+                              color: colors.warning,
                             ),
                             SizedBox(width: 4.w),
                             Text(
@@ -530,7 +543,7 @@ class ManageContentState extends State<ManageContent> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s11,
                                 fontWeight: FontWeightManager.medium,
-                                color: ColorManager.warning,
+                                color: colors.warning,
                               ),
                             ),
                           ],
@@ -550,13 +563,13 @@ class ManageContentState extends State<ManageContent> {
                   child: Container(
                     padding: EdgeInsets.all(10.w),
                     decoration: BoxDecoration(
-                      color: ColorManager.primary.withValues(alpha: 0.1),
+                      color: colors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Icon(
                       Icons.add,
                       size: 20.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -568,45 +581,45 @@ class ManageContentState extends State<ManageContent> {
     );
   }
 
-  Widget _buildStationsList() {
+  Widget _buildStationsList(ThemeHelper colors) {
     return ListView.builder(
       padding: EdgeInsets.all(16.w),
       itemCount: _stations.length,
       itemBuilder: (context, index) {
-        return _buildStationCard(_stations[index]);
+        return _buildStationCard(_stations[index], colors);
       },
     );
   }
 
-  Widget _buildManagersList() {
+  Widget _buildManagersList(ThemeHelper colors) {
     return ListView.builder(
       padding: EdgeInsets.all(16.w),
       itemCount: _managers.length,
       itemBuilder: (context, index) {
-        return _buildManagerCard(_managers[index]);
+        return _buildManagerCard(_managers[index], colors);
       },
     );
   }
 
-  Widget _buildEventsList() {
+  Widget _buildEventsList(ThemeHelper colors) {
     return ListView.builder(
       padding: EdgeInsets.all(16.w),
       itemCount: _events.length,
       itemBuilder: (context, index) {
-        return _buildEventCard(_events[index]);
+        return _buildEventCard(_events[index], colors);
       },
     );
   }
 
-  Widget _buildStationCard(StationItem station) {
+  Widget _buildStationCard(StationItem station, ThemeHelper colors) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
+            color: colors.grey3.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -653,7 +666,7 @@ class ManageContentState extends State<ManageContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s15,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -662,14 +675,14 @@ class ManageContentState extends State<ManageContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s12,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                       SizedBox(height: 6.h),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: ColorManager.warning.withValues(alpha: 0.1),
+                          color: colors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Row(
@@ -678,7 +691,7 @@ class ManageContentState extends State<ManageContent> {
                             Icon(
                               Icons.person_outline,
                               size: 14.sp,
-                              color: ColorManager.warning,
+                              color: colors.warning,
                             ),
                             SizedBox(width: 4.w),
                             Text(
@@ -686,7 +699,7 @@ class ManageContentState extends State<ManageContent> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s11,
                                 fontWeight: FontWeightManager.medium,
-                                color: ColorManager.warning,
+                                color: colors.warning,
                               ),
                             ),
                           ],
@@ -703,15 +716,15 @@ class ManageContentState extends State<ManageContent> {
     );
   }
 
-  Widget _buildManagerCard(ManagerItem manager) {
+  Widget _buildManagerCard(ManagerItem manager, ThemeHelper colors) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
+            color: colors.grey3.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -758,7 +771,7 @@ class ManageContentState extends State<ManageContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s15,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -767,7 +780,7 @@ class ManageContentState extends State<ManageContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s12,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -776,14 +789,14 @@ class ManageContentState extends State<ManageContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s11,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textTertiary,
+                          color: colors.textTertiary,
                         ),
                       ),
                       SizedBox(height: 6.h),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: ColorManager.warning.withValues(alpha: 0.1),
+                          color: colors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Row(
@@ -792,7 +805,7 @@ class ManageContentState extends State<ManageContent> {
                             Icon(
                               Icons.person_outline,
                               size: 14.sp,
-                              color: ColorManager.warning,
+                              color: colors.warning,
                             ),
                             SizedBox(width: 4.w),
                             Text(
@@ -800,7 +813,7 @@ class ManageContentState extends State<ManageContent> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s11,
                                 fontWeight: FontWeightManager.medium,
-                                color: ColorManager.warning,
+                                color: colors.warning,
                               ),
                             ),
                           ],
@@ -817,15 +830,15 @@ class ManageContentState extends State<ManageContent> {
     );
   }
 
-  Widget _buildEventCard(EventItem event) {
+  Widget _buildEventCard(EventItem event, ThemeHelper colors) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
+            color: colors.grey3.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -872,7 +885,7 @@ class ManageContentState extends State<ManageContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s15,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -881,7 +894,7 @@ class ManageContentState extends State<ManageContent> {
                           Icon(
                             Icons.location_on_outlined,
                             size: 14.sp,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                           SizedBox(width: 4.w),
                           Expanded(
@@ -890,7 +903,7 @@ class ManageContentState extends State<ManageContent> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s12,
                                 fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ),
@@ -902,7 +915,7 @@ class ManageContentState extends State<ManageContent> {
                           Icon(
                             Icons.calendar_today,
                             size: 14.sp,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                           SizedBox(width: 4.w),
                           Text(
@@ -910,7 +923,7 @@ class ManageContentState extends State<ManageContent> {
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s12,
                               fontWeight: FontWeightManager.regular,
-                              color: ColorManager.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -919,7 +932,7 @@ class ManageContentState extends State<ManageContent> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: ColorManager.warning.withValues(alpha: 0.1),
+                          color: colors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Row(
@@ -928,7 +941,7 @@ class ManageContentState extends State<ManageContent> {
                             Icon(
                               Icons.person_outline,
                               size: 14.sp,
-                              color: ColorManager.warning,
+                              color: colors.warning,
                             ),
                             SizedBox(width: 4.w),
                             Text(
@@ -936,7 +949,7 @@ class ManageContentState extends State<ManageContent> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s11,
                                 fontWeight: FontWeightManager.medium,
-                                color: ColorManager.warning,
+                                color: colors.warning,
                               ),
                             ),
                           ],
@@ -954,13 +967,14 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showLocationDetails(LocationItem location) {
+    final colors = ThemeHelper.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: colors.cardBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
         padding: EdgeInsets.all(24.w),
@@ -973,7 +987,7 @@ class ManageContentState extends State<ManageContent> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.grey3,
+                  color: colors.grey3,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -1015,7 +1029,7 @@ class ManageContentState extends State<ManageContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s20,
                 fontWeight: FontWeightManager.bold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -1026,7 +1040,7 @@ class ManageContentState extends State<ManageContent> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: ColorManager.warning.withValues(alpha: 0.1),
+                color: colors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
@@ -1035,7 +1049,7 @@ class ManageContentState extends State<ManageContent> {
                   Icon(
                     Icons.person_outline,
                     size: 16.sp,
-                    color: ColorManager.warning,
+                    color: colors.warning,
                   ),
                   SizedBox(width: 6.w),
                   Text(
@@ -1043,7 +1057,7 @@ class ManageContentState extends State<ManageContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.warning,
+                      color: colors.warning,
                     ),
                   ),
                 ],
@@ -1074,7 +1088,7 @@ class ManageContentState extends State<ManageContent> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primary,
+                      backgroundColor: colors.primary,
                       foregroundColor: ColorManager.white,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       elevation: 0,
@@ -1094,22 +1108,22 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.person_add,
                       size: 18.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     label: Text(
                       'Assign DOER',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.white,
-                      foregroundColor: ColorManager.primary,
+                      backgroundColor: colors.cardBackground,
+                      foregroundColor: colors.primary,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       elevation: 0,
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1132,19 +1146,19 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.edit_outlined,
                       size: 18.sp,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     label: Text(
                       'Edit',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1161,19 +1175,19 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.delete_outline,
                       size: 18.sp,
-                      color: ColorManager.error,
+                      color: colors.error,
                     ),
                     label: Text(
                       'Delete',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.error,
+                        color: colors.error,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      side: BorderSide(color: ColorManager.error),
+                      side: BorderSide(color: colors.error),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1190,6 +1204,7 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showAssignDoerModal(LocationItem location) {
+    final colors = ThemeHelper.of(context);
     // Sample available DOERs data
     final List<Map<String, dynamic>> availableDoers = [
       {
@@ -1277,7 +1292,7 @@ class ManageContentState extends State<ManageContent> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: ColorManager.white,
+          backgroundColor: colors.cardBackground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
@@ -1289,7 +1304,7 @@ class ManageContentState extends State<ManageContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s18,
                   fontWeight: FontWeightManager.bold,
-                  color: ColorManager.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
               SizedBox(height: 4.h),
@@ -1298,7 +1313,7 @@ class ManageContentState extends State<ManageContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s13,
                   fontWeight: FontWeightManager.regular,
-                  color: ColorManager.textSecondary,
+                  color: colors.textSecondary,
                 ),
               ),
             ],
@@ -1315,7 +1330,7 @@ class ManageContentState extends State<ManageContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 12.h),
@@ -1323,7 +1338,7 @@ class ManageContentState extends State<ManageContent> {
                 // Dropdown/Select Field
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: ColorManager.grey4),
+                    border: Border.all(color: colors.grey4),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Theme(
@@ -1337,13 +1352,13 @@ class ManageContentState extends State<ManageContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s14,
                           fontWeight: FontWeightManager.medium,
-                          color: selectedDoer != null ? ColorManager.textPrimary : ColorManager.grey3,
+                          color: selectedDoer != null ? colors.textPrimary : colors.grey3,
                         ),
                       ),
                       trailing: Icon(
                         Icons.keyboard_arrow_down,
                         size: 20.sp,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                       children: [
                         Container(
@@ -1365,7 +1380,7 @@ class ManageContentState extends State<ManageContent> {
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                                   color: isSelected
-                                      ? ColorManager.primary.withValues(alpha: 0.05)
+                                      ? colors.primary.withValues(alpha: 0.05)
                                       : Colors.transparent,
                                   child: Row(
                                     children: [
@@ -1379,8 +1394,8 @@ class ManageContentState extends State<ManageContent> {
                                                 fontSize: FontSize.s14,
                                                 fontWeight: FontWeightManager.regular,
                                                 color: isSelected
-                                                    ? ColorManager.primary
-                                                    : ColorManager.textPrimary,
+                                                    ? colors.primary
+                                                    : colors.textPrimary,
                                               ),
                                             ),
                                           ],
@@ -1408,7 +1423,7 @@ class ManageContentState extends State<ManageContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s14,
                   fontWeight: FontWeightManager.semiBold,
-                  color: ColorManager.textSecondary,
+                  color: colors.textSecondary,
                 ),
               ),
             ),
@@ -1427,7 +1442,7 @@ class ManageContentState extends State<ManageContent> {
                                 color: ColorManager.white,
                               ),
                             ),
-                            backgroundColor: ColorManager.success,
+                            backgroundColor: colors.success,
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
@@ -1435,8 +1450,8 @@ class ManageContentState extends State<ManageContent> {
                     }
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: ColorManager.primary,
-                disabledBackgroundColor: ColorManager.grey4,
+                backgroundColor: colors.primary,
+                disabledBackgroundColor: colors.grey4,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
@@ -1460,13 +1475,14 @@ class ManageContentState extends State<ManageContent> {
 
 
   void _showStationDetails(StationItem station) {
+    final colors = ThemeHelper.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: colors.cardBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
         padding: EdgeInsets.all(24.w),
@@ -1479,7 +1495,7 @@ class ManageContentState extends State<ManageContent> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.grey3,
+                  color: colors.grey3,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -1521,7 +1537,7 @@ class ManageContentState extends State<ManageContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s20,
                 fontWeight: FontWeightManager.bold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -1532,7 +1548,7 @@ class ManageContentState extends State<ManageContent> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: ColorManager.warning.withValues(alpha: 0.1),
+                color: colors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
@@ -1541,7 +1557,7 @@ class ManageContentState extends State<ManageContent> {
                   Icon(
                     Icons.person_outline,
                     size: 16.sp,
-                    color: ColorManager.warning,
+                    color: colors.warning,
                   ),
                   SizedBox(width: 6.w),
                   Text(
@@ -1549,7 +1565,7 @@ class ManageContentState extends State<ManageContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.warning,
+                      color: colors.warning,
                     ),
                   ),
                 ],
@@ -1580,7 +1596,7 @@ class ManageContentState extends State<ManageContent> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primary,
+                      backgroundColor: colors.primary,
                       foregroundColor: ColorManager.white,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       elevation: 0,
@@ -1600,22 +1616,22 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.person_add,
                       size: 18.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     label: Text(
                       'Assign DOER',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManager.white,
-                      foregroundColor: ColorManager.primary,
+                      foregroundColor: colors.primary,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       elevation: 0,
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1638,19 +1654,19 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.edit_outlined,
                       size: 18.sp,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     label: Text(
                       'Edit',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1667,19 +1683,19 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.delete_outline,
                       size: 18.sp,
-                      color: ColorManager.error,
+                      color: colors.error,
                     ),
                     label: Text(
                       'Delete',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.error,
+                        color: colors.error,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      side: BorderSide(color: ColorManager.error),
+                      side: BorderSide(color: colors.error),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1696,13 +1712,14 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showManagerDetails(ManagerItem manager) {
+    final colors = ThemeHelper.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: colors.cardBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
         padding: EdgeInsets.all(24.w),
@@ -1715,7 +1732,7 @@ class ManageContentState extends State<ManageContent> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.grey3,
+                  color: colors.grey3,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -1757,7 +1774,7 @@ class ManageContentState extends State<ManageContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s20,
                 fontWeight: FontWeightManager.bold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -1768,7 +1785,7 @@ class ManageContentState extends State<ManageContent> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: ColorManager.warning.withValues(alpha: 0.1),
+                color: colors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
@@ -1777,7 +1794,7 @@ class ManageContentState extends State<ManageContent> {
                   Icon(
                     Icons.person_outline,
                     size: 16.sp,
-                    color: ColorManager.warning,
+                    color: colors.warning,
                   ),
                   SizedBox(width: 6.w),
                   Text(
@@ -1785,7 +1802,7 @@ class ManageContentState extends State<ManageContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.warning,
+                      color: colors.warning,
                     ),
                   ),
                 ],
@@ -1816,7 +1833,7 @@ class ManageContentState extends State<ManageContent> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primary,
+                      backgroundColor: colors.primary,
                       foregroundColor: ColorManager.white,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       elevation: 0,
@@ -1836,22 +1853,22 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.person_add,
                       size: 18.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     label: Text(
                       'Assign DOER',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManager.white,
-                      foregroundColor: ColorManager.primary,
+                      foregroundColor: colors.primary,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       elevation: 0,
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1874,19 +1891,19 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.edit_outlined,
                       size: 18.sp,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     label: Text(
                       'Edit',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1903,19 +1920,19 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.delete_outline,
                       size: 18.sp,
-                      color: ColorManager.error,
+                      color: colors.error,
                     ),
                     label: Text(
                       'Delete',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.error,
+                        color: colors.error,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      side: BorderSide(color: ColorManager.error),
+                      side: BorderSide(color: colors.error),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1932,13 +1949,14 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showEventDetails(EventItem event) {
+    final colors = ThemeHelper.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: colors.cardBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
         padding: EdgeInsets.all(24.w),
@@ -1951,7 +1969,7 @@ class ManageContentState extends State<ManageContent> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.grey3,
+                  color: colors.grey3,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -1993,7 +2011,7 @@ class ManageContentState extends State<ManageContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s20,
                 fontWeight: FontWeightManager.bold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -2004,7 +2022,7 @@ class ManageContentState extends State<ManageContent> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: ColorManager.warning.withValues(alpha: 0.1),
+                color: colors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
@@ -2013,7 +2031,7 @@ class ManageContentState extends State<ManageContent> {
                   Icon(
                     Icons.person_outline,
                     size: 16.sp,
-                    color: ColorManager.warning,
+                    color: colors.warning,
                   ),
                   SizedBox(width: 6.w),
                   Text(
@@ -2021,7 +2039,7 @@ class ManageContentState extends State<ManageContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.warning,
+                      color: colors.warning,
                     ),
                   ),
                 ],
@@ -2052,7 +2070,7 @@ class ManageContentState extends State<ManageContent> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primary,
+                      backgroundColor: colors.primary,
                       foregroundColor: ColorManager.white,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       elevation: 0,
@@ -2072,22 +2090,22 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.person_add,
                       size: 18.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     label: Text(
                       'Assign DOER',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManager.white,
-                      foregroundColor: ColorManager.primary,
+                      foregroundColor: colors.primary,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       elevation: 0,
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -2110,19 +2128,19 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.edit_outlined,
                       size: 18.sp,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     label: Text(
                       'Edit',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -2139,19 +2157,19 @@ class ManageContentState extends State<ManageContent> {
                     icon: Icon(
                       Icons.delete_outline,
                       size: 18.sp,
-                      color: ColorManager.error,
+                      color: colors.error,
                     ),
                     label: Text(
                       'Delete',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.error,
+                        color: colors.error,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      side: BorderSide(color: ColorManager.error),
+                      side: BorderSide(color: colors.error),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -2168,12 +2186,13 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showEditDialog(LocationItem location) {
+    final colors = ThemeHelper.of(context);
     final textController = TextEditingController(text: location.name);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -2182,7 +2201,7 @@ class ManageContentState extends State<ManageContent> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s18,
             fontWeight: FontWeightManager.bold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         content: Column(
@@ -2194,7 +2213,7 @@ class ManageContentState extends State<ManageContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s13,
                 fontWeight: FontWeightManager.regular,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
             SizedBox(height: 16.h),
@@ -2203,7 +2222,7 @@ class ManageContentState extends State<ManageContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             SizedBox(height: 8.h),
@@ -2215,28 +2234,28 @@ class ManageContentState extends State<ManageContent> {
                 hintStyle: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s14,
                   fontWeight: FontWeightManager.regular,
-                  color: ColorManager.grey3,
+                  color: colors.grey3,
                 ),
                 filled: true,
-                fillColor: ColorManager.grey6,
+                fillColor: colors.grey6,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: ColorManager.grey4),
+                  borderSide: BorderSide(color: colors.grey4),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: ColorManager.primary, width: 2),
+                  borderSide: BorderSide(color: colors.primary, width: 2),
                 ),
                 contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               ),
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.regular,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ],
@@ -2249,7 +2268,7 @@ class ManageContentState extends State<ManageContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -2270,7 +2289,7 @@ class ManageContentState extends State<ManageContent> {
                           color: ColorManager.white,
                         ),
                       ),
-                      backgroundColor: ColorManager.success,
+                      backgroundColor: colors.success,
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -2278,7 +2297,7 @@ class ManageContentState extends State<ManageContent> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.primary,
+              backgroundColor: colors.primary,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
@@ -2313,10 +2332,11 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showDeleteConfirmation(LocationItem location) {
+    final colors = ThemeHelper.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -2325,7 +2345,7 @@ class ManageContentState extends State<ManageContent> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s18,
             fontWeight: FontWeightManager.bold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         content: Text(
@@ -2333,7 +2353,7 @@ class ManageContentState extends State<ManageContent> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s14,
             fontWeight: FontWeightManager.regular,
-            color: ColorManager.textSecondary,
+            color: colors.textSecondary,
           ),
         ),
         actions: [
@@ -2344,7 +2364,7 @@ class ManageContentState extends State<ManageContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -2363,14 +2383,14 @@ class ManageContentState extends State<ManageContent> {
                         color: ColorManager.white,
                       ),
                     ),
-                    backgroundColor: ColorManager.error,
+                    backgroundColor: colors.error,
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.error,
+              backgroundColor: colors.error,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
@@ -2391,6 +2411,7 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showAddExternalDoerDialog(LocationItem location) {
+    final colors = ThemeHelper.of(context);
     final nameController = TextEditingController();
     final contactController = TextEditingController();
     String selectedDoerType = 'Regular';
@@ -2399,7 +2420,7 @@ class ManageContentState extends State<ManageContent> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: ColorManager.white,
+          backgroundColor: colors.cardBackground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
@@ -2408,7 +2429,7 @@ class ManageContentState extends State<ManageContent> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s18,
               fontWeight: FontWeightManager.bold,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           content: SingleChildScrollView(
@@ -2421,7 +2442,7 @@ class ManageContentState extends State<ManageContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -2434,7 +2455,7 @@ class ManageContentState extends State<ManageContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -2445,28 +2466,28 @@ class ManageContentState extends State<ManageContent> {
                     hintStyle: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s14,
                       fontWeight: FontWeightManager.regular,
-                      color: ColorManager.grey3,
+                      color: colors.grey3,
                     ),
                     filled: true,
-                    fillColor: ColorManager.grey6,
+                    fillColor: colors.grey6,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
                       borderSide: BorderSide.none,
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(color: ColorManager.grey4),
+                      borderSide: BorderSide(color: colors.grey4),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(color: ColorManager.primary, width: 2),
+                      borderSide: BorderSide(color: colors.primary, width: 2),
                     ),
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                   ),
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -2477,7 +2498,7 @@ class ManageContentState extends State<ManageContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -2489,28 +2510,28 @@ class ManageContentState extends State<ManageContent> {
                     hintStyle: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s14,
                       fontWeight: FontWeightManager.regular,
-                      color: ColorManager.grey3,
+                      color: colors.grey3,
                     ),
                     filled: true,
-                    fillColor: ColorManager.grey6,
+                    fillColor: colors.grey6,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
                       borderSide: BorderSide.none,
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(color: ColorManager.grey4),
+                      borderSide: BorderSide(color: colors.grey4),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(color: ColorManager.primary, width: 2),
+                      borderSide: BorderSide(color: colors.primary, width: 2),
                     ),
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                   ),
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -2521,7 +2542,7 @@ class ManageContentState extends State<ManageContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -2542,10 +2563,10 @@ class ManageContentState extends State<ManageContent> {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                         decoration: BoxDecoration(
-                          color: isSelected ? ColorManager.primary : ColorManager.white,
+                          color: isSelected ? colors.primary : ColorManager.white,
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
-                            color: isSelected ? ColorManager.primary : ColorManager.grey4,
+                            color: isSelected ? colors.primary : colors.grey4,
                             width: isSelected ? 2 : 1,
                           ),
                         ),
@@ -2554,7 +2575,7 @@ class ManageContentState extends State<ManageContent> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s13,
                             fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-                            color: isSelected ? ColorManager.white : ColorManager.textPrimary,
+                            color: isSelected ? ColorManager.white : colors.textPrimary,
                           ),
                         ),
                       ),
@@ -2572,7 +2593,7 @@ class ManageContentState extends State<ManageContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s14,
                   fontWeight: FontWeightManager.semiBold,
-                  color: ColorManager.textSecondary,
+                  color: colors.textSecondary,
                 ),
               ),
             ),
@@ -2591,7 +2612,7 @@ class ManageContentState extends State<ManageContent> {
                             color: ColorManager.white,
                           ),
                         ),
-                        backgroundColor: ColorManager.success,
+                        backgroundColor: colors.success,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
@@ -2599,7 +2620,7 @@ class ManageContentState extends State<ManageContent> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: ColorManager.primary,
+                backgroundColor: colors.primary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
@@ -2631,12 +2652,13 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showEditStationDialog(StationItem station) {
+    final colors = ThemeHelper.of(context);
     final textController = TextEditingController(text: station.name);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -2645,7 +2667,7 @@ class ManageContentState extends State<ManageContent> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s18,
             fontWeight: FontWeightManager.bold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         content: TextField(
@@ -2654,14 +2676,14 @@ class ManageContentState extends State<ManageContent> {
           decoration: InputDecoration(
             hintText: 'Enter station name',
             filled: true,
-            fillColor: ColorManager.grey6,
+            fillColor: colors.grey6,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: ColorManager.primary, width: 2),
+              borderSide: BorderSide(color: colors.primary, width: 2),
             ),
           ),
         ),
@@ -2686,7 +2708,7 @@ class ManageContentState extends State<ManageContent> {
                 });
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Station updated successfully'), backgroundColor: ColorManager.success),
+                  SnackBar(content: Text('Station updated successfully'), backgroundColor: colors.success),
                 );
               }
             },
@@ -2698,10 +2720,11 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showDeleteStationConfirmation(StationItem station) {
+    final colors = ThemeHelper.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         title: Text('Delete Station'),
         content: Text('Are you sure you want to delete "${station.name}"?'),
         actions: [
@@ -2716,10 +2739,10 @@ class ManageContentState extends State<ManageContent> {
               });
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Station deleted successfully'), backgroundColor: ColorManager.error),
+                SnackBar(content: Text('Station deleted successfully'), backgroundColor: colors.error),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: ColorManager.error),
+            style: ElevatedButton.styleFrom(backgroundColor: colors.error),
             child: Text('Delete'),
           ),
         ],
@@ -2737,6 +2760,7 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showEditManagerDialog(ManagerItem manager) {
+    final colors = ThemeHelper.of(context);
     final nameController = TextEditingController(text: manager.name);
     final emailController = TextEditingController(text: manager.email);
     final roleController = TextEditingController(text: manager.role);
@@ -2744,7 +2768,7 @@ class ManageContentState extends State<ManageContent> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -2753,7 +2777,7 @@ class ManageContentState extends State<ManageContent> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s18,
             fontWeight: FontWeightManager.bold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         content: Column(
@@ -2764,7 +2788,7 @@ class ManageContentState extends State<ManageContent> {
               decoration: InputDecoration(
                 labelText: 'Name',
                 filled: true,
-                fillColor: ColorManager.grey6,
+                fillColor: colors.grey6,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
               ),
             ),
@@ -2774,7 +2798,7 @@ class ManageContentState extends State<ManageContent> {
               decoration: InputDecoration(
                 labelText: 'Email',
                 filled: true,
-                fillColor: ColorManager.grey6,
+                fillColor: colors.grey6,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
               ),
             ),
@@ -2784,7 +2808,7 @@ class ManageContentState extends State<ManageContent> {
               decoration: InputDecoration(
                 labelText: 'Role',
                 filled: true,
-                fillColor: ColorManager.grey6,
+                fillColor: colors.grey6,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
               ),
             ),
@@ -2812,7 +2836,7 @@ class ManageContentState extends State<ManageContent> {
                 });
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Manager updated successfully'), backgroundColor: ColorManager.success),
+                  SnackBar(content: Text('Manager updated successfully'), backgroundColor: colors.success),
                 );
               }
             },
@@ -2824,10 +2848,11 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showDeleteManagerConfirmation(ManagerItem manager) {
+    final colors = ThemeHelper.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         title: Text('Delete Manager'),
         content: Text('Are you sure you want to delete "${manager.name}"?'),
         actions: [
@@ -2842,10 +2867,10 @@ class ManageContentState extends State<ManageContent> {
               });
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Manager deleted successfully'), backgroundColor: ColorManager.error),
+                SnackBar(content: Text('Manager deleted successfully'), backgroundColor: colors.error),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: ColorManager.error),
+            style: ElevatedButton.styleFrom(backgroundColor: colors.error),
             child: Text('Delete'),
           ),
         ],
@@ -2863,6 +2888,7 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showEditEventDialog(EventItem event) {
+    final colors = ThemeHelper.of(context);
     final nameController = TextEditingController(text: event.name);
     final dateController = TextEditingController(text: event.dateString);
     final locationController = TextEditingController(text: event.locationName);
@@ -2870,7 +2896,7 @@ class ManageContentState extends State<ManageContent> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -2879,7 +2905,7 @@ class ManageContentState extends State<ManageContent> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s18,
             fontWeight: FontWeightManager.bold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         content: Column(
@@ -2890,7 +2916,7 @@ class ManageContentState extends State<ManageContent> {
               decoration: InputDecoration(
                 labelText: 'Event Name',
                 filled: true,
-                fillColor: ColorManager.grey6,
+                fillColor: colors.grey6,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
               ),
             ),
@@ -2900,7 +2926,7 @@ class ManageContentState extends State<ManageContent> {
               decoration: InputDecoration(
                 labelText: 'Date',
                 filled: true,
-                fillColor: ColorManager.grey6,
+                fillColor: colors.grey6,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
               ),
             ),
@@ -2910,7 +2936,7 @@ class ManageContentState extends State<ManageContent> {
               decoration: InputDecoration(
                 labelText: 'Location',
                 filled: true,
-                fillColor: ColorManager.grey6,
+                fillColor: colors.grey6,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
               ),
             ),
@@ -2938,7 +2964,7 @@ class ManageContentState extends State<ManageContent> {
                 });
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Event updated successfully'), backgroundColor: ColorManager.success),
+                  SnackBar(content: Text('Event updated successfully'), backgroundColor: colors.success),
                 );
               }
             },
@@ -2950,10 +2976,11 @@ class ManageContentState extends State<ManageContent> {
   }
 
   void _showDeleteEventConfirmation(EventItem event) {
+    final colors = ThemeHelper.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         title: Text('Delete Event'),
         content: Text('Are you sure you want to delete "${event.name}"?'),
         actions: [
@@ -2968,10 +2995,10 @@ class ManageContentState extends State<ManageContent> {
               });
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Event deleted successfully'), backgroundColor: ColorManager.error),
+                SnackBar(content: Text('Event deleted successfully'), backgroundColor: colors.error),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: ColorManager.error),
+            style: ElevatedButton.styleFrom(backgroundColor: colors.error),
             child: Text('Delete'),
           ),
         ],

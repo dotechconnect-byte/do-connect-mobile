@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class AssignGroupModal extends StatefulWidget {
   final String currentGroup;
@@ -45,11 +46,12 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.r),
       ),
-      backgroundColor: ColorManager.white,
+      backgroundColor: colors.cardBackground,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.85,
         padding: EdgeInsets.all(20.w),
@@ -66,7 +68,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s18,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 IconButton(
@@ -74,7 +76,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                   icon: Icon(
                     Icons.close,
                     size: 22.sp,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -89,7 +91,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s13,
                 fontWeight: FontWeightManager.regular,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
             SizedBox(height: 20.h),
@@ -100,7 +102,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             SizedBox(height: 12.h),
@@ -108,7 +110,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
             // Group Dropdown
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: InkWell(
@@ -126,13 +128,13 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s14,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       Icon(
                         Icons.keyboard_arrow_down,
                         size: 20.sp,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ],
                   ),
@@ -148,7 +150,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: ColorManager.grey4),
+                      side: BorderSide(color: colors.grey4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -159,7 +161,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ),
@@ -172,7 +174,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primary,
+                      backgroundColor: colors.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -198,9 +200,10 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
   }
 
   void _showGroupPicker() {
+    final colors = ThemeHelper.of(context);
     showModalBottomSheet(
       context: context,
-      backgroundColor: ColorManager.white,
+      backgroundColor: colors.cardBackground,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -214,7 +217,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: ColorManager.grey3,
+                color: colors.grey3,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
@@ -233,7 +236,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                   color: isSelected
-                      ? ColorManager.primary.withValues(alpha: 0.05)
+                      ? colors.primary.withValues(alpha: 0.05)
                       : Colors.transparent,
                   child: Row(
                     children: [
@@ -241,7 +244,7 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                         Icon(
                           Icons.check,
                           size: 20.sp,
-                          color: ColorManager.primary,
+                          color: colors.primary,
                         ),
                       if (isSelected) SizedBox(width: 12.w),
                       Text(
@@ -252,8 +255,8 @@ class _AssignGroupModalState extends State<AssignGroupModal> {
                               ? FontWeightManager.semiBold
                               : FontWeightManager.medium,
                           color: isSelected
-                              ? ColorManager.primary
-                              : ColorManager.textPrimary,
+                              ? colors.primary
+                              : colors.textPrimary,
                         ),
                       ),
                     ],

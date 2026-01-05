@@ -211,7 +211,7 @@ class _ProfileContentState extends State<ProfileContent> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s11,
                             fontWeight: FontWeightManager.regular,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                       ],
@@ -245,7 +245,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
           // Role & Permissions Section
           Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,7 +255,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s16,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -263,7 +263,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -272,9 +272,9 @@ class _ProfileContentState extends State<ProfileContent> {
                 Container(
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(
-                    color: ColorManager.grey6,
+                    color: colors.grey6,
                     borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(color: ColorManager.grey4),
+                    border: Border.all(color: colors.grey4),
                   ),
                   child: Row(
                     children: [
@@ -287,7 +287,7 @@ class _ProfileContentState extends State<ProfileContent> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s11,
                                 fontWeight: FontWeightManager.medium,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                             SizedBox(height: 4.h),
@@ -296,13 +296,13 @@ class _ProfileContentState extends State<ProfileContent> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s15,
                                 fontWeight: FontWeightManager.bold,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.keyboard_arrow_down, size: 20.sp, color: ColorManager.textSecondary),
+                      Icon(Icons.keyboard_arrow_down, size: 20.sp, color: colors.textSecondary),
                     ],
                   ),
                 ),
@@ -314,7 +314,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
 
@@ -326,7 +326,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -338,7 +338,7 @@ class _ProfileContentState extends State<ProfileContent> {
                       Icon(
                         Icons.check_circle,
                         size: 16.sp,
-                        color: const Color(0xFF10B981),
+                        color: colors.success,
                       ),
                       SizedBox(width: 8.w),
                       Expanded(
@@ -347,7 +347,7 @@ class _ProfileContentState extends State<ProfileContent> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s12,
                             fontWeight: FontWeightManager.regular,
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -362,7 +362,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
           // Quick Stats Section
           Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,7 +372,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s16,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -380,7 +380,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildStatCard('Account Type', 'Employer Pro', ColorManager.primary),
+                      child: _buildStatCard('Account Type', 'Employer Pro', colors.primary),
                     ),
                   ],
                 ),
@@ -390,7 +390,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildStatCard('Member Since', 'January 2025', ColorManager.textPrimary),
+                      child: _buildStatCard('Member Since', 'January 2025', colors.textPrimary),
                     ),
                   ],
                 ),
@@ -400,11 +400,11 @@ class _ProfileContentState extends State<ProfileContent> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildStatCard('Total Staff Hired', '47', const Color(0xFF3B82F6)),
+                      child: _buildStatCard('Total Staff Hired', '47', colors.info),
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
-                      child: _buildStatCard('Total Shifts', '324', const Color(0xFF10B981)),
+                      child: _buildStatCard('Total Shifts', '324', colors.success),
                     ),
                   ],
                 ),
@@ -420,7 +420,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, size: 18.sp, color: ColorManager.primary),
+                      Icon(Icons.info_outline, size: 18.sp, color: colors.primary),
                       SizedBox(width: 8.w),
                       Expanded(
                         child: Text(
@@ -428,7 +428,7 @@ class _ProfileContentState extends State<ProfileContent> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s11,
                             fontWeight: FontWeightManager.medium,
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -443,7 +443,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
           // Manager Feedback Summary
           Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,7 +453,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s16,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -461,7 +461,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -475,7 +475,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
           // Notification Settings
           Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,7 +485,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s16,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -493,7 +493,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -543,7 +543,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
           // Security Section
           Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -553,7 +553,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s16,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -591,7 +591,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
           // Contact Support
           Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -601,7 +601,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s16,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -609,7 +609,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -617,7 +617,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 _buildContactOption(
                   Icons.phone_outlined,
                   'WhatsApp',
-                  ColorManager.primary,
+                  colors.primary,
                   () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -631,7 +631,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 _buildContactOption(
                   Icons.chat_bubble_outline,
                   'Chat with Us',
-                  ColorManager.primary,
+                  colors.primary,
                   () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -652,12 +652,13 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Widget _buildInfoBox(String label, String value) {
+    final colors = ThemeHelper.of(context);
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -667,7 +668,7 @@ class _ProfileContentState extends State<ProfileContent> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s11,
               fontWeight: FontWeightManager.medium,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -678,7 +679,7 @@ class _ProfileContentState extends State<ProfileContent> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s13,
               fontWeight: FontWeightManager.semiBold,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -689,12 +690,13 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Widget _buildStatCard(String label, String value, Color color) {
+    final colors = ThemeHelper.of(context);
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
       ),
       child: Row(
         children: [
@@ -704,7 +706,7 @@ class _ProfileContentState extends State<ProfileContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s12,
                 fontWeight: FontWeightManager.medium,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -722,6 +724,7 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Widget _buildFeedbackItem(FeedbackCategory category) {
+    final colors = ThemeHelper.of(context);
     return InkWell(
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -735,7 +738,7 @@ class _ProfileContentState extends State<ProfileContent> {
         padding: EdgeInsets.symmetric(vertical: 12.h),
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: ColorManager.grey4, width: 1),
+            bottom: BorderSide(color: colors.grey4, width: 1),
           ),
         ),
         child: Row(
@@ -744,7 +747,7 @@ class _ProfileContentState extends State<ProfileContent> {
               width: 36.w,
               height: 36.w,
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Center(
@@ -764,7 +767,7 @@ class _ProfileContentState extends State<ProfileContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s14,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -776,7 +779,7 @@ class _ProfileContentState extends State<ProfileContent> {
                               ? Icons.star
                               : (index < category.rating ? Icons.star_half : Icons.star_border),
                           size: 14.sp,
-                          color: const Color(0xFFFFA500),
+                          color: colors.warning,
                         );
                       }),
                       SizedBox(width: 6.w),
@@ -785,7 +788,7 @@ class _ProfileContentState extends State<ProfileContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s11,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                       SizedBox(width: 6.w),
@@ -794,7 +797,7 @@ class _ProfileContentState extends State<ProfileContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s11,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -802,7 +805,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 ],
               ),
             ),
-            Icon(Icons.keyboard_arrow_down, size: 20.sp, color: ColorManager.textSecondary),
+            Icon(Icons.keyboard_arrow_down, size: 20.sp, color: colors.textSecondary),
           ],
         ),
       ),
@@ -816,13 +819,14 @@ class _ProfileContentState extends State<ProfileContent> {
     Function(bool) onChanged, {
     bool isLast = false,
   }) {
+    final colors = ThemeHelper.of(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 12.h),
       decoration: BoxDecoration(
         border: isLast
             ? null
             : Border(
-                bottom: BorderSide(color: ColorManager.grey4, width: 1),
+                bottom: BorderSide(color: colors.grey4, width: 1),
               ),
       ),
       child: Row(
@@ -836,7 +840,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -845,7 +849,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -854,7 +858,7 @@ class _ProfileContentState extends State<ProfileContent> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeTrackColor: ColorManager.primary,
+            activeTrackColor: colors.primary,
             activeThumbColor: ColorManager.white,
           ),
         ],
@@ -863,17 +867,18 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Widget _buildSecurityOption(IconData icon, String title, VoidCallback onTap) {
+    final colors = ThemeHelper.of(context);
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          border: Border.all(color: ColorManager.grey3),
+          border: Border.all(color: colors.grey3),
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 20.sp, color: ColorManager.textPrimary),
+            Icon(icon, size: 20.sp, color: colors.textPrimary),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
@@ -881,11 +886,11 @@ class _ProfileContentState extends State<ProfileContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s14,
                   fontWeight: FontWeightManager.medium,
-                  color: ColorManager.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
             ),
-            Icon(Icons.chevron_right, size: 20.sp, color: ColorManager.textSecondary),
+            Icon(Icons.chevron_right, size: 20.sp, color: colors.textSecondary),
           ],
         ),
       ),
@@ -893,12 +898,13 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 
   Widget _buildContactOption(IconData icon, String title, Color color, VoidCallback onTap) {
+    final colors = ThemeHelper.of(context);
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          border: Border.all(color: ColorManager.grey3),
+          border: Border.all(color: colors.grey3),
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Row(
@@ -911,11 +917,11 @@ class _ProfileContentState extends State<ProfileContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s14,
                   fontWeight: FontWeightManager.semiBold,
-                  color: ColorManager.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
             ),
-            Icon(Icons.chevron_right, size: 20.sp, color: ColorManager.textSecondary),
+            Icon(Icons.chevron_right, size: 20.sp, color: colors.textSecondary),
           ],
         ),
       ),

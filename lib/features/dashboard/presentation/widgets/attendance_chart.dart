@@ -1,20 +1,22 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class AttendanceChart extends StatelessWidget {
   const AttendanceChart({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4, width: 1),
+        border: Border.all(color: colors.grey4, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +26,7 @@ class AttendanceChart extends StatelessWidget {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s16,
               fontWeight: FontWeightManager.semiBold,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           SizedBox(height: 4.h),
@@ -33,7 +35,7 @@ class AttendanceChart extends StatelessWidget {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s12,
               fontWeight: FontWeightManager.regular,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
           ),
           SizedBox(height: 20.h),
@@ -47,7 +49,7 @@ class AttendanceChart extends StatelessWidget {
                   horizontalInterval: 20,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: ColorManager.grey4,
+                      color: colors.grey4,
                       strokeWidth: 1,
                     );
                   },
@@ -64,7 +66,7 @@ class AttendanceChart extends StatelessWidget {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s10,
                             fontWeight: FontWeightManager.regular,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         );
                       },
@@ -89,7 +91,7 @@ class AttendanceChart extends StatelessWidget {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s10,
                                 fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           );
@@ -118,8 +120,8 @@ class AttendanceChart extends StatelessWidget {
                     isCurved: true,
                     gradient: LinearGradient(
                       colors: [
-                        ColorManager.primary,
-                        ColorManager.primaryLight,
+                        colors.primary,
+                        colors.primaryLight,
                       ],
                     ),
                     barWidth: 3,
@@ -129,9 +131,9 @@ class AttendanceChart extends StatelessWidget {
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: 4,
-                          color: ColorManager.primary,
+                          color: colors.primary,
                           strokeWidth: 2,
-                          strokeColor: ColorManager.white,
+                          strokeColor: colors.cardBackground,
                         );
                       },
                     ),
@@ -139,8 +141,8 @@ class AttendanceChart extends StatelessWidget {
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          ColorManager.primary.withValues(alpha: 0.2),
-                          ColorManager.primary.withValues(alpha: 0.0),
+                          colors.primary.withValues(alpha: 0.2),
+                          colors.primary.withValues(alpha: 0.0),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/user_model.dart';
 import 'assign_group_modal.dart';
 import 'availability_modal.dart';
@@ -44,10 +45,11 @@ class _UserDetailModalState extends State<UserDetailModal> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
-        color: ColorManager.backgroundColor,
+        color: colors.background,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24.r),
           topRight: Radius.circular(24.r),
@@ -59,7 +61,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
           Container(
             padding: EdgeInsets.all(20.w),
             decoration: BoxDecoration(
-              color: ColorManager.white,
+              color: colors.cardBackground,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(24.r),
                 topRight: Radius.circular(24.r),
@@ -72,7 +74,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                   width: 40.w,
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: ColorManager.grey3,
+                    color: colors.grey3,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
@@ -87,7 +89,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s20,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ),
@@ -96,7 +98,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                       icon: Icon(
                         Icons.close,
                         size: 24.sp,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -118,9 +120,9 @@ class _UserDetailModalState extends State<UserDetailModal> {
                   Container(
                     padding: EdgeInsets.all(20.w),
                     decoration: BoxDecoration(
-                      color: ColorManager.white,
+                      color: colors.cardBackground,
                       borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(color: ColorManager.grey4),
+                      border: Border.all(color: colors.grey4),
                     ),
                     child: Column(
                       children: [
@@ -132,7 +134,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                             color: Color(int.parse('FF${widget.user.avatarColor}', radix: 16)),
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: ColorManager.grey4.withValues(alpha: 0.3),
+                              color: colors.grey4.withValues(alpha: 0.3),
                               width: 2,
                             ),
                           ),
@@ -142,7 +144,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s36,
                                 fontWeight: FontWeightManager.bold,
-                                color: ColorManager.primary,
+                                color: colors.primary,
                               ),
                             ),
                           ),
@@ -155,7 +157,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s20,
                             fontWeight: FontWeightManager.bold,
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -167,7 +169,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s14,
                             fontWeight: FontWeightManager.regular,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -177,21 +179,21 @@ class _UserDetailModalState extends State<UserDetailModal> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.star, size: 18.sp, color: ColorManager.warning),
+                            Icon(Icons.star, size: 18.sp, color: colors.warning),
                             SizedBox(width: 6.w),
                             Text(
                               '${_currentUser.rating}',
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s16,
                                 fontWeight: FontWeightManager.bold,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                             SizedBox(width: 16.w),
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
                               decoration: BoxDecoration(
-                                color: ColorManager.primary.withValues(alpha: 0.1),
+                                color: colors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Text(
@@ -199,7 +201,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                                 style: FontConstants.getPoppinsStyle(
                                   fontSize: FontSize.s13,
                                   fontWeight: FontWeightManager.semiBold,
-                                  color: ColorManager.primary,
+                                  color: colors.primary,
                                 ),
                               ),
                             ),
@@ -213,7 +215,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                             spacing: 8.w,
                             runSpacing: 8.h,
                             alignment: WrapAlignment.center,
-                            children: _currentUser.tags.map((tag) => _buildTag(tag)).toList(),
+                            children: _currentUser.tags.map((tag) => _buildTag(tag, colors: colors)).toList(),
                           ),
                       ],
                     ),
@@ -229,7 +231,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                         child: _buildPrimaryActionButton(
                           icon: Icons.phone,
                           label: 'Call',
-                          color: ColorManager.success,
+                          color: colors.success,
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -241,7 +243,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                                     color: ColorManager.white,
                                   ),
                                 ),
-                                backgroundColor: ColorManager.success,
+                                backgroundColor: colors.success,
                                 duration: const Duration(seconds: 2),
                               ),
                             );
@@ -254,7 +256,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                         child: _buildPrimaryActionButton(
                           icon: Icons.calendar_today,
                           label: 'Availability',
-                          color: ColorManager.info,
+                          color: colors.info,
                           onTap: () {
                             showModalBottomSheet(
                               context: context,
@@ -276,7 +278,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                     child: _buildPrimaryActionButton(
                       icon: _currentUser.isLoved ? Icons.favorite : Icons.favorite_border,
                       label: _currentUser.isLoved ? 'Liked' : 'Like',
-                      color: _currentUser.isLoved ? ColorManager.error : ColorManager.grey3,
+                      color: _currentUser.isLoved ? colors.error : colors.grey3,
                       onTap: () {
                         setState(() {
                           _currentUser = _currentUser.copyWith(isLoved: !_currentUser.isLoved);
@@ -322,9 +324,9 @@ class _UserDetailModalState extends State<UserDetailModal> {
                   Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
-                      color: ColorManager.white,
+                      color: colors.cardBackground,
                       borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(color: ColorManager.grey4),
+                      border: Border.all(color: colors.grey4),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,22 +336,22 @@ class _UserDetailModalState extends State<UserDetailModal> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s16,
                             fontWeight: FontWeightManager.bold,
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         SizedBox(height: 16.h),
-                        _buildDetailRow('Role', _currentUser.role),
+                        _buildDetailRow('Role', _currentUser.role, colors: colors),
                         if (_currentUser.group != null) ...[
                           SizedBox(height: 12.h),
-                          Divider(color: ColorManager.grey4, height: 1),
+                          Divider(color: colors.grey4, height: 1),
                           SizedBox(height: 12.h),
-                          _buildDetailRow('Group', _currentUser.group!),
+                          _buildDetailRow('Group', _currentUser.group!, colors: colors),
                         ],
                         if (_currentUser.availabilityStatus != null) ...[
                           SizedBox(height: 12.h),
-                          Divider(color: ColorManager.grey4, height: 1),
+                          Divider(color: colors.grey4, height: 1),
                           SizedBox(height: 12.h),
-                          _buildDetailRow('Status', _currentUser.availabilityStatus!),
+                          _buildDetailRow('Status', _currentUser.availabilityStatus!, colors: colors),
                         ],
                       ],
                     ),
@@ -401,7 +403,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                                       color: ColorManager.white,
                                     ),
                                   ),
-                                  backgroundColor: ColorManager.success,
+                                  backgroundColor: colors.success,
                                   behavior: SnackBarBehavior.floating,
                                   duration: const Duration(seconds: 2),
                                   shape: RoundedRectangleBorder(
@@ -427,7 +429,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorManager.primary,
+                        backgroundColor: colors.primary,
                         padding: EdgeInsets.symmetric(vertical: 14.h),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
@@ -443,9 +445,9 @@ class _UserDetailModalState extends State<UserDetailModal> {
                   Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
-                      color: ColorManager.white,
+                      color: colors.cardBackground,
                       borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(color: ColorManager.grey4),
+                      border: Border.all(color: colors.grey4),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -458,7 +460,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s16,
                                 fontWeight: FontWeightManager.bold,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                             InkWell(
@@ -477,7 +479,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
                                             color: ColorManager.white,
                                           ),
                                         ),
-                                        backgroundColor: ColorManager.success,
+                                        backgroundColor: colors.success,
                                         duration: const Duration(seconds: 1),
                                       ),
                                     );
@@ -489,16 +491,16 @@ class _UserDetailModalState extends State<UserDetailModal> {
                                 padding: EdgeInsets.all(8.w),
                                 decoration: BoxDecoration(
                                   color: _isEditingComments
-                                      ? ColorManager.success.withValues(alpha: 0.1)
-                                      : ColorManager.primary.withValues(alpha: 0.1),
+                                      ? colors.success.withValues(alpha: 0.1)
+                                      : colors.primary.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8.r),
                                 ),
                                 child: Icon(
                                   _isEditingComments ? Icons.check : Icons.edit,
                                   size: 18.sp,
                                   color: _isEditingComments
-                                      ? ColorManager.success
-                                      : ColorManager.primary,
+                                      ? colors.success
+                                      : colors.primary,
                                 ),
                               ),
                             ),
@@ -514,26 +516,26 @@ class _UserDetailModalState extends State<UserDetailModal> {
                                   hintStyle: FontConstants.getPoppinsStyle(
                                     fontSize: FontSize.s13,
                                     fontWeight: FontWeightManager.regular,
-                                    color: ColorManager.textSecondary,
+                                    color: colors.textSecondary,
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12.r),
-                                    borderSide: BorderSide(color: ColorManager.grey4),
+                                    borderSide: BorderSide(color: colors.grey4),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12.r),
-                                    borderSide: BorderSide(color: ColorManager.grey4),
+                                    borderSide: BorderSide(color: colors.grey4),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12.r),
-                                    borderSide: BorderSide(color: ColorManager.primary),
+                                    borderSide: BorderSide(color: colors.primary),
                                   ),
                                   contentPadding: EdgeInsets.all(12.w),
                                 ),
                                 style: FontConstants.getPoppinsStyle(
                                   fontSize: FontSize.s13,
                                   fontWeight: FontWeightManager.regular,
-                                  color: ColorManager.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               )
                             : Text(
@@ -544,8 +546,8 @@ class _UserDetailModalState extends State<UserDetailModal> {
                                   fontSize: FontSize.s13,
                                   fontWeight: FontWeightManager.regular,
                                   color: _commentsController.text.isEmpty
-                                      ? ColorManager.textSecondary
-                                      : ColorManager.textPrimary,
+                                      ? colors.textSecondary
+                                      : colors.textPrimary,
                                 ),
                               ),
                       ],
@@ -562,7 +564,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
     );
   }
 
-  Widget _buildTag(String tag) {
+  Widget _buildTag(String tag, {required ThemeHelper colors}) {
     Color backgroundColor;
     Color textColor;
     String displayText;
@@ -570,23 +572,23 @@ class _UserDetailModalState extends State<UserDetailModal> {
     switch (tag.toLowerCase()) {
       case 'favourite':
       case 'favorite':
-        backgroundColor = ColorManager.error.withValues(alpha: 0.1);
-        textColor = ColorManager.error;
+        backgroundColor = colors.error.withValues(alpha: 0.1);
+        textColor = colors.error;
         displayText = 'favourite';
         break;
       case 'priority':
-        backgroundColor = ColorManager.warning.withValues(alpha: 0.1);
-        textColor = ColorManager.warning;
+        backgroundColor = colors.warning.withValues(alpha: 0.1);
+        textColor = colors.warning;
         displayText = 'priority';
         break;
       case 'regular':
-        backgroundColor = ColorManager.info.withValues(alpha: 0.1);
-        textColor = ColorManager.info;
+        backgroundColor = colors.info.withValues(alpha: 0.1);
+        textColor = colors.info;
         displayText = 'regular';
         break;
       default:
-        backgroundColor = ColorManager.grey5;
-        textColor = ColorManager.textSecondary;
+        backgroundColor = colors.grey5;
+        textColor = colors.textSecondary;
         displayText = tag;
     }
 
@@ -646,7 +648,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(String label, String value, {required ThemeHelper colors}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -655,7 +657,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s13,
             fontWeight: FontWeightManager.regular,
-            color: ColorManager.textSecondary,
+            color: colors.textSecondary,
           ),
         ),
         Flexible(
@@ -664,7 +666,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s14,
               fontWeight: FontWeightManager.semiBold,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
             textAlign: TextAlign.right,
           ),

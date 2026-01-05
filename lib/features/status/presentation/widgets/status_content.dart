@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/doer_status_model.dart';
 import 'doer_status_card.dart';
 
@@ -94,6 +95,7 @@ class _StatusContentState extends State<StatusContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     final filteredDoers = _filteredDoers;
 
     return Column(
@@ -104,7 +106,7 @@ class _StatusContentState extends State<StatusContent> {
         // Time Slot Filter Tabs
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          color: ColorManager.backgroundColor,
+          color: colors.background,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -128,7 +130,7 @@ class _StatusContentState extends State<StatusContent> {
         if (widget.searchQuery.isNotEmpty)
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            color: ColorManager.backgroundColor,
+            color: colors.background,
             child: Row(
               children: [
                 Expanded(
@@ -137,7 +139,7 @@ class _StatusContentState extends State<StatusContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -155,7 +157,7 @@ class _StatusContentState extends State<StatusContent> {
                       Icon(
                         Icons.search_off,
                         size: 64.sp,
-                        color: ColorManager.grey3,
+                        color: colors.grey3,
                       ),
                       SizedBox(height: 16.h),
                       Text(
@@ -163,7 +165,7 @@ class _StatusContentState extends State<StatusContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s16,
                           fontWeight: FontWeightManager.semiBold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 8.h),
@@ -172,7 +174,7 @@ class _StatusContentState extends State<StatusContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -211,8 +213,10 @@ class _StatusContentState extends State<StatusContent> {
   }
 
   Widget _buildDateFilter() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
-      color: ColorManager.white,
+      color: colors.cardBackground,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
@@ -227,14 +231,14 @@ class _StatusContentState extends State<StatusContent> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 20.sp,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -250,13 +254,23 @@ class _StatusContentState extends State<StatusContent> {
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2030),
                   builder: (context, child) {
+                    final pickerColors = ThemeHelper.of(context);
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
                     return Theme(
                       data: Theme.of(context).copyWith(
-                        colorScheme: ColorScheme.light(
-                          primary: ColorManager.primary,
-                          onPrimary: ColorManager.white,
-                          surface: ColorManager.white,
-                        ),
+                        colorScheme: isDark
+                            ? ColorScheme.dark(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              )
+                            : ColorScheme.light(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              ),
                       ),
                       child: child!,
                     );
@@ -272,9 +286,9 @@ class _StatusContentState extends State<StatusContent> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: ColorManager.primary),
+                  border: Border.all(color: colors.primary),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -282,7 +296,7 @@ class _StatusContentState extends State<StatusContent> {
                     Icon(
                       Icons.calendar_today,
                       size: 18.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     SizedBox(width: 8.w),
                     Text(
@@ -290,7 +304,7 @@ class _StatusContentState extends State<StatusContent> {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                   ],
@@ -311,14 +325,14 @@ class _StatusContentState extends State<StatusContent> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: Icon(
                 Icons.chevron_right,
                 size: 20.sp,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -377,6 +391,7 @@ class _StatusContentState extends State<StatusContent> {
   }
 
   Widget _buildTimeSlotTab(String label, String? timeSlot) {
+    final colors = ThemeHelper.of(context);
     final isSelected = _selectedTimeSlot == timeSlot;
     final count = timeSlot == null
         ? _doers.length
@@ -391,10 +406,10 @@ class _StatusContentState extends State<StatusContent> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.white : Colors.transparent,
+          color: isSelected ? colors.cardBackground : Colors.transparent,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: isSelected ? ColorManager.primary : ColorManager.grey3,
+            color: isSelected ? colors.primary : colors.grey3,
             width: 1,
           ),
         ),
@@ -404,7 +419,7 @@ class _StatusContentState extends State<StatusContent> {
             Icon(
               Icons.access_time,
               size: 14.sp,
-              color: isSelected ? ColorManager.primary : ColorManager.textSecondary,
+              color: isSelected ? colors.primary : colors.textSecondary,
             ),
             SizedBox(width: 6.w),
             Text(
@@ -412,7 +427,7 @@ class _StatusContentState extends State<StatusContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s12,
                 fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-                color: isSelected ? ColorManager.primary : ColorManager.textSecondary,
+                color: isSelected ? colors.primary : colors.textSecondary,
               ),
             ),
             if (count > 0) ...[
@@ -420,7 +435,7 @@ class _StatusContentState extends State<StatusContent> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                 decoration: BoxDecoration(
-                  color: isSelected ? ColorManager.primary : ColorManager.grey4,
+                  color: isSelected ? colors.primary : colors.grey4,
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: Text(
@@ -428,7 +443,7 @@ class _StatusContentState extends State<StatusContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s10,
                     fontWeight: FontWeightManager.semiBold,
-                    color: isSelected ? ColorManager.white : ColorManager.textSecondary,
+                    color: isSelected ? ColorManager.white : colors.textSecondary,
                   ),
                 ),
               ),

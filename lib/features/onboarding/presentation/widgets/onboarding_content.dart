@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/onboarding_model.dart';
 import 'feature_item.dart';
 
@@ -17,6 +17,7 @@ class OnboardingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -38,13 +39,13 @@ class OnboardingContent extends StatelessWidget {
                   width: 80.w,
                   height: 80.w,
                   decoration: BoxDecoration(
-                    color: ColorManager.onboardingIconBg,
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Icon(
                     model.icon,
                     size: 40.sp,
-                    color: ColorManager.onboardingIconColor,
+                    color: colors.primary,
                   ),
                 ),
               ),
@@ -66,7 +67,7 @@ class OnboardingContent extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s32,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                     height: 1.3,
                   ),
                 ),
@@ -89,7 +90,7 @@ class OnboardingContent extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s16,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                     height: 1.5,
                   ),
                 ),

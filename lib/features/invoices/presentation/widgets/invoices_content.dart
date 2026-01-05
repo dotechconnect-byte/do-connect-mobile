@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/invoice_model.dart';
 import 'invoice_details_modal.dart';
 
@@ -122,6 +123,8 @@ class _InvoicesContentState extends State<InvoicesContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -132,8 +135,8 @@ class _InvoicesContentState extends State<InvoicesContent> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  ColorManager.primary,
-                  ColorManager.primaryDark,
+                  colors.primary,
+                  colors.primaryDark,
                 ],
               ),
             ),
@@ -145,7 +148,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
                   width: double.infinity,
                   padding: EdgeInsets.all(20.w),
                   decoration: BoxDecoration(
-                    color: ColorManager.white.withValues(alpha: 0.95),
+                    color: colors.cardBackground.withValues(alpha: 0.95),
                     borderRadius: BorderRadius.circular(16.r),
                     boxShadow: [
                       BoxShadow(
@@ -162,13 +165,13 @@ class _InvoicesContentState extends State<InvoicesContent> {
                           Container(
                             padding: EdgeInsets.all(10.w),
                             decoration: BoxDecoration(
-                              color: ColorManager.primary.withValues(alpha: 0.1),
+                              color: colors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                             child: Icon(
                               Icons.account_balance_wallet,
                               size: 24.sp,
-                              color: ColorManager.primary,
+                              color: colors.primary,
                             ),
                           ),
                           SizedBox(width: 12.w),
@@ -180,7 +183,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
                                 style: FontConstants.getPoppinsStyle(
                                   fontSize: FontSize.s13,
                                   fontWeight: FontWeightManager.medium,
-                                  color: ColorManager.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                               Text(
@@ -188,7 +191,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
                                 style: FontConstants.getPoppinsStyle(
                                   fontSize: FontSize.s28,
                                   fontWeight: FontWeightManager.bold,
-                                  color: ColorManager.primary,
+                                  color: colors.primary,
                                 ),
                               ),
                             ],
@@ -241,7 +244,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s18,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -249,7 +252,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.medium,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -282,10 +285,12 @@ class _InvoicesContentState extends State<InvoicesContent> {
     required IconData icon,
     required Color color,
   }) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white.withValues(alpha: 0.95),
+        color: colors.cardBackground.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -312,7 +317,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s11,
               fontWeight: FontWeightManager.medium,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
           ),
           SizedBox(height: 4.h),
@@ -321,7 +326,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s18,
               fontWeight: FontWeightManager.bold,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           SizedBox(height: 2.h),
@@ -330,7 +335,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s10,
               fontWeight: FontWeightManager.regular,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
           ),
         ],
@@ -339,11 +344,13 @@ class _InvoicesContentState extends State<InvoicesContent> {
   }
 
   Widget _buildModernInvoiceCard(InvoiceModel invoice) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
         boxShadow: [
           BoxShadow(
             color: ColorManager.black.withValues(alpha: 0.04),
@@ -373,7 +380,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s15,
                               fontWeight: FontWeightManager.bold,
-                              color: ColorManager.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                           SizedBox(width: 10.w),
@@ -386,7 +393,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s18,
                         fontWeight: FontWeightManager.bold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                   ],
@@ -396,14 +403,14 @@ class _InvoicesContentState extends State<InvoicesContent> {
                 // Details Row
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, size: 14.sp, color: ColorManager.textSecondary),
+                    Icon(Icons.calendar_today, size: 14.sp, color: colors.textSecondary),
                     SizedBox(width: 6.w),
                     Text(
                       invoice.period,
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
                         fontWeight: FontWeightManager.regular,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -411,25 +418,25 @@ class _InvoicesContentState extends State<InvoicesContent> {
                 SizedBox(height: 8.h),
                 Row(
                   children: [
-                    Icon(Icons.people_outline, size: 14.sp, color: ColorManager.textSecondary),
+                    Icon(Icons.people_outline, size: 14.sp, color: colors.textSecondary),
                     SizedBox(width: 6.w),
                     Text(
                       '${invoice.staffCount} DOER',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
                         fontWeight: FontWeightManager.regular,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                     SizedBox(width: 16.w),
-                    Icon(Icons.access_time, size: 14.sp, color: ColorManager.textSecondary),
+                    Icon(Icons.access_time, size: 14.sp, color: colors.textSecondary),
                     SizedBox(width: 6.w),
                     Text(
                       invoice.totalHours,
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
                         fontWeight: FontWeightManager.regular,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -437,7 +444,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
                 SizedBox(height: 12.h),
 
                 // Divider
-                Divider(color: ColorManager.grey4, height: 1),
+                Divider(color: colors.grey4, height: 1),
                 SizedBox(height: 12.h),
 
                 // Action Buttons Row
@@ -476,6 +483,8 @@ class _InvoicesContentState extends State<InvoicesContent> {
     required VoidCallback onTap,
     required bool isPrimary,
   }) {
+    final colors = ThemeHelper.of(context);
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10.r),
@@ -483,11 +492,11 @@ class _InvoicesContentState extends State<InvoicesContent> {
         padding: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
           color: isPrimary
-              ? ColorManager.primary.withValues(alpha: 0.1)
-              : ColorManager.grey5,
+              ? colors.primary.withValues(alpha: 0.1)
+              : colors.grey5,
           borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
-            color: isPrimary ? ColorManager.primary : ColorManager.grey4,
+            color: isPrimary ? colors.primary : colors.grey4,
           ),
         ),
         child: Row(
@@ -496,7 +505,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
             Icon(
               icon,
               size: 16.sp,
-              color: isPrimary ? ColorManager.primary : ColorManager.textSecondary,
+              color: isPrimary ? colors.primary : colors.textSecondary,
             ),
             SizedBox(width: 6.w),
             Text(
@@ -504,7 +513,7 @@ class _InvoicesContentState extends State<InvoicesContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s12,
                 fontWeight: FontWeightManager.semiBold,
-                color: isPrimary ? ColorManager.primary : ColorManager.textSecondary,
+                color: isPrimary ? colors.primary : colors.textSecondary,
               ),
             ),
           ],
@@ -556,24 +565,25 @@ class _InvoicesContentState extends State<InvoicesContent> {
   }
 
   Widget _buildStatusBadge(InvoiceStatus status) {
+    final colors = ThemeHelper.of(context);
     Color backgroundColor;
     Color textColor;
     String text;
 
     switch (status) {
       case InvoiceStatus.pending:
-        backgroundColor = ColorManager.warning.withValues(alpha: 0.1);
-        textColor = ColorManager.warning;
+        backgroundColor = colors.warning.withValues(alpha: 0.1);
+        textColor = colors.warning;
         text = 'pending';
         break;
       case InvoiceStatus.paid:
-        backgroundColor = ColorManager.success.withValues(alpha: 0.1);
-        textColor = ColorManager.success;
+        backgroundColor = colors.success.withValues(alpha: 0.1);
+        textColor = colors.success;
         text = 'paid';
         break;
       case InvoiceStatus.overdue:
-        backgroundColor = ColorManager.error.withValues(alpha: 0.1);
-        textColor = ColorManager.error;
+        backgroundColor = colors.error.withValues(alpha: 0.1);
+        textColor = colors.error;
         text = 'overdue';
         break;
     }

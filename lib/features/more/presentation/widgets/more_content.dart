@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/navigation_service.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../../../core/providers/theme_provider.dart';
 import '../../../invoices/presentation/pages/invoices_screen.dart';
 import '../../../groups/presentation/pages/groups_screen.dart';
@@ -22,12 +22,7 @@ class _MoreContentState extends State<MoreContent> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-
-    // Determine colors based on theme
-    final cardColor = isDarkMode ? ColorManager.darkCardBackground : ColorManager.white;
-    final textPrimaryColor = isDarkMode ? ColorManager.darkTextPrimary : ColorManager.textPrimary;
-    final textSecondaryColor = isDarkMode ? ColorManager.darkTextSecondary : ColorManager.textSecondary;
-    final borderColor = isDarkMode ? ColorManager.darkGrey5 : ColorManager.grey5;
+    final colors = ThemeHelper.of(context);
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
@@ -35,18 +30,18 @@ class _MoreContentState extends State<MoreContent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Main Options Section
-          _buildSectionTitle('Main Options', textSecondaryColor),
+          _buildSectionTitle('Main Options', colors.textSecondary),
           SizedBox(height: 12.h),
           _buildOptionCard(
             context,
             icon: Icons.receipt_long,
-            iconColor: ColorManager.primary,
+            iconColor: colors.primary,
             title: 'Invoices',
             subtitle: 'Manage invoices and billing',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () async {
               final result = await Navigator.push(
                 context,
@@ -68,13 +63,13 @@ class _MoreContentState extends State<MoreContent> {
           _buildOptionCard(
             context,
             icon: Icons.group,
-            iconColor: ColorManager.success,
+            iconColor: colors.success,
             title: 'Groups & Users',
             subtitle: 'Manage user groups and permissions',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               Navigator.push(
                 context,
@@ -88,13 +83,13 @@ class _MoreContentState extends State<MoreContent> {
           _buildOptionCard(
             context,
             icon: Icons.manage_accounts,
-            iconColor: ColorManager.info,
+            iconColor: colors.info,
             title: 'Manage',
             subtitle: 'System settings and configuration',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               Navigator.push(
                 context,
@@ -111,10 +106,10 @@ class _MoreContentState extends State<MoreContent> {
             iconColor: const Color(0xFFFF6B00),
             title: 'Transport Management',
             subtitle: 'Zone-based staff assignment with drag-and-drop',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               Navigator.push(
                 context,
@@ -137,18 +132,18 @@ class _MoreContentState extends State<MoreContent> {
           SizedBox(height: 24.h),
 
           // Additional Options Section
-          _buildSectionTitle('Additional', textSecondaryColor),
+          _buildSectionTitle('Additional', colors.textSecondary),
           SizedBox(height: 12.h),
           _buildOptionCard(
             context,
             icon: Icons.work_outline,
-            iconColor: ColorManager.primary,
+            iconColor: colors.primary,
             title: 'Full Time Jobs',
             subtitle: 'View and manage full-time positions',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               // Navigate to Full Time Jobs screen
             },
@@ -157,13 +152,13 @@ class _MoreContentState extends State<MoreContent> {
           _buildOptionCard(
             context,
             icon: Icons.smart_toy_outlined,
-            iconColor: ColorManager.primaryDark,
+            iconColor: colors.primaryDark,
             title: 'AI Chat',
             subtitle: 'AI-powered assistance and support',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               // Navigate to AI Chat screen
             },
@@ -172,13 +167,13 @@ class _MoreContentState extends State<MoreContent> {
           _buildOptionCard(
             context,
             icon: Icons.help_outline,
-            iconColor: ColorManager.info,
+            iconColor: colors.info,
             title: 'DO Assist AI',
             subtitle: 'Smart AI assistance for your tasks',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               // Navigate to DO Assist AI screen
             },
@@ -187,30 +182,27 @@ class _MoreContentState extends State<MoreContent> {
           SizedBox(height: 24.h),
 
           // Settings Section
-          _buildSectionTitle('Settings', textSecondaryColor),
+          _buildSectionTitle('Settings', colors.textSecondary),
           SizedBox(height: 12.h),
 
           // Dark Mode Toggle
           _buildDarkModeToggle(
             themeProvider,
             isDarkMode,
-            cardColor,
-            textPrimaryColor,
-            textSecondaryColor,
-            borderColor,
+            colors,
           ),
 
           SizedBox(height: 12.h),
           _buildOptionCard(
             context,
             icon: Icons.notifications_outlined,
-            iconColor: ColorManager.warning,
+            iconColor: colors.warning,
             title: 'Notifications',
             subtitle: 'Manage notification preferences',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               // Navigate to Notifications settings
             },
@@ -219,13 +211,13 @@ class _MoreContentState extends State<MoreContent> {
           _buildOptionCard(
             context,
             icon: Icons.settings_outlined,
-            iconColor: textSecondaryColor,
+            iconColor: colors.textSecondary,
             title: 'Settings',
             subtitle: 'App settings and preferences',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               // Navigate to Settings screen
             },
@@ -234,16 +226,16 @@ class _MoreContentState extends State<MoreContent> {
           _buildOptionCard(
             context,
             icon: Icons.logout,
-            iconColor: ColorManager.error,
+            iconColor: colors.error,
             title: 'Logout',
             subtitle: 'Sign out of your account',
-            cardColor: cardColor,
-            textPrimaryColor: textPrimaryColor,
-            textSecondaryColor: textSecondaryColor,
-            borderColor: borderColor,
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
             onTap: () {
               // Handle logout
-              _showLogoutDialog(context, cardColor, textPrimaryColor, textSecondaryColor);
+              _showLogoutDialog(context, colors);
             },
           ),
 
@@ -267,17 +259,14 @@ class _MoreContentState extends State<MoreContent> {
   Widget _buildDarkModeToggle(
     ThemeProvider themeProvider,
     bool isDarkMode,
-    Color cardColor,
-    Color textPrimaryColor,
-    Color textSecondaryColor,
-    Color borderColor,
+    ThemeHelper colors,
   ) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: cardColor,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: borderColor),
+        border: Border.all(color: colors.grey5),
       ),
       child: Row(
         children: [
@@ -286,13 +275,13 @@ class _MoreContentState extends State<MoreContent> {
             width: 48.w,
             height: 48.w,
             decoration: BoxDecoration(
-              color: (isDarkMode ? ColorManager.darkPrimary : ColorManager.primary).withValues(alpha: 0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               isDarkMode ? Icons.dark_mode : Icons.light_mode,
               size: 24.sp,
-              color: isDarkMode ? ColorManager.darkPrimary : ColorManager.primary,
+              color: colors.primary,
             ),
           ),
           SizedBox(width: 16.w),
@@ -307,7 +296,7 @@ class _MoreContentState extends State<MoreContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s15,
                     fontWeight: FontWeightManager.semiBold,
-                    color: textPrimaryColor,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 4.h),
@@ -316,7 +305,7 @@ class _MoreContentState extends State<MoreContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: textSecondaryColor,
+                    color: colors.textSecondary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -331,8 +320,8 @@ class _MoreContentState extends State<MoreContent> {
             onChanged: (value) {
               themeProvider.toggleTheme();
             },
-            activeThumbColor: ColorManager.darkPrimary,
-            activeTrackColor: ColorManager.darkPrimary.withValues(alpha: 0.5),
+            activeThumbColor: colors.primary,
+            activeTrackColor: colors.primary.withValues(alpha: 0.5),
           ),
         ],
       ),
@@ -421,14 +410,12 @@ class _MoreContentState extends State<MoreContent> {
 
   void _showLogoutDialog(
     BuildContext context,
-    Color cardColor,
-    Color textPrimaryColor,
-    Color textSecondaryColor,
+    ThemeHelper colors,
   ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: cardColor,
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -437,7 +424,7 @@ class _MoreContentState extends State<MoreContent> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s18,
             fontWeight: FontWeightManager.semiBold,
-            color: textPrimaryColor,
+            color: colors.textPrimary,
           ),
         ),
         content: Text(
@@ -445,7 +432,7 @@ class _MoreContentState extends State<MoreContent> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s14,
             fontWeight: FontWeightManager.regular,
-            color: textSecondaryColor,
+            color: colors.textSecondary,
           ),
         ),
         actions: [
@@ -456,7 +443,7 @@ class _MoreContentState extends State<MoreContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.medium,
-                color: textSecondaryColor,
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -470,7 +457,7 @@ class _MoreContentState extends State<MoreContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.error,
+                color: colors.error,
               ),
             ),
           ),

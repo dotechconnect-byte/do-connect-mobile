@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/transport_staff_model.dart';
 import 'transport_staff_card.dart';
 
@@ -153,6 +154,7 @@ class _TransportContentState extends State<TransportContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     final filteredStaff = _filteredStaff;
 
     return CustomScrollView(
@@ -171,7 +173,7 @@ class _TransportContentState extends State<TransportContent> {
         SliverToBoxAdapter(
           child: Container(
             padding: EdgeInsets.all(16.w),
-            color: ColorManager.backgroundColor,
+            color: colors.background,
             child: Row(
               children: [
                 Expanded(
@@ -179,7 +181,7 @@ class _TransportContentState extends State<TransportContent> {
                     'Total Staff',
                     _totalStaff.toString(),
                     Icons.people,
-                    ColorManager.primary,
+                    colors.primary,
                     '$_externalStaff external',
                   ),
                 ),
@@ -201,7 +203,7 @@ class _TransportContentState extends State<TransportContent> {
         // Staff Section Header
         SliverToBoxAdapter(
           child: Container(
-            color: ColorManager.backgroundColor,
+            color: colors.background,
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             child: Row(
               children: [
@@ -214,7 +216,7 @@ class _TransportContentState extends State<TransportContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s18,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -223,7 +225,7 @@ class _TransportContentState extends State<TransportContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s12,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -238,7 +240,7 @@ class _TransportContentState extends State<TransportContent> {
         filteredStaff.isEmpty
             ? SliverFillRemaining(
                 child: Container(
-                  color: ColorManager.backgroundColor,
+                  color: colors.background,
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -246,7 +248,7 @@ class _TransportContentState extends State<TransportContent> {
                         Icon(
                           Icons.search_off,
                           size: 64.sp,
-                          color: ColorManager.grey3,
+                          color: colors.grey3,
                         ),
                         SizedBox(height: 16.h),
                         Text(
@@ -254,7 +256,7 @@ class _TransportContentState extends State<TransportContent> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s16,
                             fontWeight: FontWeightManager.semiBold,
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         SizedBox(height: 8.h),
@@ -263,7 +265,7 @@ class _TransportContentState extends State<TransportContent> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s13,
                             fontWeight: FontWeightManager.regular,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                       ],
@@ -290,8 +292,10 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   Widget _buildDateFilter() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
-      color: ColorManager.white,
+      color: colors.cardBackground,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
@@ -306,14 +310,14 @@ class _TransportContentState extends State<TransportContent> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 20.sp,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -329,13 +333,23 @@ class _TransportContentState extends State<TransportContent> {
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2030),
                   builder: (context, child) {
+                    final pickerColors = ThemeHelper.of(context);
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
                     return Theme(
                       data: Theme.of(context).copyWith(
-                        colorScheme: ColorScheme.light(
-                          primary: ColorManager.primary,
-                          onPrimary: ColorManager.white,
-                          surface: ColorManager.white,
-                        ),
+                        colorScheme: isDark
+                            ? ColorScheme.dark(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              )
+                            : ColorScheme.light(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              ),
                       ),
                       child: child!,
                     );
@@ -351,9 +365,9 @@ class _TransportContentState extends State<TransportContent> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: ColorManager.primary),
+                  border: Border.all(color: colors.primary),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -361,7 +375,7 @@ class _TransportContentState extends State<TransportContent> {
                     Icon(
                       Icons.calendar_today,
                       size: 18.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     SizedBox(width: 8.w),
                     Text(
@@ -369,7 +383,7 @@ class _TransportContentState extends State<TransportContent> {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                   ],
@@ -390,14 +404,14 @@ class _TransportContentState extends State<TransportContent> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: Icon(
                 Icons.chevron_right,
                 size: 20.sp,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -407,22 +421,24 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   Widget _buildFilters() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(16.w),
-      color: ColorManager.white,
+      color: colors.cardBackground,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.filter_list, size: 18.sp, color: ColorManager.textPrimary),
+              Icon(Icons.filter_list, size: 18.sp, color: colors.textPrimary),
               SizedBox(width: 8.w),
               Text(
                 'Filters',
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s16,
                   fontWeight: FontWeightManager.semiBold,
-                  color: ColorManager.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
               const Spacer(),
@@ -433,7 +449,7 @@ class _TransportContentState extends State<TransportContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.primary,
+                    color: colors.primary,
                   ),
                 ),
               ),
@@ -473,23 +489,25 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   Widget _buildFilterDropdown(String label, List<String> items, String value, Function(String?) onChanged) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
       ),
       child: DropdownButton<String>(
         value: value,
         isExpanded: true,
         underline: const SizedBox(),
         isDense: true,
-        icon: Icon(Icons.keyboard_arrow_down, size: 20.sp, color: ColorManager.textPrimary),
+        icon: Icon(Icons.keyboard_arrow_down, size: 20.sp, color: colors.textPrimary),
         style: FontConstants.getPoppinsStyle(
           fontSize: FontSize.s13,
           fontWeight: FontWeightManager.medium,
-          color: ColorManager.textPrimary,
+          color: colors.textPrimary,
         ),
         items: items.map((item) {
           return DropdownMenuItem(
@@ -507,6 +525,7 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   Widget _buildSavedViewChip(Map<String, String> view) {
+    final colors = ThemeHelper.of(context);
     final viewName = view['name'] ?? '';
     final isActive = _selectedZone == view['zone'] && _selectedShift == view['shift'];
 
@@ -529,7 +548,7 @@ class _TransportContentState extends State<TransportContent> {
                 color: ColorManager.white,
               ),
             ),
-            backgroundColor: ColorManager.primary,
+            backgroundColor: colors.primary,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
@@ -547,10 +566,10 @@ class _TransportContentState extends State<TransportContent> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: isActive ? ColorManager.primary.withValues(alpha: 0.1) : ColorManager.grey6,
+          color: isActive ? colors.primary.withValues(alpha: 0.1) : colors.grey6,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: isActive ? ColorManager.primary : ColorManager.grey4,
+            color: isActive ? colors.primary : colors.grey4,
             width: isActive ? 1.5 : 1,
           ),
         ),
@@ -560,7 +579,7 @@ class _TransportContentState extends State<TransportContent> {
             Icon(
               Icons.filter_alt,
               size: 14.sp,
-              color: isActive ? ColorManager.primary : ColorManager.textSecondary,
+              color: isActive ? colors.primary : colors.textSecondary,
             ),
             SizedBox(width: 4.w),
             Text(
@@ -568,7 +587,7 @@ class _TransportContentState extends State<TransportContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s12,
                 fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.medium,
-                color: isActive ? ColorManager.primary : ColorManager.textPrimary,
+                color: isActive ? colors.primary : colors.textPrimary,
               ),
             ),
           ],
@@ -826,12 +845,14 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color, String subtitle) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
       ),
       child: Row(
         children: [
@@ -853,7 +874,7 @@ class _TransportContentState extends State<TransportContent> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.medium,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -880,7 +901,7 @@ class _TransportContentState extends State<TransportContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s11,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -897,6 +918,8 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   void _showStaffDetails(TransportStaffModel staff) {
+    final colors = ThemeHelper.of(context);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -905,7 +928,7 @@ class _TransportContentState extends State<TransportContent> {
         builder: (context, setModalState) => Container(
           height: MediaQuery.of(context).size.height * 0.7,
           decoration: BoxDecoration(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
           ),
           child: Column(
@@ -916,7 +939,7 @@ class _TransportContentState extends State<TransportContent> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.grey3,
+                  color: colors.grey3,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -933,7 +956,7 @@ class _TransportContentState extends State<TransportContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s20,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -965,7 +988,7 @@ class _TransportContentState extends State<TransportContent> {
                             _showTransportSelectionSheet(staff);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorManager.primary,
+                            backgroundColor: colors.primary,
                             foregroundColor: ColorManager.white,
                             padding: EdgeInsets.symmetric(vertical: 14.h),
                             shape: RoundedRectangleBorder(
@@ -1492,10 +1515,12 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   Widget _buildDetailRow(IconData icon, String label, String value) {
+    final colors = ThemeHelper.of(context);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18.sp, color: ColorManager.primary),
+        Icon(icon, size: 18.sp, color: colors.primary),
         SizedBox(width: 8.w),
         Expanded(
           child: Column(
@@ -1506,7 +1531,7 @@ class _TransportContentState extends State<TransportContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s12,
                   fontWeight: FontWeightManager.medium,
-                  color: ColorManager.textSecondary,
+                  color: colors.textSecondary,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -1517,7 +1542,7 @@ class _TransportContentState extends State<TransportContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s14,
                   fontWeight: FontWeightManager.semiBold,
-                  color: ColorManager.textPrimary,
+                  color: colors.textPrimary,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -1530,20 +1555,22 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   Widget _buildEditableDetailRow(IconData icon, String label, String value, VoidCallback onEdit) {
+    final colors = ThemeHelper.of(context);
+
     return InkWell(
       onTap: onEdit,
       borderRadius: BorderRadius.circular(8.r),
       child: Container(
         padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
-          color: ColorManager.grey6,
+          color: colors.grey6,
           borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: ColorManager.grey4),
+          border: Border.all(color: colors.grey4),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 18.sp, color: ColorManager.primary),
+            Icon(icon, size: 18.sp, color: colors.primary),
             SizedBox(width: 8.w),
             Expanded(
               child: Column(
@@ -1554,7 +1581,7 @@ class _TransportContentState extends State<TransportContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s12,
                       fontWeight: FontWeightManager.medium,
-                      color: ColorManager.textSecondary,
+                      color: colors.textSecondary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1565,7 +1592,7 @@ class _TransportContentState extends State<TransportContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s14,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -1577,7 +1604,7 @@ class _TransportContentState extends State<TransportContent> {
             Icon(
               Icons.edit,
               size: 16.sp,
-              color: ColorManager.primary,
+              color: colors.primary,
             ),
           ],
         ),

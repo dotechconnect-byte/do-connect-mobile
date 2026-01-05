@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/transport_staff_model.dart';
 
 class TransportStaffCard extends StatelessWidget {
@@ -16,14 +17,16 @@ class TransportStaffCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Card(
       margin: EdgeInsets.only(bottom: 12.h),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.r),
-        side: BorderSide(color: ColorManager.grey4, width: 1),
+        side: BorderSide(color: colors.grey4, width: 1),
       ),
-      color: ColorManager.white,
+      color: colors.cardBackground,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12.r),
@@ -38,8 +41,8 @@ class TransportStaffCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      ColorManager.primary.withValues(alpha: 0.8),
-                      ColorManager.primary,
+                      colors.primary.withValues(alpha: 0.8),
+                      colors.primary,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -66,7 +69,7 @@ class TransportStaffCard extends StatelessWidget {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -79,7 +82,7 @@ class TransportStaffCard extends StatelessWidget {
                         Icon(
                           Icons.location_on,
                           size: 12.sp,
-                          color: ColorManager.primary,
+                          color: colors.primary,
                         ),
                         SizedBox(width: 3.w),
                         Flexible(
@@ -88,7 +91,7 @@ class TransportStaffCard extends StatelessWidget {
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s11,
                               fontWeight: FontWeightManager.medium,
-                              color: ColorManager.textSecondary,
+                              color: colors.textSecondary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -104,7 +107,7 @@ class TransportStaffCard extends StatelessWidget {
                         Icon(
                           Icons.access_time,
                           size: 12.sp,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         SizedBox(width: 3.w),
                         Flexible(
@@ -113,7 +116,7 @@ class TransportStaffCard extends StatelessWidget {
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s11,
                               fontWeight: FontWeightManager.regular,
-                              color: ColorManager.textSecondary,
+                              color: colors.textSecondary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -128,10 +131,10 @@ class TransportStaffCard extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                         decoration: BoxDecoration(
-                          color: ColorManager.success.withValues(alpha: 0.1),
+                          color: colors.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4.r),
                           border: Border.all(
-                            color: ColorManager.success.withValues(alpha: 0.3),
+                            color: colors.success.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -140,7 +143,7 @@ class TransportStaffCard extends StatelessWidget {
                             Icon(
                               Icons.check_circle,
                               size: 10.sp,
-                              color: ColorManager.success,
+                              color: colors.success,
                             ),
                             SizedBox(width: 3.w),
                             Text(
@@ -148,7 +151,7 @@ class TransportStaffCard extends StatelessWidget {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s10,
                                 fontWeight: FontWeightManager.semiBold,
-                                color: ColorManager.success,
+                                color: colors.success,
                               ),
                             ),
                           ],
@@ -165,8 +168,8 @@ class TransportStaffCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: staff.assignedTransport != null
-                      ? ColorManager.info
-                      : ColorManager.primary,
+                      ? colors.info
+                      : colors.primary,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Row(
