@@ -9,6 +9,7 @@ import '../../../invoices/presentation/pages/invoices_screen.dart';
 import '../../../groups/presentation/pages/groups_screen.dart';
 import '../../../manage/presentation/pages/manage_screen.dart';
 import '../../../transport/presentation/pages/transport_screen.dart';
+import '../../../full_time_jobs/presentation/pages/full_time_jobs_screen.dart';
 
 class MoreContent extends StatefulWidget {
   const MoreContent({super.key});
@@ -145,7 +146,12 @@ class _MoreContentState extends State<MoreContent> {
             textSecondaryColor: colors.textSecondary,
             borderColor: colors.grey5,
             onTap: () {
-              // Navigate to Full Time Jobs screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FullTimeJobsScreen(),
+                ),
+              );
             },
           ),
           SizedBox(height: 12.h),
