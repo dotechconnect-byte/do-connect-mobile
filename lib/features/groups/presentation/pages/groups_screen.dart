@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../widgets/groups_content.dart';
 
 class GroupsScreen extends StatefulWidget {
@@ -16,17 +16,19 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(
             Icons.arrow_back_ios,
             size: 20.sp,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         title: Column(
@@ -37,7 +39,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s18,
                 fontWeight: FontWeightManager.bold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             Text(
@@ -45,7 +47,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s11,
                 fontWeight: FontWeightManager.regular,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ],
@@ -56,13 +58,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
         children: [
           // Search Bar
           Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             child: Container(
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: TextField(
                 onChanged: (value) {
@@ -75,12 +77,12 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   hintStyle: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
                     size: 20.sp,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
@@ -92,7 +94,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                           icon: Icon(
                             Icons.clear,
                             size: 18.sp,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         )
                       : null,
@@ -102,7 +104,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s14,
                   fontWeight: FontWeightManager.regular,
-                  color: ColorManager.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
             ),

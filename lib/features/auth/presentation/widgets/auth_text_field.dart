@@ -81,7 +81,7 @@ class AuthTextField extends StatelessWidget {
                   )
                 : null,
             filled: true,
-            fillColor: ColorManager.white,
+            fillColor: colors.cardBackground,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(

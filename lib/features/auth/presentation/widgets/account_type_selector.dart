@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
 
@@ -59,12 +58,12 @@ class AccountTypeSelector extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.white : Colors.transparent,
+          color: isSelected ? colors.cardBackground : Colors.transparent,
           borderRadius: BorderRadius.circular(8.r),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: ColorManager.black.withValues(alpha: 0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

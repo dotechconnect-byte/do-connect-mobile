@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../widgets/transport_content.dart';
 
 class TransportScreen extends StatefulWidget {
@@ -23,13 +24,15 @@ class _TransportScreenState extends State<TransportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorManager.textPrimary),
+          icon: Icon(Icons.arrow_back, color: colors.textPrimary),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -43,7 +46,7 @@ class _TransportScreenState extends State<TransportScreen> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s16,
                 fontWeight: FontWeightManager.bold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -53,7 +56,7 @@ class _TransportScreenState extends State<TransportScreen> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s11,
                 fontWeight: FontWeightManager.regular,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -63,7 +66,7 @@ class _TransportScreenState extends State<TransportScreen> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(60.h),
           child: Container(
-            color: ColorManager.white,
+            color: colors.cardBackground,
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             child: Row(
               children: [
@@ -71,9 +74,9 @@ class _TransportScreenState extends State<TransportScreen> {
                   child: Container(
                     height: 44.h,
                     decoration: BoxDecoration(
-                      color: ColorManager.grey6,
+                      color: colors.grey6,
                       borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: ColorManager.grey4),
+                      border: Border.all(color: colors.grey4),
                     ),
                     child: TextField(
                       controller: _searchController,
@@ -87,19 +90,19 @@ class _TransportScreenState extends State<TransportScreen> {
                         hintStyle: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         prefixIcon: Icon(
                           Icons.search,
                           size: 20.sp,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         suffixIcon: _searchQuery.isNotEmpty
                             ? IconButton(
                                 icon: Icon(
                                   Icons.clear,
                                   size: 20.sp,
-                                  color: ColorManager.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                                 onPressed: () {
                                   _searchController.clear();
@@ -115,7 +118,7 @@ class _TransportScreenState extends State<TransportScreen> {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s13,
                         fontWeight: FontWeightManager.regular,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -138,8 +141,8 @@ class _TransportScreenState extends State<TransportScreen> {
             FloatingActionButton.extended(
               heroTag: 'transport_download_fab',
               onPressed: () {},
-              backgroundColor: ColorManager.white,
-              foregroundColor: ColorManager.textPrimary,
+              backgroundColor: colors.cardBackground,
+              foregroundColor: colors.textPrimary,
               elevation: 2,
               icon: Icon(Icons.download, size: 18.sp),
               label: Text(
@@ -156,7 +159,7 @@ class _TransportScreenState extends State<TransportScreen> {
             FloatingActionButton.extended(
               heroTag: 'transport_add_staff_fab',
               onPressed: () {},
-              backgroundColor: ColorManager.primary,
+              backgroundColor: colors.primary,
               foregroundColor: ColorManager.white,
               elevation: 4,
               icon: Icon(Icons.person_add, size: 18.sp),

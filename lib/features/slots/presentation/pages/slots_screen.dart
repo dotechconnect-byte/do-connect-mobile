@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/slot_model.dart';
 import '../widgets/slot_card.dart';
 import '../../../dashboard/presentation/widgets/request_doer_bottom_sheet.dart';
@@ -93,15 +94,17 @@ class _SlotsScreenState extends State<SlotsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Column(
           children: [
             // Header
             Container(
               padding: EdgeInsets.all(16.w),
-              color: ColorManager.white,
+              color: colors.cardBackground,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -110,7 +113,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                       IconButton(
                         icon: Icon(Icons.menu, size: 24.sp),
                         onPressed: () {},
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -124,7 +127,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s20,
                                 fontWeight: FontWeightManager.bold,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                             SizedBox(height: 2.h),
@@ -133,7 +136,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s12,
                                 fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -147,7 +150,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                           IconButton(
                             icon: Icon(Icons.notifications_outlined, size: 22.sp),
                             onPressed: () {},
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                             padding: EdgeInsets.all(8.w),
                             constraints: const BoxConstraints(),
                           ),
@@ -157,8 +160,8 @@ class _SlotsScreenState extends State<SlotsScreen> {
                             child: Container(
                               width: 6.w,
                               height: 6.w,
-                              decoration: const BoxDecoration(
-                                color: ColorManager.error,
+                              decoration: BoxDecoration(
+                                color: colors.error,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -173,7 +176,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                     decoration: BoxDecoration(
-                      color: ColorManager.grey6,
+                      color: colors.grey6,
                       borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: Row(
@@ -181,7 +184,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                         Icon(
                           Icons.search,
                           size: 20.sp,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         SizedBox(width: 8.w),
                         Expanded(
@@ -190,7 +193,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s13,
                               fontWeight: FontWeightManager.regular,
-                              color: ColorManager.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ),
@@ -204,7 +207,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
             // Date Selector
             Container(
               height: 50.h,
-              color: ColorManager.white,
+              color: colors.cardBackground,
               child: ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
                 scrollDirection: Axis.horizontal,
@@ -218,10 +221,10 @@ class _SlotsScreenState extends State<SlotsScreen> {
                       margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       decoration: BoxDecoration(
-                        color: isSelected ? ColorManager.primary : Colors.transparent,
+                        color: isSelected ? colors.primary : Colors.transparent,
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: isSelected ? ColorManager.primary : ColorManager.grey3,
+                          color: isSelected ? colors.primary : colors.grey3,
                           width: 1,
                         ),
                       ),
@@ -231,7 +234,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s13,
                             fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-                            color: isSelected ? ColorManager.white : ColorManager.textSecondary,
+                            color: isSelected ? ColorManager.white : colors.textSecondary,
                           ),
                         ),
                       ),
@@ -244,13 +247,13 @@ class _SlotsScreenState extends State<SlotsScreen> {
             // Date Header
             Container(
               padding: EdgeInsets.all(16.w),
-              color: ColorManager.backgroundColor,
+              color: colors.background,
               child: Row(
                 children: [
                   Icon(
                     Icons.calendar_today,
                     size: 18.sp,
-                    color: ColorManager.primary,
+                    color: colors.primary,
                   ),
                   SizedBox(width: 8.w),
                   Text(
@@ -258,7 +261,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s15,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ],
@@ -299,7 +302,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
             ),
           );
         },
-        backgroundColor: ColorManager.primary,
+        backgroundColor: colors.primary,
         icon: Icon(Icons.add, color: ColorManager.white, size: 20.sp),
         label: Text(
           'Request',
@@ -312,17 +315,17 @@ class _SlotsScreenState extends State<SlotsScreen> {
       ),
 
       // Bottom Navigation
-      bottomNavigationBar: _buildBottomNavBar(),
+      bottomNavigationBar: _buildBottomNavBar(colors),
     );
   }
 
-  Widget _buildBottomNavBar() {
+  Widget _buildBottomNavBar(ThemeHelper colors) {
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         boxShadow: [
           BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -334,11 +337,11 @@ class _SlotsScreenState extends State<SlotsScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.dashboard_outlined, 'Dashboard', false),
-              _buildNavItem(Icons.calendar_today_outlined, 'Slots', true),
-              _buildNavItem(Icons.assessment_outlined, 'Status', false),
-              _buildNavItem(Icons.person_outline, 'Profile', false),
-              _buildNavItem(Icons.more_horiz, 'More', false),
+              _buildNavItem(colors, Icons.dashboard_outlined, 'Dashboard', false),
+              _buildNavItem(colors, Icons.calendar_today_outlined, 'Slots', true),
+              _buildNavItem(colors, Icons.assessment_outlined, 'Status', false),
+              _buildNavItem(colors, Icons.person_outline, 'Profile', false),
+              _buildNavItem(colors, Icons.more_horiz, 'More', false),
             ],
           ),
         ),
@@ -346,7 +349,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
+  Widget _buildNavItem(ThemeHelper colors, IconData icon, String label, bool isActive) {
     return GestureDetector(
       onTap: () {
         if (!isActive && label == 'Dashboard') {
@@ -358,7 +361,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
         children: [
           Icon(
             icon,
-            color: isActive ? ColorManager.primary : ColorManager.textSecondary,
+            color: isActive ? colors.primary : colors.textSecondary,
             size: 22.sp,
           ),
           SizedBox(height: 2.h),
@@ -367,7 +370,7 @@ class _SlotsScreenState extends State<SlotsScreen> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s10,
               fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.regular,
-              color: isActive ? ColorManager.primary : ColorManager.textSecondary,
+              color: isActive ? colors.primary : colors.textSecondary,
             ),
             overflow: TextOverflow.ellipsis,
           ),

@@ -373,9 +373,9 @@ class _EditCompanyModalState extends State<EditCompanyModal> {
                     Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFF4ED),
+                        color: colors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10.r),
-                        border: Border.all(color: const Color(0xFFFFE5DC)),
+                        border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         children: [
