@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
@@ -15,8 +16,9 @@ class ManageScreen extends StatefulWidget {
 class _ManageScreenState extends State<ManageScreen> {
   int _selectedTabIndex = 0;
   final GlobalKey<ManageContentState> _contentKey = GlobalKey<ManageContentState>();
+  String _accountType = 'employer'; // Default to employer
 
-  final List<ManageTab> _tabs = [
+  final List<ManageTab> _allTabs = [
     ManageTab(
       title: 'Locations',
       subtitle: 'Manage locations, stations, managers, and events with DOER assignments',
@@ -34,6 +36,28 @@ class _ManageScreenState extends State<ManageScreen> {
       subtitle: 'Organize and schedule events and activities',
     ),
   ];
+
+  List<ManageTab> get _tabs {
+    // For personal accounts, only show Locations tab
+    if (_accountType == 'personal') {
+      return _allTabs.where((tab) => tab.title == 'Locations').toList();
+    }
+    // For employer accounts, show all tabs
+    return _allTabs;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAccountType();
+  }
+
+  Future<void> _loadAccountType() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _accountType = prefs.getString('account_type') ?? 'employer';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +88,9 @@ class _ManageScreenState extends State<ManageScreen> {
               ),
             ),
             Text(
-              _tabs[_selectedTabIndex].subtitle,
+              _accountType == 'personal'
+                  ? 'Locations'
+                  : _tabs[_selectedTabIndex].subtitle,
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s11,
                 fontWeight: FontWeightManager.regular,
@@ -79,22 +105,23 @@ class _ManageScreenState extends State<ManageScreen> {
       ),
       body: Column(
         children: [
-          // Modern Tab Bar
-          Container(
-            color: colors.cardBackground,
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(_tabs.length, (index) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: 8.w),
-                    child: _buildTabChip(_tabs[index].title, index),
-                  );
-                }),
+          // Modern Tab Bar - only show if there are multiple tabs (employer account)
+          if (_tabs.length > 1)
+            Container(
+              color: colors.cardBackground,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(_tabs.length, (index) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 8.w),
+                      child: _buildTabChip(_tabs[index].title, index),
+                    );
+                  }),
+                ),
               ),
             ),
-          ),
 
           // Content
           Expanded(

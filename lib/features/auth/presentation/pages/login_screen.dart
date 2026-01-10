@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
@@ -55,9 +56,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     super.dispose();
   }
 
-  void _handleSignIn() {
+  void _handleSignIn() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
+
+      // Save account type to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('account_type', _accountType);
 
       // TODO: Implement actual sign in logic with API
       Future.delayed(const Duration(seconds: 2), () {
