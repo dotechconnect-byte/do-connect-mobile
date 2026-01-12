@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/job_model.dart';
+import '../pages/job_details_screen.dart';
 import 'job_card.dart';
 
 class FullTimeJobsContent extends StatefulWidget {
@@ -28,7 +29,15 @@ class FullTimeJobsContent extends StatefulWidget {
 }
 
 class _FullTimeJobsContentState extends State<FullTimeJobsContent> {
-  List<JobModel> _getSampleJobs() {
+  late List<JobModel> _jobs;
+
+  @override
+  void initState() {
+    super.initState();
+    _jobs = _getInitialJobs();
+  }
+
+  List<JobModel> _getInitialJobs() {
     return [
       JobModel(
         id: '1',
@@ -153,8 +162,17 @@ class _FullTimeJobsContentState extends State<FullTimeJobsContent> {
     ];
   }
 
+  void _updateJob(JobModel updatedJob) {
+    setState(() {
+      final index = _jobs.indexWhere((job) => job.id == updatedJob.id);
+      if (index != -1) {
+        _jobs[index] = updatedJob;
+      }
+    });
+  }
+
   List<JobModel> _getFilteredJobs() {
-    final allJobs = _getSampleJobs();
+    final allJobs = _jobs;
 
     // Filter by tab (status)
     var filteredJobs = allJobs.where((job) {
@@ -217,8 +235,17 @@ class _FullTimeJobsContentState extends State<FullTimeJobsContent> {
       itemBuilder: (context, index) {
         return JobCard(
           job: filteredJobs[index],
-          onTap: () {
-            // Navigate to job details
+          onTap: () async {
+            final updatedJob = await Navigator.push<JobModel>(
+              context,
+              MaterialPageRoute(
+                builder: (context) => JobDetailsScreen(job: filteredJobs[index]),
+              ),
+            );
+
+            if (updatedJob != null) {
+              _updateJob(updatedJob);
+            }
           },
         );
       },

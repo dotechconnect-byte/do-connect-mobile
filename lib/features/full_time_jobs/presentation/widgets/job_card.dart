@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/job_model.dart';
@@ -20,16 +19,19 @@ class JobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = ThemeHelper.of(context);
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
-      decoration: BoxDecoration(
-        color: colors.cardBackground,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: colors.grey5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 16.h),
+        decoration: BoxDecoration(
+          color: colors.cardBackground,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: colors.grey5),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Header with title and actions
           Padding(
             padding: EdgeInsets.all(16.w),
@@ -94,7 +96,7 @@ class JobCard extends StatelessWidget {
                       ),
                       SizedBox(height: 12.h),
 
-                      // Salary and Location
+                      // Salary
                       Row(
                         children: [
                           Icon(
@@ -111,7 +113,13 @@ class JobCard extends StatelessWidget {
                               color: colors.textPrimary,
                             ),
                           ),
-                          SizedBox(width: 16.w),
+                        ],
+                      ),
+                      SizedBox(height: 8.h),
+
+                      // Location
+                      Row(
+                        children: [
                           Icon(
                             _getLocationIcon(job.locationType),
                             size: 16.sp,
@@ -130,81 +138,10 @@ class JobCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          if (job.locationType == 'Multiple locations') ...[
-                            SizedBox(width: 4.w),
-                            TextButton(
-                              onPressed: () {
-                                // Show all locations
-                              },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: Text(
-                                'See all',
-                                style: FontConstants.getPoppinsStyle(
-                                  fontSize: FontSize.s12,
-                                  fontWeight: FontWeightManager.medium,
-                                  color: ColorManager.primary,
-                                ),
-                              ),
-                            ),
-                          ],
                         ],
                       ),
                     ],
                   ),
-                ),
-                SizedBox(width: 8.w),
-
-                // Actions Menu
-                PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: colors.textSecondary,
-                    size: 20.sp,
-                  ),
-                  color: colors.cardBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    side: BorderSide(color: colors.grey5),
-                  ),
-                  onSelected: (value) {
-                    // Handle menu actions
-                  },
-                  itemBuilder: (context) => [
-                    _buildMenuItem(
-                      Icons.visibility,
-                      'View Applicants',
-                      colors,
-                    ),
-                    _buildMenuItem(
-                      Icons.trending_up,
-                      'Bump Job',
-                      colors,
-                    ),
-                    _buildMenuItem(
-                      Icons.person_add_outlined,
-                      'Invite Applicants',
-                      colors,
-                    ),
-                    _buildMenuItem(
-                      Icons.edit_outlined,
-                      'Edit Job',
-                      colors,
-                    ),
-                    _buildMenuItem(
-                      Icons.share_outlined,
-                      'Share Post',
-                      colors,
-                    ),
-                    _buildMenuItem(
-                      Icons.more_horiz,
-                      'More Actions',
-                      colors,
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -298,57 +235,8 @@ class JobCard extends StatelessWidget {
               ],
             ),
           ),
-
-          // View Analytics Button
-          Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-            child: TextButton.icon(
-              onPressed: () {
-                // View detailed analytics
-              },
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-              ),
-              icon: Icon(
-                Icons.bar_chart,
-                size: 16.sp,
-                color: ColorManager.primary,
-              ),
-              label: Text(
-                'View detailed analytics',
-                style: FontConstants.getPoppinsStyle(
-                  fontSize: FontSize.s13,
-                  fontWeight: FontWeightManager.medium,
-                  color: ColorManager.primary,
-                ),
-              ),
-            ),
-          ),
         ],
-      ),
-    );
-  }
-
-  PopupMenuItem<String> _buildMenuItem(
-    IconData icon,
-    String label,
-    ThemeHelper colors,
-  ) {
-    return PopupMenuItem<String>(
-      value: label,
-      child: Row(
-        children: [
-          Icon(icon, size: 18.sp, color: colors.textSecondary),
-          SizedBox(width: 12.w),
-          Text(
-            label,
-            style: FontConstants.getPoppinsStyle(
-              fontSize: FontSize.s13,
-              fontWeight: FontWeightManager.regular,
-              color: colors.textPrimary,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
