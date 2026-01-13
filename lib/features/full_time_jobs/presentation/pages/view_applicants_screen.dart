@@ -488,6 +488,7 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
 
           // Application message
           Container(
+            width: double.infinity,
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               color: colors.grey6,

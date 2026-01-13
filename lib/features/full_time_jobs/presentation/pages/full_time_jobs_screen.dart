@@ -4,6 +4,7 @@ import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
 import '../widgets/full_time_jobs_content.dart';
+import 'talent_pool_screen.dart';
 
 class FullTimeJobsScreen extends StatefulWidget {
   const FullTimeJobsScreen({super.key});
@@ -75,6 +76,20 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
           ],
         ),
         centerTitle: false,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.people, color: colors.textPrimary),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TalentPoolScreen(),
+                ),
+              );
+            },
+            tooltip: 'Talent Pool',
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(56.h),
           child: Container(

@@ -24,7 +24,8 @@
       "Bash(fi)",
       "Bash(for:*)",
       "Bash(do if grep -q \"ColorManager\\\\|Widget\\\\|StatelessWidget\\\\|StatefulWidget\" \"$file\")",
-      "Bash(do echo \"$file\")"
+      "Bash(do echo \"$file\")",
+      "Bash(dir:*)"
     ]
   }
 }
