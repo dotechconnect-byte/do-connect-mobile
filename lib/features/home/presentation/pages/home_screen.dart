@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/navigation_service.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../../dashboard/presentation/widgets/notification_panel.dart';
 import '../../../dashboard/presentation/widgets/request_doer_bottom_sheet.dart';
 import '../../../dashboard/presentation/widgets/dashboard_content.dart';
@@ -98,15 +99,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Column(
           children: [
             // Common Header
             Container(
               padding: EdgeInsets.all(16.w),
-              color: ColorManager.white,
+              color: colors.cardBackground,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -143,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s16,
                                 fontWeight: FontWeightManager.bold,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -154,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s12,
                                 fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -189,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               );
                             },
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                             padding: EdgeInsets.all(8.w),
                             constraints: const BoxConstraints(),
                           ),
@@ -216,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12.w),
                       decoration: BoxDecoration(
-                        color: ColorManager.grey6,
+                        color: colors.grey6,
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Row(
@@ -224,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Icon(
                             Icons.search,
                             size: 20.sp,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                           SizedBox(width: 8.w),
                           Expanded(
@@ -238,14 +241,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s13,
                                 fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                               decoration: InputDecoration(
                                 hintText: 'Search DOER, shifts, invoices...',
                                 hintStyle: FontConstants.getPoppinsStyle(
                                   fontSize: FontSize.s13,
                                   fontWeight: FontWeightManager.regular,
-                                  color: ColorManager.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.symmetric(vertical: 10.h),
@@ -257,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: Icon(
                                 Icons.clear,
                                 size: 20.sp,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -330,9 +333,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBottomNavBar() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         boxShadow: [
           BoxShadow(
             color: ColorManager.black.withValues(alpha: 0.05),

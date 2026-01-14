@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/account_type_selector.dart';
@@ -54,9 +56,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     super.dispose();
   }
 
-  void _handleSignIn() {
+  void _handleSignIn() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
+
+      // Save account type to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('account_type', _accountType);
 
       // TODO: Implement actual sign in logic with API
       Future.delayed(const Duration(seconds: 2), () {
@@ -98,8 +104,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: FadeTransition(
@@ -153,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s28,
                         fontWeight: FontWeightManager.bold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -165,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.regular,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
 
@@ -182,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s26,
                               fontWeight: FontWeightManager.bold,
-                              color: ColorManager.textPrimary,
+                              color: colors.textPrimary,
                               letterSpacing: -0.5,
                             ),
                           ),
@@ -192,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s15,
                               fontWeight: FontWeightManager.regular,
-                              color: ColorManager.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
 
@@ -291,7 +299,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                     gradient: LinearGradient(
                                       colors: [
                                         Colors.transparent,
-                                        ColorManager.grey3,
+                                        colors.grey3,
                                       ],
                                     ),
                                   ),
@@ -304,7 +312,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                   style: FontConstants.getPoppinsStyle(
                                     fontSize: FontSize.s13,
                                     fontWeight: FontWeightManager.medium,
-                                    color: ColorManager.textSecondary,
+                                    color: colors.textSecondary,
                                   ),
                                 ),
                               ),
@@ -314,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        ColorManager.grey3,
+                                        colors.grey3,
                                         Colors.transparent,
                                       ],
                                     ),
@@ -333,7 +341,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s16,
                                 fontWeight: FontWeightManager.semiBold,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           ),
@@ -345,10 +353,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             width: double.infinity,
                             height: 56.h,
                             decoration: BoxDecoration(
-                              color: ColorManager.grey6,
+                              color: colors.grey6,
                               borderRadius: BorderRadius.circular(14.r),
                               border: Border.all(
-                                color: ColorManager.grey4,
+                                color: colors.grey4,
                                 width: 1.5,
                               ),
                             ),
@@ -363,7 +371,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                     children: [
                                       Icon(
                                         Icons.play_circle_outline,
-                                        color: ColorManager.textPrimary,
+                                        color: colors.textPrimary,
                                         size: 22.sp,
                                       ),
                                       SizedBox(width: 10.w),
@@ -372,7 +380,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                         style: FontConstants.getPoppinsStyle(
                                           fontSize: FontSize.s15,
                                           fontWeight: FontWeightManager.semiBold,
-                                          color: ColorManager.textPrimary,
+                                          color: colors.textPrimary,
                                         ),
                                       ),
                                     ],

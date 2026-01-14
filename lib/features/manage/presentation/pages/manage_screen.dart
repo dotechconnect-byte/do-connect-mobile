@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../widgets/manage_content.dart';
 
 class ManageScreen extends StatefulWidget {
@@ -14,8 +16,9 @@ class ManageScreen extends StatefulWidget {
 class _ManageScreenState extends State<ManageScreen> {
   int _selectedTabIndex = 0;
   final GlobalKey<ManageContentState> _contentKey = GlobalKey<ManageContentState>();
+  String _accountType = 'employer'; // Default to employer
 
-  final List<ManageTab> _tabs = [
+  final List<ManageTab> _allTabs = [
     ManageTab(
       title: 'Locations',
       subtitle: 'Manage locations, stations, managers, and events with DOER assignments',
@@ -34,19 +37,43 @@ class _ManageScreenState extends State<ManageScreen> {
     ),
   ];
 
+  List<ManageTab> get _tabs {
+    // For personal accounts, only show Locations tab
+    if (_accountType == 'personal') {
+      return _allTabs.where((tab) => tab.title == 'Locations').toList();
+    }
+    // For employer accounts, show all tabs
+    return _allTabs;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAccountType();
+  }
+
+  Future<void> _loadAccountType() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _accountType = prefs.getString('account_type') ?? 'employer';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(
             Icons.arrow_back_ios,
             size: 20.sp,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         title: Column(
@@ -57,15 +84,17 @@ class _ManageScreenState extends State<ManageScreen> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s18,
                 fontWeight: FontWeightManager.bold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             Text(
-              _tabs[_selectedTabIndex].subtitle,
+              _accountType == 'personal'
+                  ? 'Locations'
+                  : _tabs[_selectedTabIndex].subtitle,
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s11,
                 fontWeight: FontWeightManager.regular,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -76,22 +105,23 @@ class _ManageScreenState extends State<ManageScreen> {
       ),
       body: Column(
         children: [
-          // Modern Tab Bar
-          Container(
-            color: ColorManager.white,
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(_tabs.length, (index) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: 8.w),
-                    child: _buildTabChip(_tabs[index].title, index),
-                  );
-                }),
+          // Modern Tab Bar - only show if there are multiple tabs (employer account)
+          if (_tabs.length > 1)
+            Container(
+              color: colors.cardBackground,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(_tabs.length, (index) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 8.w),
+                      child: _buildTabChip(_tabs[index].title, index),
+                    );
+                  }),
+                ),
               ),
             ),
-          ),
 
           // Content
           Expanded(
@@ -126,6 +156,7 @@ class _ManageScreenState extends State<ManageScreen> {
   }
 
   Widget _buildTabChip(String label, int index) {
+    final colors = ThemeHelper.of(context);
     final isSelected = _selectedTabIndex == index;
 
     return InkWell(
@@ -138,10 +169,10 @@ class _ManageScreenState extends State<ManageScreen> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.primary : ColorManager.grey6,
+          color: isSelected ? colors.primary : colors.grey6,
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isSelected ? ColorManager.primary : ColorManager.grey4,
+            color: isSelected ? colors.primary : colors.grey4,
           ),
         ),
         child: Text(
@@ -149,7 +180,7 @@ class _ManageScreenState extends State<ManageScreen> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s13,
             fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-            color: isSelected ? ColorManager.white : ColorManager.textSecondary,
+            color: isSelected ? ColorManager.white : colors.textSecondary,
           ),
         ),
       ),
@@ -157,6 +188,7 @@ class _ManageScreenState extends State<ManageScreen> {
   }
 
   void _showAddNewDialog() {
+    final colors = ThemeHelper.of(context);
     final textController = TextEditingController();
     String dialogTitle = '';
     String dialogHint = '';
@@ -183,7 +215,7 @@ class _ManageScreenState extends State<ManageScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -192,7 +224,7 @@ class _ManageScreenState extends State<ManageScreen> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s18,
             fontWeight: FontWeightManager.bold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         content: TextField(
@@ -203,28 +235,28 @@ class _ManageScreenState extends State<ManageScreen> {
             hintStyle: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s14,
               fontWeight: FontWeightManager.regular,
-              color: ColorManager.grey3,
+              color: colors.grey3,
             ),
             filled: true,
-            fillColor: ColorManager.grey6,
+            fillColor: colors.grey6,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: ColorManager.grey4),
+              borderSide: BorderSide(color: colors.grey4),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: ColorManager.primary, width: 2),
+              borderSide: BorderSide(color: colors.primary, width: 2),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           ),
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s14,
             fontWeight: FontWeightManager.regular,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         actions: [
@@ -235,7 +267,7 @@ class _ManageScreenState extends State<ManageScreen> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -246,7 +278,7 @@ class _ManageScreenState extends State<ManageScreen> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.primary,
+              backgroundColor: colors.primary,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
@@ -279,7 +311,7 @@ class _ManageScreenState extends State<ManageScreen> {
                 color: ColorManager.white,
               ),
             ),
-            backgroundColor: ColorManager.success,
+            backgroundColor: colors.success,
             behavior: SnackBarBehavior.floating,
           ),
         );

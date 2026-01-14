@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_button.dart';
 
@@ -106,15 +107,17 @@ class _AccessCodeRegistrationScreenState
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.background,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -123,7 +126,7 @@ class _AccessCodeRegistrationScreenState
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s15,
             fontWeight: FontWeightManager.medium,
-            color: ColorManager.textSecondary,
+            color: colors.textSecondary,
           ),
         ),
       ),
@@ -180,7 +183,7 @@ class _AccessCodeRegistrationScreenState
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s26,
                         fontWeight: FontWeightManager.bold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -192,7 +195,7 @@ class _AccessCodeRegistrationScreenState
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.regular,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
 
@@ -364,7 +367,7 @@ class _AccessCodeRegistrationScreenState
                                       style: FontConstants.getPoppinsStyle(
                                         fontSize: FontSize.s13,
                                         fontWeight: FontWeightManager.regular,
-                                        color: ColorManager.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                                     GestureDetector(
@@ -385,7 +388,7 @@ class _AccessCodeRegistrationScreenState
                                       style: FontConstants.getPoppinsStyle(
                                         fontSize: FontSize.s13,
                                         fontWeight: FontWeightManager.regular,
-                                        color: ColorManager.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                                     GestureDetector(

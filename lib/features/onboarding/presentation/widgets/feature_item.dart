@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class FeatureItem extends StatelessWidget {
   final String text;
@@ -15,6 +15,7 @@ class FeatureItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 600 + (index * 100)),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -37,8 +38,8 @@ class FeatureItem extends StatelessWidget {
               width: 8.w,
               height: 8.w,
               margin: EdgeInsets.only(top: 6.h, right: 12.w),
-              decoration: const BoxDecoration(
-                color: ColorManager.primary,
+              decoration: BoxDecoration(
+                color: colors.primary,
                 shape: BoxShape.circle,
               ),
             ),
@@ -48,7 +49,7 @@ class FeatureItem extends StatelessWidget {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s14,
                   fontWeight: FontWeightManager.regular,
-                  color: ColorManager.textSecondary,
+                  color: colors.textSecondary,
                   height: 1.5,
                 ),
               ),

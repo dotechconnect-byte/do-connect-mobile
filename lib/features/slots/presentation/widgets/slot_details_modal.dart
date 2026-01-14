@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/slot_model.dart';
 
 class SlotDetailsModal extends StatefulWidget {
@@ -45,10 +46,12 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.r),
           topRight: Radius.circular(20.r),
@@ -61,7 +64,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: ColorManager.grey4, width: 1),
+                bottom: BorderSide(color: colors.grey4, width: 1),
               ),
             ),
             child: Row(
@@ -72,12 +75,12 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s18,
                       fontWeight: FontWeightManager.bold,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, size: 24.sp),
+                  icon: Icon(Icons.close, size: 24.sp, color: colors.textPrimary),
                   onPressed: () => Navigator.pop(context),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -127,7 +130,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                           setState(() => _isEditMode = true);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorManager.primary,
+                          backgroundColor: colors.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.r),
                           ),
@@ -162,7 +165,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                             },
                             style: OutlinedButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 12.h),
-                              side: BorderSide(color: ColorManager.grey3),
+                              side: BorderSide(color: colors.grey3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.r),
                               ),
@@ -172,7 +175,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s14,
                                 fontWeight: FontWeightManager.semiBold,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           ),
@@ -185,7 +188,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                               // Save changes logic here
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorManager.primary,
+                              backgroundColor: colors.primary,
                               padding: EdgeInsets.symmetric(vertical: 12.h),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.r),
@@ -219,21 +222,25 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
   }
 
   Widget _buildViewSubtitle() {
+    final colors = ThemeHelper.of(context);
+
     return Text(
       'View and manage staff bookings',
       style: FontConstants.getPoppinsStyle(
         fontSize: FontSize.s13,
         fontWeight: FontWeightManager.regular,
-        color: ColorManager.textSecondary,
+        color: colors.textSecondary,
       ),
     );
   }
 
   Widget _buildSlotInfoCard() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
@@ -244,13 +251,13 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
               Icons.access_time,
               'Time Slot',
               widget.slot.timeRange,
-              ColorManager.primary,
+              colors.primary,
             ),
           ),
           Container(
             width: 1,
             height: 40.h,
-            color: ColorManager.grey3,
+            color: colors.grey3,
             margin: EdgeInsets.symmetric(horizontal: 8.w),
           ),
           // Location
@@ -268,6 +275,8 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
   }
 
   Widget _buildInfoItem(IconData icon, String label, String value, Color color) {
+    final colors = ThemeHelper.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -280,7 +289,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s11,
                 fontWeight: FontWeightManager.medium,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ],
@@ -291,7 +300,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s13,
             fontWeight: FontWeightManager.bold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -301,19 +310,21 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
   }
 
   Widget _buildAssignedGroups() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.groups, size: 16.sp, color: ColorManager.primary),
+              Icon(Icons.groups, size: 16.sp, color: colors.primary),
               SizedBox(width: 6.w),
               Expanded(
                 child: Text(
@@ -321,7 +332,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -338,7 +349,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s12,
                       fontWeight: FontWeightManager.medium,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                   ),
                 )),
@@ -348,6 +359,8 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
   }
 
   List<Widget> _buildGroupCheckboxes() {
+    final colors = ThemeHelper.of(context);
+
     return _availableGroups.map((group) {
       final isSelected = _selectedGroups.contains(group.name);
       return CheckboxListTile(
@@ -369,28 +382,30 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s12,
             fontWeight: FontWeightManager.medium,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
-        activeColor: ColorManager.primary,
+        activeColor: colors.primary,
       );
     }).toList();
   }
 
   Widget _buildAssignedStaff() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.person, size: 16.sp, color: ColorManager.primary),
+              Icon(Icons.person, size: 16.sp, color: colors.primary),
               SizedBox(width: 6.w),
               Expanded(
                 child: Text(
@@ -398,7 +413,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -413,7 +428,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                   child: Row(
                     children: [
                       Icon(Icons.person_outline,
-                          size: 14.sp, color: ColorManager.primary),
+                          size: 14.sp, color: colors.primary),
                       SizedBox(width: 4.w),
                       Expanded(
                         child: Text(
@@ -421,7 +436,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s12,
                             fontWeight: FontWeightManager.medium,
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -434,6 +449,8 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
   }
 
   List<Widget> _buildStaffCheckboxes() {
+    final colors = ThemeHelper.of(context);
+
     return _availableStaff.map((staff) {
       final isSelected = _selectedStaff.contains(staff.name);
       return CheckboxListTile(
@@ -455,15 +472,17 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s12,
             fontWeight: FontWeightManager.medium,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
-        activeColor: ColorManager.primary,
+        activeColor: colors.primary,
       );
     }).toList();
   }
 
   Widget _buildBookedStaffSection() {
+    final colors = ThemeHelper.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -472,17 +491,17 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s15,
             fontWeight: FontWeightManager.bold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         SizedBox(height: 12.h),
         Container(
           padding: EdgeInsets.all(40.w),
           decoration: BoxDecoration(
-            color: ColorManager.grey6,
+            color: colors.grey6,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: ColorManager.grey4,
+              color: colors.grey4,
               style: BorderStyle.solid,
               width: 1,
             ),
@@ -493,7 +512,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                 Icon(
                   Icons.people_outline,
                   size: 48.sp,
-                  color: ColorManager.grey3,
+                  color: colors.grey3,
                 ),
                 SizedBox(height: 12.h),
                 Text(
@@ -501,7 +520,7 @@ class _SlotDetailsModalState extends State<SlotDetailsModal> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.medium,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
               ],

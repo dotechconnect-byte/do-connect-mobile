@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class AuthTextField extends StatelessWidget {
   final String label;
@@ -29,6 +30,8 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -37,7 +40,7 @@ class AuthTextField extends StatelessWidget {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s14,
             fontWeight: FontWeightManager.medium,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         SizedBox(height: 8.h),
@@ -49,19 +52,19 @@ class AuthTextField extends StatelessWidget {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s14,
             fontWeight: FontWeightManager.regular,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s14,
               fontWeight: FontWeightManager.regular,
-              color: ColorManager.grey2,
+              color: colors.grey2,
             ),
             prefixIcon: prefixIcon != null
                 ? Icon(
                     prefixIcon,
-                    color: ColorManager.grey2,
+                    color: colors.grey2,
                     size: 20.sp,
                   )
                 : null,
@@ -71,25 +74,25 @@ class AuthTextField extends StatelessWidget {
                       obscureText
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
-                      color: ColorManager.grey2,
+                      color: colors.grey2,
                       size: 20.sp,
                     ),
                     onPressed: onTogglePassword,
                   )
                 : null,
             filled: true,
-            fillColor: ColorManager.white,
+            fillColor: colors.cardBackground,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(
-                color: ColorManager.grey4,
+                color: colors.grey4,
                 width: 1.5,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(
-                color: ColorManager.grey4,
+                color: colors.grey4,
                 width: 1.5,
               ),
             ),

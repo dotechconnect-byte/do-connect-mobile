@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class PromoBanner extends StatefulWidget {
   const PromoBanner({super.key});
@@ -167,8 +168,8 @@ class _PromoBannerState extends State<PromoBanner> {
               margin: EdgeInsets.symmetric(horizontal: 4.w),
               decoration: BoxDecoration(
                 color: _currentIndex == entry.key
-                    ? ColorManager.primary
-                    : ColorManager.grey3,
+                    ? ThemeHelper.of(context).primary
+                    : ThemeHelper.of(context).grey3,
                 borderRadius: BorderRadius.circular(4.r),
               ),
             );

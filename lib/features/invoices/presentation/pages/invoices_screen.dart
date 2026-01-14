@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../widgets/invoices_content.dart';
 
 class InvoicesScreen extends StatelessWidget {
@@ -9,15 +9,17 @@ class InvoicesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: ColorManager.white,
+        backgroundColor: colors.cardBackground,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
             size: 24.sp,
           ),
           onPressed: () => Navigator.pop(context),
@@ -30,7 +32,7 @@ class InvoicesScreen extends StatelessWidget {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s18,
                 fontWeight: FontWeightManager.bold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             Text(
@@ -38,7 +40,7 @@ class InvoicesScreen extends StatelessWidget {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s12,
                 fontWeight: FontWeightManager.regular,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ],
@@ -47,7 +49,7 @@ class InvoicesScreen extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.file_download_outlined,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
               size: 24.sp,
             ),
             onPressed: () {
@@ -57,7 +59,7 @@ class InvoicesScreen extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.add_circle_outline,
-              color: ColorManager.primary,
+              color: colors.primary,
               size: 24.sp,
             ),
             onPressed: () {

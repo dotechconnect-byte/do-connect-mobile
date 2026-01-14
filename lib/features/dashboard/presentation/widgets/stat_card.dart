@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class StatCard extends StatelessWidget {
   final String title;
@@ -23,13 +23,15 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: ColorManager.grey4,
+          color: colors.grey4,
           width: 1,
         ),
       ),
@@ -46,7 +48,7 @@ class StatCard extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.medium,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -73,7 +75,7 @@ class StatCard extends StatelessWidget {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s20,
               fontWeight: FontWeightManager.bold,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -85,7 +87,7 @@ class StatCard extends StatelessWidget {
                 Icon(
                   isPositive ? Icons.arrow_upward : Icons.arrow_downward,
                   size: 10.sp,
-                  color: isPositive ? ColorManager.success : ColorManager.error,
+                  color: isPositive ? colors.success : colors.error,
                 ),
                 SizedBox(width: 2.w),
                 Flexible(
@@ -94,7 +96,7 @@ class StatCard extends StatelessWidget {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s10,
                       fontWeight: FontWeightManager.medium,
-                      color: isPositive ? ColorManager.success : ColorManager.error,
+                      color: isPositive ? colors.success : colors.error,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

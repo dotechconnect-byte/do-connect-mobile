@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/attendance_model.dart';
 
 class AttendanceDetailModal extends StatefulWidget {
@@ -31,10 +32,12 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.r),
           topRight: Radius.circular(20.r),
@@ -46,13 +49,13 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
           Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: ColorManager.white,
+              color: colors.cardBackground,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20.r),
                 topRight: Radius.circular(20.r),
               ),
               border: Border(
-                bottom: BorderSide(color: ColorManager.grey4, width: 1),
+                bottom: BorderSide(color: colors.grey4, width: 1),
               ),
             ),
             child: Row(
@@ -66,7 +69,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s18,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -75,7 +78,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s11,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         maxLines: 2,
                       ),
@@ -83,7 +86,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, size: 24.sp, color: ColorManager.textPrimary),
+                  icon: Icon(Icons.close, size: 24.sp, color: colors.textPrimary),
                   onPressed: () => Navigator.pop(context),
                   padding: EdgeInsets.all(8.w),
                   constraints: const BoxConstraints(),
@@ -157,7 +160,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                         decoration: BoxDecoration(
-                          border: Border.all(color: ColorManager.grey3),
+                          border: Border.all(color: colors.grey3),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Text(
@@ -165,7 +168,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s14,
                             fontWeight: FontWeightManager.medium,
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -178,9 +181,9 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                   Container(
                     padding: EdgeInsets.all(14.w),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF4ED),
+                      color: colors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: const Color(0xFFFFE5DC)),
+                      border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -194,7 +197,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                                 style: FontConstants.getPoppinsStyle(
                                   fontSize: FontSize.s13,
                                   fontWeight: FontWeightManager.semiBold,
-                                  color: ColorManager.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                               SizedBox(height: 2.h),
@@ -203,7 +206,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                                 style: FontConstants.getPoppinsStyle(
                                   fontSize: FontSize.s10,
                                   fontWeight: FontWeightManager.regular,
-                                  color: ColorManager.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -214,7 +217,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s24,
                             fontWeight: FontWeightManager.bold,
-                            color: ColorManager.primary,
+                            color: colors.primary,
                           ),
                         ),
                       ],
@@ -253,7 +256,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.medium,
-                      color: ColorManager.textSecondary,
+                      color: colors.textSecondary,
                     ),
                   ),
                   SizedBox(height: 8.h),
@@ -263,26 +266,26 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.regular,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Add performance notes...',
                       hintStyle: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s13,
                         fontWeight: FontWeightManager.regular,
-                        color: ColorManager.grey3,
+                        color: colors.grey3,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
-                        borderSide: BorderSide(color: ColorManager.grey3),
+                        borderSide: BorderSide(color: colors.grey3),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
-                        borderSide: BorderSide(color: ColorManager.grey3),
+                        borderSide: BorderSide(color: colors.grey3),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
-                        borderSide: BorderSide(color: ColorManager.primary, width: 2),
+                        borderSide: BorderSide(color: colors.primary, width: 2),
                       ),
                       contentPadding: EdgeInsets.all(12.w),
                     ),
@@ -305,7 +308,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorManager.primary,
+                        backgroundColor: colors.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.r),
                         ),
@@ -333,17 +336,21 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
   }
 
   Widget _buildSectionHeader(String title) {
+    final colors = ThemeHelper.of(context);
+
     return Text(
       title,
       style: FontConstants.getPoppinsStyle(
         fontSize: FontSize.s15,
         fontWeight: FontWeightManager.bold,
-        color: ColorManager.textPrimary,
+        color: colors.textPrimary,
       ),
     );
   }
 
   Widget _buildActionChip(IconData icon, String label, {bool isOrange = false}) {
+    final colors = ThemeHelper.of(context);
+
     return InkWell(
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -357,10 +364,10 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isOrange ? ColorManager.primary : Colors.transparent,
+          color: isOrange ? colors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: isOrange ? ColorManager.primary : ColorManager.grey3,
+            color: isOrange ? colors.primary : colors.grey3,
             width: 1,
           ),
         ),
@@ -370,7 +377,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
             Icon(
               icon,
               size: 16.sp,
-              color: isOrange ? ColorManager.white : ColorManager.textPrimary,
+              color: isOrange ? ColorManager.white : colors.textPrimary,
             ),
             SizedBox(width: 6.w),
             Text(
@@ -378,7 +385,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s12,
                 fontWeight: FontWeightManager.semiBold,
-                color: isOrange ? ColorManager.white : ColorManager.textPrimary,
+                color: isOrange ? ColorManager.white : colors.textPrimary,
               ),
             ),
           ],
@@ -388,6 +395,8 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
   }
 
   Widget _buildTimeSection(String title, List<Widget> children) {
+    final colors = ThemeHelper.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -396,7 +405,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s13,
             fontWeight: FontWeightManager.medium,
-            color: ColorManager.textSecondary,
+            color: colors.textSecondary,
           ),
         ),
         SizedBox(height: 8.h),
@@ -406,16 +415,18 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
   }
 
   Widget _buildTimeRow(String startTime, String endTime) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
       ),
       child: Row(
         children: [
-          Icon(Icons.access_time, size: 18.sp, color: ColorManager.primary),
+          Icon(Icons.access_time, size: 18.sp, color: colors.primary),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
@@ -423,7 +434,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -432,7 +443,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s14,
               fontWeight: FontWeightManager.bold,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
           ),
           SizedBox(width: 8.w),
@@ -443,18 +454,20 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
           SizedBox(width: 8.w),
-          Icon(Icons.access_time, size: 18.sp, color: ColorManager.primary),
+          Icon(Icons.access_time, size: 18.sp, color: colors.primary),
         ],
       ),
     );
   }
 
   Widget _buildInfoRow(String label, String value, Color valueColor) {
+    final colors = ThemeHelper.of(context);
+
     return Padding(
       padding: EdgeInsets.only(bottom: 6.h),
       child: Row(
@@ -464,7 +477,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s13,
               fontWeight: FontWeightManager.medium,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
           ),
           SizedBox(width: 8.w),
@@ -482,6 +495,8 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
   }
 
   Widget _buildDropdownButton(IconData icon, String label) {
+    final colors = ThemeHelper.of(context);
+
     return InkWell(
       onTap: () {
         // Handle dropdown
@@ -489,12 +504,12 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         decoration: BoxDecoration(
-          border: Border.all(color: ColorManager.grey3),
+          border: Border.all(color: colors.grey3),
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 18.sp, color: ColorManager.textSecondary),
+            Icon(icon, size: 18.sp, color: colors.textSecondary),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
@@ -502,11 +517,11 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s13,
                   fontWeight: FontWeightManager.medium,
-                  color: ColorManager.textSecondary,
+                  color: colors.textSecondary,
                 ),
               ),
             ),
-            Icon(Icons.keyboard_arrow_down, size: 20.sp, color: ColorManager.textSecondary),
+            Icon(Icons.keyboard_arrow_down, size: 20.sp, color: colors.textSecondary),
           ],
         ),
       ),
@@ -514,6 +529,8 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
   }
 
   Widget _buildRatingRow(String label, int rating, Function(int) onRatingChanged) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
@@ -524,7 +541,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s13,
                 fontWeight: FontWeightManager.medium,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -537,7 +554,7 @@ class _AttendanceDetailModalState extends State<AttendanceDetailModal> {
                 child: Icon(
                   starIndex <= rating ? Icons.star : Icons.star_border,
                   size: 26.sp,
-                  color: starIndex <= rating ? const Color(0xFFFFA500) : ColorManager.grey3,
+                  color: starIndex <= rating ? const Color(0xFFFFA500) : colors.grey3,
                 ),
               ),
             );

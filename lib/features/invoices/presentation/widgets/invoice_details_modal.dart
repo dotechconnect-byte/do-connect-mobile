@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/invoice_model.dart';
 
 class InvoiceDetailsModal extends StatelessWidget {
@@ -14,10 +15,12 @@ class InvoiceDetailsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
-        color: ColorManager.backgroundColor,
+        color: colors.background,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24.r),
           topRight: Radius.circular(24.r),
@@ -29,7 +32,7 @@ class InvoiceDetailsModal extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(20.w),
             decoration: BoxDecoration(
-              color: ColorManager.white,
+              color: colors.cardBackground,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(24.r),
                 topRight: Radius.circular(24.r),
@@ -42,7 +45,7 @@ class InvoiceDetailsModal extends StatelessWidget {
                   width: 40.w,
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: ColorManager.grey3,
+                    color: colors.grey3,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
@@ -60,7 +63,7 @@ class InvoiceDetailsModal extends StatelessWidget {
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s20,
                               fontWeight: FontWeightManager.bold,
-                              color: ColorManager.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                           SizedBox(height: 4.h),
@@ -69,7 +72,7 @@ class InvoiceDetailsModal extends StatelessWidget {
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s13,
                               fontWeight: FontWeightManager.regular,
-                              color: ColorManager.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -80,7 +83,7 @@ class InvoiceDetailsModal extends StatelessWidget {
                       icon: Icon(
                         Icons.close,
                         size: 24.sp,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -102,34 +105,34 @@ class InvoiceDetailsModal extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
-                      color: ColorManager.white,
+                      color: colors.cardBackground,
                       borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: ColorManager.grey4),
+                      border: Border.all(color: colors.grey4),
                     ),
                     child: Column(
                       children: [
-                        _buildInfoRow('Invoice Number', invoice.invoiceNumber),
+                        _buildInfoRow('Invoice Number', invoice.invoiceNumber, colors),
                         SizedBox(height: 12.h),
-                        _buildInfoRow('Period', invoice.period),
+                        _buildInfoRow('Period', invoice.period, colors),
                         SizedBox(height: 12.h),
                         Row(
                           children: [
                             Expanded(
-                              child: _buildInfoColumn('Submitted Date', invoice.submittedDate),
+                              child: _buildInfoColumn('Submitted Date', invoice.submittedDate, colors: colors),
                             ),
                             Expanded(
-                              child: _buildInfoColumn('Due Date', invoice.dueDate),
+                              child: _buildInfoColumn('Due Date', invoice.dueDate, colors: colors),
                             ),
                           ],
                         ),
                         SizedBox(height: 12.h),
-                        Divider(color: ColorManager.grey4),
+                        Divider(color: colors.grey4),
                         SizedBox(height: 12.h),
                         Row(
                           children: [
                             Expanded(
                               child: _buildInfoColumn('Total Amount', invoice.amount,
-                                  valueColor: ColorManager.primary, valueBold: true),
+                                  colors: colors, valueColor: colors.primary, valueBold: true),
                             ),
                             Expanded(
                               child: Column(
@@ -140,11 +143,11 @@ class InvoiceDetailsModal extends StatelessWidget {
                                     style: FontConstants.getPoppinsStyle(
                                       fontSize: FontSize.s12,
                                       fontWeight: FontWeightManager.regular,
-                                      color: ColorManager.textSecondary,
+                                      color: colors.textSecondary,
                                     ),
                                   ),
                                   SizedBox(height: 4.h),
-                                  _buildStatusBadge(invoice.status),
+                                  _buildStatusBadge(invoice.status, colors),
                                 ],
                               ),
                             ),
@@ -154,10 +157,10 @@ class InvoiceDetailsModal extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: _buildInfoColumn('DOER Count', '${invoice.staffCount} DOER'),
+                              child: _buildInfoColumn('DOER Count', '${invoice.staffCount} DOER', colors: colors),
                             ),
                             Expanded(
-                              child: _buildInfoColumn('Total Hours', invoice.totalHours),
+                              child: _buildInfoColumn('Total Hours', invoice.totalHours, colors: colors),
                             ),
                           ],
                         ),
@@ -173,7 +176,7 @@ class InvoiceDetailsModal extends StatelessWidget {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s16,
                         fontWeight: FontWeightManager.bold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     SizedBox(height: 12.h),
@@ -195,7 +198,7 @@ class InvoiceDetailsModal extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, String value, ThemeHelper colors) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -204,7 +207,7 @@ class InvoiceDetailsModal extends StatelessWidget {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s13,
             fontWeight: FontWeightManager.regular,
-            color: ColorManager.textSecondary,
+            color: colors.textSecondary,
           ),
         ),
         Text(
@@ -212,7 +215,7 @@ class InvoiceDetailsModal extends StatelessWidget {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s13,
             fontWeight: FontWeightManager.semiBold,
-            color: ColorManager.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
       ],
@@ -222,6 +225,7 @@ class InvoiceDetailsModal extends StatelessWidget {
   Widget _buildInfoColumn(
     String label,
     String value, {
+    required ThemeHelper colors,
     Color? valueColor,
     bool valueBold = false,
   }) {
@@ -233,7 +237,7 @@ class InvoiceDetailsModal extends StatelessWidget {
           style: FontConstants.getPoppinsStyle(
             fontSize: FontSize.s12,
             fontWeight: FontWeightManager.regular,
-            color: ColorManager.textSecondary,
+            color: colors.textSecondary,
           ),
         ),
         SizedBox(height: 4.h),
@@ -242,32 +246,32 @@ class InvoiceDetailsModal extends StatelessWidget {
           style: FontConstants.getPoppinsStyle(
             fontSize: valueBold ? FontSize.s16 : FontSize.s14,
             fontWeight: valueBold ? FontWeightManager.bold : FontWeightManager.semiBold,
-            color: valueColor ?? ColorManager.textPrimary,
+            color: valueColor ?? colors.textPrimary,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildStatusBadge(InvoiceStatus status) {
+  Widget _buildStatusBadge(InvoiceStatus status, ThemeHelper colors) {
     Color backgroundColor;
     Color textColor;
     String text;
 
     switch (status) {
       case InvoiceStatus.pending:
-        backgroundColor = ColorManager.warning.withValues(alpha: 0.1);
-        textColor = ColorManager.warning;
+        backgroundColor = colors.warning.withValues(alpha: 0.1);
+        textColor = colors.warning;
         text = 'PENDING';
         break;
       case InvoiceStatus.paid:
-        backgroundColor = ColorManager.success.withValues(alpha: 0.1);
-        textColor = ColorManager.success;
+        backgroundColor = colors.success.withValues(alpha: 0.1);
+        textColor = colors.success;
         text = 'PAID';
         break;
       case InvoiceStatus.overdue:
-        backgroundColor = ColorManager.error.withValues(alpha: 0.1);
-        textColor = ColorManager.error;
+        backgroundColor = colors.error.withValues(alpha: 0.1);
+        textColor = colors.error;
         text = 'OVERDUE';
         break;
     }
@@ -290,12 +294,14 @@ class InvoiceDetailsModal extends StatelessWidget {
   }
 
   Widget _buildAttendanceDateCard(AttendanceDate attendance, BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4),
+        border: Border.all(color: colors.grey4),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,7 +311,7 @@ class InvoiceDetailsModal extends StatelessWidget {
             width: 32.w,
             height: 32.w,
             decoration: BoxDecoration(
-              color: ColorManager.primary,
+              color: colors.primary,
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -328,7 +334,7 @@ class InvoiceDetailsModal extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 6.h),
@@ -337,7 +343,7 @@ class InvoiceDetailsModal extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -363,7 +369,7 @@ class InvoiceDetailsModal extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: ColorManager.primary,
+                    color: colors.primary,
                     width: 1,
                   ),
                 ),
@@ -373,7 +379,7 @@ class InvoiceDetailsModal extends StatelessWidget {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s13,
                   fontWeight: FontWeightManager.semiBold,
-                  color: ColorManager.primary,
+                  color: colors.primary,
                 ),
               ),
             ),

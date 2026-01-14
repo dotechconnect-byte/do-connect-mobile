@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/attendance_model.dart';
 
 class AttendanceCard extends StatelessWidget {
@@ -16,13 +17,15 @@ class AttendanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),
         padding: EdgeInsets.all(14.w),
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: colors.cardBackground,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
@@ -39,7 +42,7 @@ class AttendanceCard extends StatelessWidget {
               width: 36.w,
               height: 36.w,
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Center(
@@ -48,7 +51,7 @@ class AttendanceCard extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -69,7 +72,7 @@ class AttendanceCard extends StatelessWidget {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s15,
                             fontWeight: FontWeightManager.bold,
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -100,7 +103,7 @@ class AttendanceCard extends StatelessWidget {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s12,
                             fontWeight: FontWeightManager.medium,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                         Text(
@@ -124,13 +127,18 @@ class AttendanceCard extends StatelessWidget {
   }
 
   Widget _buildDetailItem(String text) {
-    return Text(
-      text,
-      style: FontConstants.getPoppinsStyle(
-        fontSize: FontSize.s12,
-        fontWeight: FontWeightManager.regular,
-        color: ColorManager.textSecondary,
-      ),
+    return Builder(
+      builder: (context) {
+        final colors = ThemeHelper.of(context);
+        return Text(
+          text,
+          style: FontConstants.getPoppinsStyle(
+            fontSize: FontSize.s12,
+            fontWeight: FontWeightManager.regular,
+            color: colors.textSecondary,
+          ),
+        );
+      },
     );
   }
 

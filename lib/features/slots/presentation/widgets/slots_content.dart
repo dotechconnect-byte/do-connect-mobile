@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/slot_model.dart';
 import 'slot_card.dart';
 import 'slot_details_modal.dart';
@@ -91,6 +92,7 @@ class _SlotsContentState extends State<SlotsContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     final filteredSlots = _filteredSlots;
 
     return Column(
@@ -102,7 +104,7 @@ class _SlotsContentState extends State<SlotsContent> {
         if (widget.searchQuery.isNotEmpty)
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            color: ColorManager.backgroundColor,
+            color: colors.background,
             child: Row(
               children: [
                 Expanded(
@@ -111,7 +113,7 @@ class _SlotsContentState extends State<SlotsContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -129,7 +131,7 @@ class _SlotsContentState extends State<SlotsContent> {
                       Icon(
                         Icons.search_off,
                         size: 64.sp,
-                        color: ColorManager.grey3,
+                        color: colors.grey3,
                       ),
                       SizedBox(height: 16.h),
                       Text(
@@ -137,7 +139,7 @@ class _SlotsContentState extends State<SlotsContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s16,
                           fontWeight: FontWeightManager.semiBold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 8.h),
@@ -146,7 +148,7 @@ class _SlotsContentState extends State<SlotsContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -177,8 +179,10 @@ class _SlotsContentState extends State<SlotsContent> {
   }
 
   Widget _buildDateFilter() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
-      color: ColorManager.white,
+      color: colors.cardBackground,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
@@ -193,14 +197,14 @@ class _SlotsContentState extends State<SlotsContent> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 20.sp,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -216,13 +220,23 @@ class _SlotsContentState extends State<SlotsContent> {
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2030),
                   builder: (context, child) {
+                    final pickerColors = ThemeHelper.of(context);
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
                     return Theme(
                       data: Theme.of(context).copyWith(
-                        colorScheme: ColorScheme.light(
-                          primary: ColorManager.primary,
-                          onPrimary: ColorManager.white,
-                          surface: ColorManager.white,
-                        ),
+                        colorScheme: isDark
+                            ? ColorScheme.dark(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              )
+                            : ColorScheme.light(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              ),
                       ),
                       child: child!,
                     );
@@ -238,9 +252,9 @@ class _SlotsContentState extends State<SlotsContent> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: ColorManager.primary),
+                  border: Border.all(color: colors.primary),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -248,7 +262,7 @@ class _SlotsContentState extends State<SlotsContent> {
                     Icon(
                       Icons.calendar_today,
                       size: 18.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     SizedBox(width: 8.w),
                     Text(
@@ -256,7 +270,7 @@ class _SlotsContentState extends State<SlotsContent> {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s14,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        color: colors.primary,
                       ),
                     ),
                   ],
@@ -277,14 +291,14 @@ class _SlotsContentState extends State<SlotsContent> {
             child: Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.grey6,
+                color: colors.grey6,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: ColorManager.grey4),
+                border: Border.all(color: colors.grey4),
               ),
               child: Icon(
                 Icons.chevron_right,
                 size: 20.sp,
-                color: ColorManager.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/user_model.dart';
 import 'user_detail_modal.dart';
 import 'availability_modal.dart';
@@ -207,11 +208,12 @@ class _GroupsContentState extends State<GroupsContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     return Column(
       children: [
         // Filter Tabs
         Container(
-          color: ColorManager.white,
+          color: colors.cardBackground,
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -220,7 +222,7 @@ class _GroupsContentState extends State<GroupsContent> {
                 final isSelected = _selectedFilter == filter;
                 return Padding(
                   padding: EdgeInsets.only(right: 8.w),
-                  child: _buildFilterChip(filter, isSelected),
+                  child: _buildFilterChip(filter, isSelected, colors: colors),
                 );
               }).toList(),
             ),
@@ -229,7 +231,7 @@ class _GroupsContentState extends State<GroupsContent> {
 
         // Action Buttons (Create Group & Invite Staff)
         Container(
-          color: ColorManager.white,
+          color: colors.cardBackground,
           padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 12.h),
           child: Row(
             children: [
@@ -249,18 +251,18 @@ class _GroupsContentState extends State<GroupsContent> {
                   icon: Icon(
                     Icons.group_add,
                     size: 18.sp,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                   label: Text(
                     'Create Group',
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s12,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: ColorManager.grey4),
+                    side: BorderSide(color: colors.grey4),
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.r),
@@ -292,7 +294,7 @@ class _GroupsContentState extends State<GroupsContent> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorManager.primary,
+                    backgroundColor: colors.primary,
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -315,7 +317,7 @@ class _GroupsContentState extends State<GroupsContent> {
                       Icon(
                         Icons.people_outline,
                         size: 64.sp,
-                        color: ColorManager.grey3,
+                        color: colors.grey3,
                       ),
                       SizedBox(height: 16.h),
                       Text(
@@ -323,7 +325,7 @@ class _GroupsContentState extends State<GroupsContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s16,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -339,7 +341,7 @@ class _GroupsContentState extends State<GroupsContent> {
                   ),
                   itemCount: _filteredUsers.length,
                   itemBuilder: (context, index) {
-                    return _buildUserCard(_filteredUsers[index]);
+                    return _buildUserCard(_filteredUsers[index], colors: colors);
                   },
                 ),
         ),
@@ -347,7 +349,7 @@ class _GroupsContentState extends State<GroupsContent> {
     );
   }
 
-  Widget _buildFilterChip(String label, bool isSelected) {
+  Widget _buildFilterChip(String label, bool isSelected, {required ThemeHelper colors}) {
     return InkWell(
       onTap: () {
         setState(() {
@@ -358,10 +360,10 @@ class _GroupsContentState extends State<GroupsContent> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.primary : ColorManager.grey6,
+          color: isSelected ? colors.primary : colors.grey6,
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isSelected ? ColorManager.primary : ColorManager.grey4,
+            color: isSelected ? colors.primary : colors.grey4,
           ),
         ),
         child: Text(
@@ -370,14 +372,14 @@ class _GroupsContentState extends State<GroupsContent> {
             fontSize: FontSize.s13,
             fontWeight:
                 isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-            color: isSelected ? ColorManager.white : ColorManager.textSecondary,
+            color: isSelected ? ColorManager.white : colors.textSecondary,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildUserCard(UserModel user) {
+  Widget _buildUserCard(UserModel user, {required ThemeHelper colors}) {
     return InkWell(
       onTap: () {
         showModalBottomSheet(
@@ -399,9 +401,9 @@ class _GroupsContentState extends State<GroupsContent> {
       borderRadius: BorderRadius.circular(16.r),
       child: Container(
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: colors.cardBackground,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: ColorManager.grey4),
+          border: Border.all(color: colors.grey4),
           boxShadow: [
             BoxShadow(
               color: ColorManager.black.withValues(alpha: 0.04),
@@ -426,7 +428,7 @@ class _GroupsContentState extends State<GroupsContent> {
                       color: Color(int.parse('FF${user.avatarColor}', radix: 16)),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: ColorManager.grey4.withValues(alpha: 0.3),
+                        color: colors.grey4.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -436,7 +438,7 @@ class _GroupsContentState extends State<GroupsContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s16,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.primary,
+                          color: colors.primary,
                         ),
                       ),
                     ),
@@ -453,7 +455,7 @@ class _GroupsContentState extends State<GroupsContent> {
                       user.isLoved ? Icons.favorite : Icons.favorite_border,
                       size: 20.sp,
                       color:
-                          user.isLoved ? ColorManager.error : ColorManager.grey3,
+                          user.isLoved ? colors.error : colors.grey3,
                     ),
                   ),
                   SizedBox(width: 8.w),
@@ -461,7 +463,7 @@ class _GroupsContentState extends State<GroupsContent> {
                   Icon(
                     Icons.more_vert,
                     size: 20.sp,
-                    color: ColorManager.grey3,
+                    color: colors.grey3,
                   ),
                 ],
               ),
@@ -478,7 +480,7 @@ class _GroupsContentState extends State<GroupsContent> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s14,
                       fontWeight: FontWeightManager.bold,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -486,14 +488,14 @@ class _GroupsContentState extends State<GroupsContent> {
                   SizedBox(height: 4.h),
                   Row(
                     children: [
-                      Icon(Icons.star, size: 14.sp, color: ColorManager.warning),
+                      Icon(Icons.star, size: 14.sp, color: colors.warning),
                       SizedBox(width: 4.w),
                       Text(
                         '${user.rating}',
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s12,
                           fontWeight: FontWeightManager.semiBold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(width: 8.w),
@@ -502,7 +504,7 @@ class _GroupsContentState extends State<GroupsContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s11,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -523,10 +525,10 @@ class _GroupsContentState extends State<GroupsContent> {
                         spacing: 6.w,
                         runSpacing: 6.h,
                         children: [
-                          ...user.tags.map((tag) => _buildTag(tag)),
+                          ...user.tags.map((tag) => _buildTag(tag, colors: colors)),
                           // Show custom group tag if user is in a custom group
                           if (_customGroups.contains(user.group))
-                            _buildTag(user.group!, isCustomGroup: true),
+                            _buildTag(user.group!, colors: colors, isCustomGroup: true),
                         ],
                       )
                     : const SizedBox(),
@@ -536,7 +538,7 @@ class _GroupsContentState extends State<GroupsContent> {
             SizedBox(height: 12.h),
 
             // Divider
-            Divider(color: ColorManager.grey4, height: 1),
+            Divider(color: colors.grey4, height: 1),
 
             // Action buttons
             Padding(
@@ -548,6 +550,7 @@ class _GroupsContentState extends State<GroupsContent> {
                     child: _buildActionButton(
                       icon: Icons.calendar_today_outlined,
                       label: 'Availability',
+                      colors: colors,
                       onTap: () {
                         showModalBottomSheet(
                           context: context,
@@ -564,6 +567,7 @@ class _GroupsContentState extends State<GroupsContent> {
                     child: _buildActionButton(
                       icon: Icons.group_add_outlined,
                       label: 'Assign',
+                      colors: colors,
                       onTap: () {
                         showDialog(
                           context: context,
@@ -582,7 +586,7 @@ class _GroupsContentState extends State<GroupsContent> {
                                       color: ColorManager.white,
                                     ),
                                   ),
-                                  backgroundColor: ColorManager.success,
+                                  backgroundColor: colors.success,
                                   behavior: SnackBarBehavior.floating,
                                   duration: const Duration(seconds: 2),
                                 ),
@@ -602,7 +606,7 @@ class _GroupsContentState extends State<GroupsContent> {
               padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
               child: SizedBox(
                 width: double.infinity,
-                child: _buildBanButton(user),
+                child: _buildBanButton(user, colors: colors),
               ),
             ),
           ],
@@ -611,37 +615,37 @@ class _GroupsContentState extends State<GroupsContent> {
     );
   }
 
-  Widget _buildTag(String tag, {bool isCustomGroup = false}) {
+  Widget _buildTag(String tag, {required ThemeHelper colors, bool isCustomGroup = false}) {
     Color backgroundColor;
     Color textColor;
     String displayText;
 
     if (isCustomGroup) {
       // Custom group tags - use purple/violet theme
-      backgroundColor = ColorManager.primary.withValues(alpha: 0.1);
-      textColor = ColorManager.primary;
+      backgroundColor = colors.primary.withValues(alpha: 0.1);
+      textColor = colors.primary;
       displayText = tag;
     } else {
       switch (tag.toLowerCase()) {
         case 'favourite':
         case 'favorite':
-          backgroundColor = ColorManager.error.withValues(alpha: 0.1);
-          textColor = ColorManager.error;
+          backgroundColor = colors.error.withValues(alpha: 0.1);
+          textColor = colors.error;
           displayText = 'favourite';
           break;
         case 'priority':
-          backgroundColor = ColorManager.warning.withValues(alpha: 0.1);
-          textColor = ColorManager.warning;
+          backgroundColor = colors.warning.withValues(alpha: 0.1);
+          textColor = colors.warning;
           displayText = 'priority';
           break;
         case 'regular':
-          backgroundColor = ColorManager.info.withValues(alpha: 0.1);
-          textColor = ColorManager.info;
+          backgroundColor = colors.info.withValues(alpha: 0.1);
+          textColor = colors.info;
           displayText = 'regular';
           break;
         default:
-          backgroundColor = ColorManager.grey5;
-          textColor = ColorManager.textSecondary;
+          backgroundColor = colors.grey5;
+          textColor = colors.textSecondary;
           displayText = tag;
       }
     }
@@ -666,6 +670,7 @@ class _GroupsContentState extends State<GroupsContent> {
   Widget _buildActionButton({
     required IconData icon,
     required String label,
+    required ThemeHelper colors,
     required VoidCallback onTap,
   }) {
     return InkWell(
@@ -674,9 +679,9 @@ class _GroupsContentState extends State<GroupsContent> {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
         decoration: BoxDecoration(
-          color: ColorManager.grey6,
+          color: colors.grey6,
           borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: ColorManager.grey4),
+          border: Border.all(color: colors.grey4),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -684,7 +689,7 @@ class _GroupsContentState extends State<GroupsContent> {
             Icon(
               icon,
               size: 14.sp,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
             SizedBox(width: 4.w),
             Flexible(
@@ -693,7 +698,7 @@ class _GroupsContentState extends State<GroupsContent> {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s10,
                   fontWeight: FontWeightManager.medium,
-                  color: ColorManager.textPrimary,
+                  color: colors.textPrimary,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -705,7 +710,7 @@ class _GroupsContentState extends State<GroupsContent> {
     );
   }
 
-  Widget _buildBanButton(UserModel user) {
+  Widget _buildBanButton(UserModel user, {required ThemeHelper colors}) {
     return InkWell(
       onTap: () {
         setState(() {
@@ -721,7 +726,7 @@ class _GroupsContentState extends State<GroupsContent> {
                 color: ColorManager.white,
               ),
             ),
-            backgroundColor: user.isBanned ? ColorManager.success : ColorManager.error,
+            backgroundColor: user.isBanned ? colors.success : colors.error,
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 2),
           ),
@@ -732,11 +737,11 @@ class _GroupsContentState extends State<GroupsContent> {
         padding: EdgeInsets.symmetric(vertical: 8.h),
         decoration: BoxDecoration(
           color: user.isBanned
-              ? ColorManager.success.withValues(alpha: 0.1)
-              : ColorManager.error.withValues(alpha: 0.1),
+              ? colors.success.withValues(alpha: 0.1)
+              : colors.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: user.isBanned ? ColorManager.success : ColorManager.error,
+            color: user.isBanned ? colors.success : colors.error,
           ),
         ),
         child: Row(
@@ -745,7 +750,7 @@ class _GroupsContentState extends State<GroupsContent> {
             Icon(
               user.isBanned ? Icons.check_circle_outline : Icons.block,
               size: 14.sp,
-              color: user.isBanned ? ColorManager.success : ColorManager.error,
+              color: user.isBanned ? colors.success : colors.error,
             ),
             SizedBox(width: 6.w),
             Text(
@@ -753,7 +758,7 @@ class _GroupsContentState extends State<GroupsContent> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s11,
                 fontWeight: FontWeightManager.semiBold,
-                color: user.isBanned ? ColorManager.success : ColorManager.error,
+                color: user.isBanned ? colors.success : colors.error,
               ),
             ),
           ],

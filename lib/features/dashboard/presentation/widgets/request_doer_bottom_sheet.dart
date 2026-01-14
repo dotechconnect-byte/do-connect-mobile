@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class RequestDoerBottomSheet extends StatefulWidget {
   const RequestDoerBottomSheet({super.key});
@@ -32,9 +33,11 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.r),
           topRight: Radius.circular(20.r),
@@ -49,7 +52,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
             width: 40.w,
             height: 4.h,
             decoration: BoxDecoration(
-              color: ColorManager.grey3,
+              color: colors.grey3,
               borderRadius: BorderRadius.circular(2.r),
             ),
           ),
@@ -65,12 +68,12 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s18,
                       fontWeight: FontWeightManager.bold,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, size: 24.sp),
+                  icon: Icon(Icons.close, size: 24.sp, color: colors.textPrimary),
                   onPressed: () => Navigator.pop(context),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -92,7 +95,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s13,
                       fontWeight: FontWeightManager.regular,
-                      color: ColorManager.textSecondary,
+                      color: colors.textSecondary,
                     ),
                   ),
                   SizedBox(height: 20.h),
@@ -101,35 +104,37 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                   Container(
                     height: 44.h,
                     decoration: BoxDecoration(
-                      color: ColorManager.grey6,
+                      color: colors.grey6,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Row(
                       children: [
-                        _buildTypeTab('DOER', 0),
-                        _buildTypeTab('Team', 1),
+                        _buildTypeTab('DOER', 0, colors),
+                        _buildTypeTab('Team', 1, colors),
                       ],
                     ),
                   ),
                   SizedBox(height: 20.h),
 
                   // Position
-                  _buildLabel('Position *'),
+                  _buildLabel('Position *', colors),
                   _buildDropdown(
                     hint: 'Select position',
                     value: _selectedPosition,
                     items: ['Event Coordinator', 'Parking Attendant', 'Crowd Control', 'Security Guard'],
                     onChanged: (value) => setState(() => _selectedPosition = value),
+                    colors: colors,
                   ),
                   SizedBox(height: 16.h),
 
                   // Location
-                  _buildLabel('Location *'),
+                  _buildLabel('Location *', colors),
                   _buildDropdown(
                     hint: 'Select location',
                     value: _selectedLocation,
                     items: ['West Branch', 'East Branch', 'North Branch', 'South Branch'],
                     onChanged: (value) => setState(() => _selectedLocation = value),
+                    colors: colors,
                   ),
                   SizedBox(height: 16.h),
 
@@ -140,8 +145,8 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabel('Date *'),
-                            _buildDateField(),
+                            _buildLabel('Date *', colors),
+                            _buildDateField(colors),
                           ],
                         ),
                       ),
@@ -150,10 +155,11 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabel('Number of DOER *'),
+                            _buildLabel('Number of DOER *', colors),
                             _buildTextField(
                               controller: _numberOfDoerController,
                               keyboardType: TextInputType.number,
+                              colors: colors,
                             ),
                           ],
                         ),
@@ -169,8 +175,8 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabel('Start Time *'),
-                            _buildTimeField(_startTimeController),
+                            _buildLabel('Start Time *', colors),
+                            _buildTimeField(_startTimeController, colors),
                           ],
                         ),
                       ),
@@ -179,8 +185,8 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabel('End Time *'),
-                            _buildTimeField(_endTimeController),
+                            _buildLabel('End Time *', colors),
+                            _buildTimeField(_endTimeController, colors),
                           ],
                         ),
                       ),
@@ -189,8 +195,8 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                   SizedBox(height: 16.h),
 
                   // Things to Note
-                  _buildLabel('Things to Note'),
-                  _buildTextArea(),
+                  _buildLabel('Things to Note', colors),
+                  _buildTextArea(colors),
                   SizedBox(height: 20.h),
 
                   // Buttons
@@ -201,7 +207,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                           onPressed: () => Navigator.pop(context),
                           style: OutlinedButton.styleFrom(
                             padding: EdgeInsets.symmetric(vertical: 14.h),
-                            side: BorderSide(color: ColorManager.grey3, width: 1),
+                            side: BorderSide(color: colors.grey3, width: 1),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r),
                             ),
@@ -211,7 +217,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                             style: FontConstants.getPoppinsStyle(
                               fontSize: FontSize.s14,
                               fontWeight: FontWeightManager.semiBold,
-                              color: ColorManager.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ),
@@ -225,7 +231,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorManager.primary,
+                            backgroundColor: colors.primary,
                             padding: EdgeInsets.symmetric(vertical: 14.h),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r),
@@ -253,7 +259,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
     );
   }
 
-  Widget _buildTypeTab(String label, int index) {
+  Widget _buildTypeTab(String label, int index, ThemeHelper colors) {
     final isSelected = _selectedType == index;
     return Expanded(
       child: GestureDetector(
@@ -262,10 +268,10 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
           duration: const Duration(milliseconds: 200),
           margin: EdgeInsets.all(4.w),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.white : Colors.transparent,
+            color: isSelected ? colors.cardBackground : Colors.transparent,
             borderRadius: BorderRadius.circular(6.r),
             boxShadow: isSelected
-                ? [BoxShadow(color: ColorManager.black.withValues(alpha: 0.05), blurRadius: 4)]
+                ? [BoxShadow(color: colors.grey3.withValues(alpha: 0.1), blurRadius: 4)]
                 : [],
           ),
           child: Center(
@@ -274,7 +280,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s13,
                 fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-                color: isSelected ? ColorManager.textPrimary : ColorManager.textSecondary,
+                color: isSelected ? colors.textPrimary : colors.textSecondary,
               ),
             ),
           ),
@@ -283,7 +289,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
     );
   }
 
-  Widget _buildLabel(String label) {
+  Widget _buildLabel(String label, ThemeHelper colors) {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
       child: Text(
@@ -291,7 +297,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
         style: FontConstants.getPoppinsStyle(
           fontSize: FontSize.s13,
           fontWeight: FontWeightManager.medium,
-          color: ColorManager.textPrimary,
+          color: colors.textPrimary,
         ),
       ),
     );
@@ -302,12 +308,13 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
     required String? value,
     required List<String> items,
     required Function(String?) onChanged,
+    required ThemeHelper colors,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: ColorManager.grey4, width: 1),
+        border: Border.all(color: colors.grey4, width: 1),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -318,14 +325,14 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
               hint,
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s13,
-                color: ColorManager.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ),
           isExpanded: true,
           icon: Padding(
             padding: EdgeInsets.only(right: 12.w),
-            child: Icon(Icons.keyboard_arrow_down, size: 20.sp, color: ColorManager.textSecondary),
+            child: Icon(Icons.keyboard_arrow_down, size: 20.sp, color: colors.textSecondary),
           ),
           items: items.map((String item) {
             return DropdownMenuItem<String>(
@@ -336,7 +343,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                   item,
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -351,42 +358,65 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
   Widget _buildTextField({
     required TextEditingController controller,
     TextInputType? keyboardType,
+    required ThemeHelper colors,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       style: FontConstants.getPoppinsStyle(
         fontSize: FontSize.s13,
-        color: ColorManager.textPrimary,
+        color: colors.textPrimary,
       ),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.grey4, width: 1),
+          borderSide: BorderSide(color: colors.grey4, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.grey4, width: 1),
+          borderSide: BorderSide(color: colors.grey4, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.primary, width: 1),
+          borderSide: BorderSide(color: colors.primary, width: 1),
         ),
       ),
     );
   }
 
-  Widget _buildDateField() {
+  Widget _buildDateField(ThemeHelper colors) {
     return TextField(
       controller: _dateController,
       readOnly: true,
       onTap: () async {
+        final pickerColors = ThemeHelper.of(context);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         final date = await showDatePicker(
           context: context,
           initialDate: DateTime.now(),
           firstDate: DateTime.now(),
           lastDate: DateTime.now().add(const Duration(days: 365)),
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: isDark
+                    ? ColorScheme.dark(
+                        primary: pickerColors.primary,
+                        onPrimary: ColorManager.white,
+                        surface: pickerColors.cardBackground,
+                        onSurface: pickerColors.textPrimary,
+                      )
+                    : ColorScheme.light(
+                        primary: pickerColors.primary,
+                        onPrimary: ColorManager.white,
+                        surface: pickerColors.cardBackground,
+                        onSurface: pickerColors.textPrimary,
+                      ),
+              ),
+              child: child!,
+            );
+          },
         );
         if (date != null) {
           _dateController.text = '${date.day}/${date.month}/${date.year}';
@@ -394,33 +424,33 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
       },
       style: FontConstants.getPoppinsStyle(
         fontSize: FontSize.s13,
-        color: ColorManager.textPrimary,
+        color: colors.textPrimary,
       ),
       decoration: InputDecoration(
         hintText: 'dd/mm/yyyy',
         hintStyle: FontConstants.getPoppinsStyle(
           fontSize: FontSize.s13,
-          color: ColorManager.textSecondary,
+          color: colors.textSecondary,
         ),
-        suffixIcon: Icon(Icons.calendar_today, size: 18.sp, color: ColorManager.textSecondary),
+        suffixIcon: Icon(Icons.calendar_today, size: 18.sp, color: colors.textSecondary),
         contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.grey4, width: 1),
+          borderSide: BorderSide(color: colors.grey4, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.grey4, width: 1),
+          borderSide: BorderSide(color: colors.grey4, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.primary, width: 1),
+          borderSide: BorderSide(color: colors.primary, width: 1),
         ),
       ),
     );
   }
 
-  Widget _buildTimeField(TextEditingController controller) {
+  Widget _buildTimeField(TextEditingController controller, ThemeHelper colors) {
     return TextField(
       controller: controller,
       readOnly: true,
@@ -435,58 +465,58 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
       },
       style: FontConstants.getPoppinsStyle(
         fontSize: FontSize.s13,
-        color: ColorManager.textPrimary,
+        color: colors.textPrimary,
       ),
       decoration: InputDecoration(
         hintText: '--:--',
         hintStyle: FontConstants.getPoppinsStyle(
           fontSize: FontSize.s13,
-          color: ColorManager.textSecondary,
+          color: colors.textSecondary,
         ),
-        suffixIcon: Icon(Icons.access_time, size: 18.sp, color: ColorManager.textSecondary),
+        suffixIcon: Icon(Icons.access_time, size: 18.sp, color: colors.textSecondary),
         contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.grey4, width: 1),
+          borderSide: BorderSide(color: colors.grey4, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.grey4, width: 1),
+          borderSide: BorderSide(color: colors.grey4, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.primary, width: 1),
+          borderSide: BorderSide(color: colors.primary, width: 1),
         ),
       ),
     );
   }
 
-  Widget _buildTextArea() {
+  Widget _buildTextArea(ThemeHelper colors) {
     return TextField(
       controller: _notesController,
       maxLines: 3,
       style: FontConstants.getPoppinsStyle(
         fontSize: FontSize.s13,
-        color: ColorManager.textPrimary,
+        color: colors.textPrimary,
       ),
       decoration: InputDecoration(
         hintText: 'Add any special requirements or notes...',
         hintStyle: FontConstants.getPoppinsStyle(
           fontSize: FontSize.s13,
-          color: ColorManager.textSecondary,
+          color: colors.textSecondary,
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.grey4, width: 1),
+          borderSide: BorderSide(color: colors.grey4, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.grey4, width: 1),
+          borderSide: BorderSide(color: colors.grey4, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(color: ColorManager.primary, width: 1),
+          borderSide: BorderSide(color: colors.primary, width: 1),
         ),
       ),
     );
