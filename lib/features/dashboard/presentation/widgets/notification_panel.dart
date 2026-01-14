@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
+import '../../../profile/presentation/pages/notification_preferences_screen.dart';
 
 enum NotificationCategory { all, jobs, bills, work, money, alerts }
 
@@ -219,7 +220,14 @@ class _NotificationPanelState extends State<NotificationPanel> {
                     SizedBox(width: 8.w),
                     Expanded(
                       child: TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationPreferencesScreen(),
+                            ),
+                          );
+                        },
                         icon: Icon(
                           Icons.settings_outlined,
                           size: 16.sp,

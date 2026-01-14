@@ -6,6 +6,7 @@ import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/image_picker_utils.dart';
 import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/company_model.dart';
+import '../pages/company_branding_screen.dart';
 import 'edit_company_modal.dart';
 
 class ProfileContent extends StatefulWidget {
@@ -84,14 +85,6 @@ class _ProfileContentState extends State<ProfileContent> {
     FeedbackCategory(title: 'Transport Feedback', icon: '🚗', rating: 4.0, reviewCount: 4),
     FeedbackCategory(title: 'Canteen Feedback', icon: '🍽️', rating: 4.5, reviewCount: 4),
   ];
-
-  // Notification settings
-  bool _shiftConfirmations = true;
-  bool _lateArrivals = true;
-  bool _invoiceReminders = true;
-  bool _weeklyReports = false;
-  bool _attendanceEmails = true;
-  bool _invoiceEmails = true;
 
   @override
   Widget build(BuildContext context) {
@@ -238,6 +231,49 @@ class _ProfileContentState extends State<ProfileContent> {
                   ],
                 ),
               ],
+            ),
+          ),
+
+          SizedBox(height: 12.h),
+
+          // Company Branding Button
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CompanyBrandingScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorManager.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  elevation: 2,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.business, size: 20.sp),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'Company Branding',
+                      style: FontConstants.getPoppinsStyle(
+                        fontSize: FontSize.s15,
+                        fontWeight: FontWeightManager.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -467,74 +503,6 @@ class _ProfileContentState extends State<ProfileContent> {
                 SizedBox(height: 16.h),
 
                 ..._feedbackCategories.map((category) => _buildFeedbackItem(category)),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 12.h),
-
-          // Notification Settings
-          Container(
-            color: colors.cardBackground,
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Notification Settings',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s16,
-                    fontWeight: FontWeightManager.bold,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                Text(
-                  'Manage how you receive notifications',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s12,
-                    fontWeight: FontWeightManager.regular,
-                    color: colors.textSecondary,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-
-                _buildNotificationToggle(
-                  'Shift Confirmations',
-                  'Get notified when staff confirm shifts',
-                  _shiftConfirmations,
-                  (value) => setState(() => _shiftConfirmations = value),
-                ),
-                _buildNotificationToggle(
-                  'Late Arrivals',
-                  'Alert when staff are running late',
-                  _lateArrivals,
-                  (value) => setState(() => _lateArrivals = value),
-                ),
-                _buildNotificationToggle(
-                  'Invoice Reminders',
-                  'Reminders for pending invoices',
-                  _invoiceReminders,
-                  (value) => setState(() => _invoiceReminders = value),
-                ),
-                _buildNotificationToggle(
-                  'Weekly Reports',
-                  'Receive weekly performance summaries',
-                  _weeklyReports,
-                  (value) => setState(() => _weeklyReports = value),
-                ),
-                _buildNotificationToggle(
-                  'Send Attendance Emails',
-                  'Automatically send attendance reports via email',
-                  _attendanceEmails,
-                  (value) => setState(() => _attendanceEmails = value),
-                ),
-                _buildNotificationToggle(
-                  'Send Invoice Emails',
-                  'Automatically send invoice notifications via email',
-                  _invoiceEmails,
-                  (value) => setState(() => _invoiceEmails = value),
-                  isLast: true,
-                ),
               ],
             ),
           ),
@@ -812,59 +780,6 @@ class _ProfileContentState extends State<ProfileContent> {
     );
   }
 
-  Widget _buildNotificationToggle(
-    String title,
-    String description,
-    bool value,
-    Function(bool) onChanged, {
-    bool isLast = false,
-  }) {
-    final colors = ThemeHelper.of(context);
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(
-                bottom: BorderSide(color: colors.grey4, width: 1),
-              ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s14,
-                    fontWeight: FontWeightManager.semiBold,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  description,
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s11,
-                    fontWeight: FontWeightManager.regular,
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeTrackColor: colors.primary,
-            activeThumbColor: ColorManager.white,
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildSecurityOption(IconData icon, String title, VoidCallback onTap) {
     final colors = ThemeHelper.of(context);
