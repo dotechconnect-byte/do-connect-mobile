@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
@@ -40,6 +41,49 @@ class _ProfileContentState extends State<ProfileContent> {
     );
   }
 
+  Future<void> openWhatsApp(String phoneNumber) async {
+    const platform = MethodChannel('whatsapp_launcher');
+
+    try {
+      // Remove any special characters and spaces from phone number
+      String cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+
+      // Remove leading + if present for wa.me format
+      if (cleanPhone.startsWith('+')) {
+        cleanPhone = cleanPhone.substring(1);
+      }
+
+      final message = 'Hello, I need assistance with DoConnect.';
+
+      await platform.invokeMethod('openWhatsApp', {
+        'phone': '918848917803',
+        'message': message,
+      });
+    } on PlatformException catch (e) {
+      debugPrint('Platform error: ${e.code} - ${e.message}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Could not open WhatsApp. Please make sure WhatsApp is installed.',
+            ),
+            backgroundColor: ColorManager.error,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error opening WhatsApp.'),
+            backgroundColor: ColorManager.error,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _handleLogoChange() async {
     final imagePath = await ImagePickerUtils.showImageSourceDialog(
       context: context,
@@ -77,14 +121,141 @@ class _ProfileContentState extends State<ProfileContent> {
   );
 
   final List<FeedbackCategory> _feedbackCategories = [
-    FeedbackCategory(title: 'Staff Feedback', icon: '👥', rating: 4.3, reviewCount: 7),
-    FeedbackCategory(title: 'Location Feedback', icon: '📍', rating: 4.3, reviewCount: 4),
-    FeedbackCategory(title: 'Event Feedback', icon: '🎉', rating: 4.5, reviewCount: 4),
-    FeedbackCategory(title: 'Station Feedback', icon: '🏢', rating: 4.3, reviewCount: 4),
-    FeedbackCategory(title: 'Environment Feedback', icon: '🌍', rating: 4.0, reviewCount: 3),
-    FeedbackCategory(title: 'Transport Feedback', icon: '🚗', rating: 4.0, reviewCount: 4),
-    FeedbackCategory(title: 'Canteen Feedback', icon: '🍽️', rating: 4.5, reviewCount: 4),
+    FeedbackCategory(
+      title: 'Staff Feedback',
+      icon: '👥',
+      rating: 4.0,
+      reviewCount: 3,
+      reviews: [
+        FeedbackReview(
+          rating: 4.0,
+          comment: 'Professional and punctual',
+          date: '2025-10-10',
+        ),
+        FeedbackReview(
+          rating: 5.0,
+          comment: 'Exceeded expectations',
+          date: '2025-10-15',
+        ),
+        FeedbackReview(
+          rating: 3.0,
+          comment: 'Good but needs improvement in communication',
+          date: '2025-10-08',
+        ),
+      ],
+    ),
+    FeedbackCategory(
+      title: 'Location Feedback',
+      icon: '📍',
+      rating: 4.5,
+      reviewCount: 2,
+      reviews: [
+        FeedbackReview(
+          rating: 5.0,
+          comment: 'Great location, easy to find',
+          date: '2025-10-12',
+        ),
+        FeedbackReview(
+          rating: 4.0,
+          comment: 'Good parking facilities',
+          date: '2025-10-09',
+        ),
+      ],
+    ),
+    FeedbackCategory(
+      title: 'Event Feedback',
+      icon: '🎉',
+      rating: 4.5,
+      reviewCount: 2,
+      reviews: [
+        FeedbackReview(
+          rating: 5.0,
+          comment: 'Well organized event',
+          date: '2025-10-14',
+        ),
+        FeedbackReview(
+          rating: 4.0,
+          comment: 'Good coordination with team',
+          date: '2025-10-11',
+        ),
+      ],
+    ),
+    FeedbackCategory(
+      title: 'Station Feedback',
+      icon: '🏢',
+      rating: 4.5,
+      reviewCount: 2,
+      reviews: [
+        FeedbackReview(
+          rating: 4.5,
+          comment: 'Clean and well maintained',
+          date: '2025-10-13',
+        ),
+        FeedbackReview(
+          rating: 4.5,
+          comment: 'Good amenities available',
+          date: '2025-10-07',
+        ),
+      ],
+    ),
+    FeedbackCategory(
+      title: 'Environment Feedback',
+      icon: '🌍',
+      rating: 4.0,
+      reviewCount: 2,
+      reviews: [
+        FeedbackReview(
+          rating: 4.0,
+          comment: 'Pleasant working environment',
+          date: '2025-10-10',
+        ),
+        FeedbackReview(
+          rating: 4.0,
+          comment: 'Good atmosphere',
+          date: '2025-10-06',
+        ),
+      ],
+    ),
+    FeedbackCategory(
+      title: 'Transport Feedback',
+      icon: '🚗',
+      rating: 4.0,
+      reviewCount: 2,
+      reviews: [
+        FeedbackReview(
+          rating: 4.0,
+          comment: 'Reliable transport service',
+          date: '2025-10-11',
+        ),
+        FeedbackReview(
+          rating: 4.0,
+          comment: 'On time pickup and drop',
+          date: '2025-10-08',
+        ),
+      ],
+    ),
+    FeedbackCategory(
+      title: 'Canteen Feedback',
+      icon: '🍽️',
+      rating: 4.5,
+      reviewCount: 2,
+      reviews: [
+        FeedbackReview(
+          rating: 5.0,
+          comment: 'Excellent food quality',
+          date: '2025-10-14',
+        ),
+        FeedbackReview(
+          rating: 4.0,
+          comment: 'Good variety of options',
+          date: '2025-10-09',
+        ),
+      ],
+    ),
   ];
+
+  // Track which feedback category is expanded (only one at a time)
+  String? _expandedCategoryTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -118,13 +289,18 @@ class _ProfileContentState extends State<ProfileContent> {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (context) => EditCompanyModal(
-                            company: _company,
-                            onSave: _handleCompanyUpdate,
-                          ),
+                          builder:
+                              (context) => EditCompanyModal(
+                                company: _company,
+                                onSave: _handleCompanyUpdate,
+                              ),
                         );
                       },
-                      icon: Icon(Icons.edit, size: 16.sp, color: colors.textSecondary),
+                      icon: Icon(
+                        Icons.edit,
+                        size: 16.sp,
+                        color: colors.textSecondary,
+                      ),
                       label: Text(
                         'Edit',
                         style: FontConstants.getPoppinsStyle(
@@ -134,7 +310,10 @@ class _ProfileContentState extends State<ProfileContent> {
                         ),
                       ),
                       style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
                       ),
                     ),
                   ],
@@ -158,25 +337,27 @@ class _ProfileContentState extends State<ProfileContent> {
                       decoration: BoxDecoration(
                         color: ColorManager.primary,
                         borderRadius: BorderRadius.circular(12.r),
-                        image: _companyLogoPath != null
-                            ? DecorationImage(
-                                image: FileImage(File(_companyLogoPath!)),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
+                        image:
+                            _companyLogoPath != null
+                                ? DecorationImage(
+                                  image: FileImage(File(_companyLogoPath!)),
+                                  fit: BoxFit.cover,
+                                )
+                                : null,
                       ),
-                      child: _companyLogoPath == null
-                          ? Center(
-                              child: Text(
-                                'DC',
-                                style: FontConstants.getPoppinsStyle(
-                                  fontSize: FontSize.s20,
-                                  fontWeight: FontWeightManager.bold,
-                                  color: ColorManager.white,
+                      child:
+                          _companyLogoPath == null
+                              ? Center(
+                                child: Text(
+                                  'DC',
+                                  style: FontConstants.getPoppinsStyle(
+                                    fontSize: FontSize.s20,
+                                    fontWeight: FontWeightManager.bold,
+                                    color: ColorManager.white,
+                                  ),
                                 ),
-                              ),
-                            )
-                          : null,
+                              )
+                              : null,
                     ),
                     SizedBox(width: 12.w),
                     Column(
@@ -217,7 +398,9 @@ class _ProfileContentState extends State<ProfileContent> {
                 // Company Details
                 Row(
                   children: [
-                    Expanded(child: _buildInfoBox('Company Name', _company.name)),
+                    Expanded(
+                      child: _buildInfoBox('Company Name', _company.name),
+                    ),
                     SizedBox(width: 12.w),
                     Expanded(child: _buildInfoBox('Email', _company.email)),
                   ],
@@ -338,7 +521,11 @@ class _ProfileContentState extends State<ProfileContent> {
                           ],
                         ),
                       ),
-                      Icon(Icons.keyboard_arrow_down, size: 20.sp, color: colors.textSecondary),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 20.sp,
+                        color: colors.textSecondary,
+                      ),
                     ],
                   ),
                 ),
@@ -367,29 +554,31 @@ class _ProfileContentState extends State<ProfileContent> {
                 ),
                 SizedBox(height: 8.h),
 
-                ..._currentRole.permissions.map((permission) => Padding(
-                  padding: EdgeInsets.only(bottom: 8.h),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.check_circle,
-                        size: 16.sp,
-                        color: colors.success,
-                      ),
-                      SizedBox(width: 8.w),
-                      Expanded(
-                        child: Text(
-                          permission,
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s12,
-                            fontWeight: FontWeightManager.regular,
-                            color: colors.textPrimary,
+                ..._currentRole.permissions.map(
+                  (permission) => Padding(
+                    padding: EdgeInsets.only(bottom: 8.h),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          size: 16.sp,
+                          color: colors.success,
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: Text(
+                            permission,
+                            style: FontConstants.getPoppinsStyle(
+                              fontSize: FontSize.s12,
+                              fontWeight: FontWeightManager.regular,
+                              color: colors.textPrimary,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -416,7 +605,11 @@ class _ProfileContentState extends State<ProfileContent> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildStatCard('Account Type', 'Employer Pro', colors.primary),
+                      child: _buildStatCard(
+                        'Account Type',
+                        'Employer Pro',
+                        colors.primary,
+                      ),
                     ),
                   ],
                 ),
@@ -426,7 +619,11 @@ class _ProfileContentState extends State<ProfileContent> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildStatCard('Member Since', 'January 2025', colors.textPrimary),
+                      child: _buildStatCard(
+                        'Member Since',
+                        'January 2025',
+                        colors.textPrimary,
+                      ),
                     ),
                   ],
                 ),
@@ -436,11 +633,19 @@ class _ProfileContentState extends State<ProfileContent> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildStatCard('Total Staff Hired', '47', colors.info),
+                      child: _buildStatCard(
+                        'Total Staff Hired',
+                        '47',
+                        colors.info,
+                      ),
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
-                      child: _buildStatCard('Total Shifts', '324', colors.success),
+                      child: _buildStatCard(
+                        'Total Shifts',
+                        '324',
+                        colors.success,
+                      ),
                     ),
                   ],
                 ),
@@ -452,11 +657,17 @@ class _ProfileContentState extends State<ProfileContent> {
                   decoration: BoxDecoration(
                     color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(color: colors.primary.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: colors.primary.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, size: 18.sp, color: colors.primary),
+                      Icon(
+                        Icons.info_outline,
+                        size: 18.sp,
+                        color: colors.primary,
+                      ),
                       SizedBox(width: 8.w),
                       Expanded(
                         child: Text(
@@ -502,7 +713,9 @@ class _ProfileContentState extends State<ProfileContent> {
                 ),
                 SizedBox(height: 16.h),
 
-                ..._feedbackCategories.map((category) => _buildFeedbackItem(category)),
+                ..._feedbackCategories.map(
+                  (category) => _buildFeedbackItem(category),
+                ),
               ],
             ),
           ),
@@ -526,18 +739,14 @@ class _ProfileContentState extends State<ProfileContent> {
                 ),
                 SizedBox(height: 16.h),
 
-                _buildSecurityOption(
-                  Icons.lock_outline,
-                  'Change Password',
-                  () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Change password'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
-                ),
+                _buildSecurityOption(Icons.lock_outline, 'Change Password', () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Change password'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }),
                 SizedBox(height: 12.h),
                 _buildSecurityOption(
                   Icons.verified_user_outlined,
@@ -586,13 +795,8 @@ class _ProfileContentState extends State<ProfileContent> {
                   Icons.phone_outlined,
                   'WhatsApp',
                   colors.primary,
-                  () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Contact via WhatsApp'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                  () async {
+                    await openWhatsApp('918848917803');
                   },
                 ),
                 SizedBox(height: 12.h),
@@ -693,93 +897,177 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildFeedbackItem(FeedbackCategory category) {
     final colors = ThemeHelper.of(context);
-    return InkWell(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('View ${category.title}'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: colors.grey4, width: 1),
-          ),
+    final isExpanded = _expandedCategoryTitle == category.title;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 8.h),
+      decoration: BoxDecoration(
+        color: colors.cardBackground,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: isExpanded ? colors.textPrimary : colors.grey4,
+          width: isExpanded ? 1.5 : 1,
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 36.w,
-              height: 36.w,
-              decoration: BoxDecoration(
-                color: colors.grey6,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Center(
-                child: Text(
-                  category.icon,
-                  style: TextStyle(fontSize: 18.sp),
-                ),
-              ),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+      child: Column(
+        children: [
+          // Header - Tappable to expand/collapse
+          InkWell(
+            onTap: () {
+              setState(() {
+                // Toggle: if already expanded, collapse it; otherwise expand this one
+                _expandedCategoryTitle = isExpanded ? null : category.title;
+              });
+            },
+            borderRadius: BorderRadius.circular(12.r),
+            child: Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Row(
                 children: [
-                  Text(
-                    category.title,
-                    style: FontConstants.getPoppinsStyle(
-                      fontSize: FontSize.s14,
-                      fontWeight: FontWeightManager.semiBold,
-                      color: colors.textPrimary,
+                  Container(
+                    width: 36.w,
+                    height: 36.w,
+                    decoration: BoxDecoration(
+                      color: colors.grey6,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Center(
+                      child: Text(category.icon, style: TextStyle(fontSize: 18.sp)),
                     ),
                   ),
-                  SizedBox(height: 4.h),
-                  Row(
-                    children: [
-                      ...List.generate(5, (index) {
-                        return Icon(
-                          index < category.rating.floor()
-                              ? Icons.star
-                              : (index < category.rating ? Icons.star_half : Icons.star_border),
-                          size: 14.sp,
-                          color: colors.warning,
-                        );
-                      }),
-                      SizedBox(width: 6.w),
-                      Text(
-                        '${category.rating} avg',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s11,
-                          fontWeight: FontWeightManager.medium,
-                          color: colors.textSecondary,
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          category.title,
+                          style: FontConstants.getPoppinsStyle(
+                            fontSize: FontSize.s14,
+                            fontWeight: FontWeightManager.semiBold,
+                            color: colors.textPrimary,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        '• ${category.reviewCount} reviews',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s11,
-                          fontWeight: FontWeightManager.regular,
-                          color: colors.textSecondary,
+                        SizedBox(height: 4.h),
+                        Row(
+                          children: [
+                            ...List.generate(5, (index) {
+                              return Icon(
+                                index < category.rating.floor()
+                                    ? Icons.star
+                                    : (index < category.rating
+                                        ? Icons.star_half
+                                        : Icons.star_border),
+                                size: 14.sp,
+                                color: colors.warning,
+                              );
+                            }),
+                            SizedBox(width: 6.w),
+                            Text(
+                              '${category.rating} avg',
+                              style: FontConstants.getPoppinsStyle(
+                                fontSize: FontSize.s11,
+                                fontWeight: FontWeightManager.medium,
+                                color: ColorManager.primary,
+                              ),
+                            ),
+                            SizedBox(width: 6.w),
+                            Text(
+                              '• ${category.reviewCount} reviews',
+                              style: FontConstants.getPoppinsStyle(
+                                fontSize: FontSize.s11,
+                                fontWeight: FontWeightManager.regular,
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    size: 24.sp,
+                    color: colors.textSecondary,
                   ),
                 ],
               ),
             ),
-            Icon(Icons.keyboard_arrow_down, size: 20.sp, color: colors.textSecondary),
-          ],
-        ),
+          ),
+
+          // Expanded Reviews
+          if (isExpanded && category.reviews.isNotEmpty)
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: colors.grey4),
+                ),
+              ),
+              child: Column(
+                children: category.reviews.map((review) {
+                  return _buildReviewItem(review, colors);
+                }).toList(),
+              ),
+            ),
+        ],
       ),
     );
   }
 
+  Widget _buildReviewItem(FeedbackReview review, ThemeHelper colors) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: colors.grey4.withValues(alpha: 0.5)),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Star Rating
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < review.rating.floor()
+                          ? Icons.star
+                          : (index < review.rating ? Icons.star_half : Icons.star_border),
+                      size: 16.sp,
+                      color: colors.warning,
+                    );
+                  }),
+                ),
+                SizedBox(height: 6.h),
+                // Comment
+                Text(
+                  review.comment,
+                  style: FontConstants.getPoppinsStyle(
+                    fontSize: FontSize.s13,
+                    fontWeight: FontWeightManager.regular,
+                    color: colors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 12.w),
+          // Date
+          Text(
+            review.date,
+            style: FontConstants.getPoppinsStyle(
+              fontSize: FontSize.s11,
+              fontWeight: FontWeightManager.regular,
+              color: colors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildSecurityOption(IconData icon, String title, VoidCallback onTap) {
     final colors = ThemeHelper.of(context);
@@ -812,7 +1100,12 @@ class _ProfileContentState extends State<ProfileContent> {
     );
   }
 
-  Widget _buildContactOption(IconData icon, String title, Color color, VoidCallback onTap) {
+  Widget _buildContactOption(
+    IconData icon,
+    String title,
+    Color color,
+    VoidCallback onTap,
+  ) {
     final colors = ThemeHelper.of(context);
     return InkWell(
       onTap: onTap,

@@ -39,12 +39,26 @@ class FeedbackCategory {
   final String icon;
   final double rating;
   final int reviewCount;
+  final List<FeedbackReview> reviews;
 
   FeedbackCategory({
     required this.title,
     required this.icon,
     required this.rating,
     required this.reviewCount,
+    this.reviews = const [],
+  });
+}
+
+class FeedbackReview {
+  final double rating;
+  final String comment;
+  final String date;
+
+  FeedbackReview({
+    required this.rating,
+    required this.comment,
+    required this.date,
   });
 }
 
