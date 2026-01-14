@@ -5,6 +5,7 @@ import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_button.dart';
+import 'forgot_password_screen.dart';
 
 class GetDemoScreen extends StatefulWidget {
   const GetDemoScreen({super.key});
@@ -22,6 +23,11 @@ class _GetDemoScreenState extends State<GetDemoScreen>
   final _addressController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  // Company-specific controllers
+  final _positionController = TextEditingController();
+  final _companyNameController = TextEditingController();
+  final _websiteController = TextEditingController();
 
   String _accountType = 'personal';
   bool _isPasswordVisible = false;
@@ -59,6 +65,9 @@ class _GetDemoScreenState extends State<GetDemoScreen>
     _addressController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _positionController.dispose();
+    _companyNameController.dispose();
+    _websiteController.dispose();
     super.dispose();
   }
 
@@ -330,6 +339,52 @@ class _GetDemoScreenState extends State<GetDemoScreen>
                             ],
                           ),
 
+                          // Company-specific fields (shown when Company is selected)
+                          if (_accountType == 'company') ...[
+                            SizedBox(height: 16.h),
+
+                            // Position
+                            AuthTextField(
+                              label: 'Position',
+                              hintText: 'Your position',
+                              prefixIcon: Icons.work_outline,
+                              controller: _positionController,
+                              validator: (value) {
+                                if (_accountType == 'company' && (value == null || value.isEmpty)) {
+                                  return 'Please enter your position';
+                                }
+                                return null;
+                              },
+                            ),
+
+                            SizedBox(height: 16.h),
+
+                            // Company Name
+                            AuthTextField(
+                              label: 'Company Name',
+                              hintText: 'Your company name',
+                              prefixIcon: Icons.business_outlined,
+                              controller: _companyNameController,
+                              validator: (value) {
+                                if (_accountType == 'company' && (value == null || value.isEmpty)) {
+                                  return 'Please enter company name';
+                                }
+                                return null;
+                              },
+                            ),
+
+                            SizedBox(height: 16.h),
+
+                            // Website
+                            AuthTextField(
+                              label: 'Website',
+                              hintText: 'https://yourcompany.com',
+                              prefixIcon: Icons.language_outlined,
+                              controller: _websiteController,
+                              keyboardType: TextInputType.url,
+                            ),
+                          ],
+
                           SizedBox(height: 16.h),
 
                           // Password
@@ -465,7 +520,12 @@ class _GetDemoScreenState extends State<GetDemoScreen>
                           Center(
                             child: GestureDetector(
                               onTap: () {
-                                // TODO: Navigate to forgot password
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ForgotPasswordScreen(),
+                                  ),
+                                );
                               },
                               child: Text(
                                 'Forgot password?',
