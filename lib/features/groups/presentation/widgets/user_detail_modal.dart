@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
@@ -41,6 +42,38 @@ class _UserDetailModalState extends State<UserDetailModal> {
   void dispose() {
     _commentsController.dispose();
     super.dispose();
+  }
+
+  Future<void> _openWhatsApp(String phoneNumber, String userName) async {
+    const platform = MethodChannel('whatsapp_launcher');
+    try {
+      String cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+      if (cleanPhone.startsWith('+')) {
+        cleanPhone = cleanPhone.substring(1);
+      }
+      final message = 'Hi $userName, I\'m reaching out from Do Connect regarding your work schedule.';
+      await platform.invokeMethod('openWhatsApp', {
+        'phone': cleanPhone,
+        'message': message,
+      });
+    } on PlatformException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Could not open WhatsApp: ${e.message}',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s13,
+                fontWeight: FontWeightManager.medium,
+                color: ColorManager.white,
+              ),
+            ),
+            backgroundColor: ColorManager.error,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -298,20 +331,9 @@ class _UserDetailModalState extends State<UserDetailModal> {
                         label: 'Message on WhatsApp',
                         color: const Color(0xFF25D366),
                         onTap: () {
-                          // Launch WhatsApp
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Opening WhatsApp...',
-                                style: FontConstants.getPoppinsStyle(
-                                  fontSize: FontSize.s13,
-                                  fontWeight: FontWeightManager.medium,
-                                  color: ColorManager.white,
-                                ),
-                              ),
-                              backgroundColor: const Color(0xFF25D366),
-                              duration: const Duration(seconds: 2),
-                            ),
+                          _openWhatsApp(
+                            _currentUser.whatsappNumber!,
+                            _currentUser.name,
                           );
                         },
                       ),
