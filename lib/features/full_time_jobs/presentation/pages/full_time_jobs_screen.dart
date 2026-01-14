@@ -5,6 +5,7 @@ import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
 import '../widgets/full_time_jobs_content.dart';
 import 'talent_pool_screen.dart';
+import 'interview_scheduler_screen.dart';
 
 class FullTimeJobsScreen extends StatefulWidget {
   const FullTimeJobsScreen({super.key});
@@ -77,6 +78,18 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
         ),
         centerTitle: false,
         actions: [
+          IconButton(
+            icon: Icon(Icons.calendar_month, color: colors.textPrimary),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const InterviewSchedulerScreen(),
+                ),
+              );
+            },
+            tooltip: 'Interview Scheduler',
+          ),
           IconButton(
             icon: Icon(Icons.people, color: colors.textPrimary),
             onPressed: () {

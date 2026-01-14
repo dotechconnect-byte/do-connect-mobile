@@ -29,7 +29,7 @@ class ColorManager {
   static const Color grey6 = Color(0xFFF9FAFB);
 
   // Functional Colors
-  static const Color error = Color(0xFFEF4444);
+  static const Color error = Color.fromARGB(255, 156, 18, 18);
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
