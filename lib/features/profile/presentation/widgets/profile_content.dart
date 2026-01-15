@@ -18,6 +18,8 @@ class ProfileContent extends StatefulWidget {
 }
 
 class _ProfileContentState extends State<ProfileContent> {
+  bool _isNavigating = false; // Prevent double-tap crashes
+
   // Mock data - using late to allow reassignment
   late CompanyModel _company = CompanyModel(
     name: 'Acme Corporation',
@@ -106,19 +108,6 @@ class _ProfileContentState extends State<ProfileContent> {
       }
     }
   }
-
-  final UserRole _currentRole = UserRole(
-    name: 'Admin',
-    description: 'Administrative access with most permissions',
-    permissions: [
-      'Manage staff and shifts',
-      'View financial reports',
-      'Handle attendance and rosters',
-      'Process staff requests',
-      'Generate reports',
-      'Limited settings access',
-    ],
-  );
 
   final List<FeedbackCategory> _feedbackCategories = [
     FeedbackCategory(
@@ -425,13 +414,16 @@ class _ProfileContentState extends State<ProfileContent> {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  if (_isNavigating) return;
+                  _isNavigating = true;
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const CompanyBrandingScreen(),
                     ),
                   );
+                  _isNavigating = false;
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorManager.primary,
@@ -457,129 +449,6 @@ class _ProfileContentState extends State<ProfileContent> {
                   ],
                 ),
               ),
-            ),
-          ),
-
-          SizedBox(height: 12.h),
-
-          // Role & Permissions Section
-          Container(
-            color: colors.cardBackground,
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Role & Permissions',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s16,
-                    fontWeight: FontWeightManager.bold,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                Text(
-                  'Your current role and access level',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s12,
-                    fontWeight: FontWeightManager.regular,
-                    color: colors.textSecondary,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-
-                // Current Role
-                Container(
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    color: colors.grey6,
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(color: colors.grey4),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Current Role',
-                              style: FontConstants.getPoppinsStyle(
-                                fontSize: FontSize.s11,
-                                fontWeight: FontWeightManager.medium,
-                                color: colors.textSecondary,
-                              ),
-                            ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              _currentRole.name,
-                              style: FontConstants.getPoppinsStyle(
-                                fontSize: FontSize.s15,
-                                fontWeight: FontWeightManager.bold,
-                                color: colors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 20.sp,
-                        color: colors.textSecondary,
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 12.h),
-
-                Text(
-                  _currentRole.description,
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s12,
-                    fontWeight: FontWeightManager.regular,
-                    color: colors.textSecondary,
-                  ),
-                ),
-
-                SizedBox(height: 16.h),
-
-                // Permissions
-                Text(
-                  'Permissions',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s13,
-                    fontWeight: FontWeightManager.semiBold,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-
-                ..._currentRole.permissions.map(
-                  (permission) => Padding(
-                    padding: EdgeInsets.only(bottom: 8.h),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          size: 16.sp,
-                          color: colors.success,
-                        ),
-                        SizedBox(width: 8.w),
-                        Expanded(
-                          child: Text(
-                            permission,
-                            style: FontConstants.getPoppinsStyle(
-                              fontSize: FontSize.s12,
-                              fontWeight: FontWeightManager.regular,
-                              color: colors.textPrimary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
 
@@ -715,50 +584,6 @@ class _ProfileContentState extends State<ProfileContent> {
 
                 ..._feedbackCategories.map(
                   (category) => _buildFeedbackItem(category),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 12.h),
-
-          // Security Section
-          Container(
-            color: colors.cardBackground,
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Security',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s16,
-                    fontWeight: FontWeightManager.bold,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-
-                _buildSecurityOption(Icons.lock_outline, 'Change Password', () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Change password'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                }),
-                SizedBox(height: 12.h),
-                _buildSecurityOption(
-                  Icons.verified_user_outlined,
-                  'Two-Factor Auth',
-                  () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Setup two-factor authentication'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
                 ),
               ],
             ),
@@ -1065,37 +890,6 @@ class _ProfileContentState extends State<ProfileContent> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSecurityOption(IconData icon, String title, VoidCallback onTap) {
-    final colors = ThemeHelper.of(context);
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          border: Border.all(color: colors.grey3),
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 20.sp, color: colors.textPrimary),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Text(
-                title,
-                style: FontConstants.getPoppinsStyle(
-                  fontSize: FontSize.s14,
-                  fontWeight: FontWeightManager.medium,
-                  color: colors.textPrimary,
-                ),
-              ),
-            ),
-            Icon(Icons.chevron_right, size: 20.sp, color: colors.textSecondary),
-          ],
-        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
@@ -17,6 +18,29 @@ class StatusContent extends StatefulWidget {
 
 class _StatusContentState extends State<StatusContent> {
   DateTime _selectedDate = DateTime.now();
+
+  Future<void> _openWhatsApp(String name) async {
+    const platform = MethodChannel('whatsapp_launcher');
+    try {
+      // Sample phone number - in real app, get from doer model
+      const phoneNumber = '1234567890';
+      final message = 'Hi $name, reaching out from Do Connect regarding your shift.';
+      await platform.invokeMethod('openWhatsApp', {
+        'phone': phoneNumber,
+        'message': message,
+      });
+    } on PlatformException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not open WhatsApp: ${e.message}'),
+            backgroundColor: ColorManager.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
 
   // Time slot filtering
   String? _selectedTimeSlot; // null means "All"
@@ -196,13 +220,7 @@ class _StatusContentState extends State<StatusContent> {
                         );
                       },
                       onMessage: () {
-                        // Handle message action
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Message ${filteredDoers[index].name}'),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
+                        _openWhatsApp(filteredDoers[index].name);
                       },
                     );
                   },

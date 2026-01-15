@@ -248,18 +248,20 @@ class DoerStatusCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: onMessage,
-                        icon: Icon(Icons.message_outlined, size: 16.sp),
-                        label: const Text('Message'),
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
-                          side: BorderSide(color: colors.grey3),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          foregroundColor: colors.textPrimary,
-                          textStyle: FontConstants.getPoppinsStyle(
+                        icon: Icon(Icons.chat, size: 16.sp, color: const Color(0xFF25D366)),
+                        label: Text(
+                          'WhatsApp',
+                          style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s13,
                             fontWeight: FontWeightManager.semiBold,
+                            color: const Color(0xFF25D366),
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          side: const BorderSide(color: Color(0xFF25D366)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
                         ),
                       ),

@@ -138,7 +138,7 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                   ),
                   SizedBox(height: 16.h),
 
-                  // Date and Number of DOER
+                  // Date and Number of DOER (Number only shown for Team)
                   Row(
                     children: [
                       Expanded(
@@ -150,20 +150,22 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
                           ],
                         ),
                       ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildLabel('Number of DOER *', colors),
-                            _buildTextField(
-                              controller: _numberOfDoerController,
-                              keyboardType: TextInputType.number,
-                              colors: colors,
-                            ),
-                          ],
+                      if (_selectedType == 1) ...[
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildLabel('Number of DOERs *', colors),
+                              _buildTextField(
+                                controller: _numberOfDoerController,
+                                keyboardType: TextInputType.number,
+                                colors: colors,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                   SizedBox(height: 16.h),
@@ -263,7 +265,15 @@ class _RequestDoerBottomSheetState extends State<RequestDoerBottomSheet> {
     final isSelected = _selectedType == index;
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _selectedType = index),
+        onTap: () {
+          setState(() {
+            _selectedType = index;
+            // Reset to 1 when switching to DOER (singular)
+            if (index == 0) {
+              _numberOfDoerController.text = '1';
+            }
+          });
+        },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           margin: EdgeInsets.all(4.w),

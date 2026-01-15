@@ -16,6 +16,7 @@ class NotificationPanel extends StatefulWidget {
 
 class _NotificationPanelState extends State<NotificationPanel> {
   NotificationCategory _selectedCategory = NotificationCategory.all;
+  bool _isNavigating = false; // Prevent double-tap crashes
 
   List<NotificationItem> _notifications = [
     NotificationItem(
@@ -220,21 +221,24 @@ class _NotificationPanelState extends State<NotificationPanel> {
                     SizedBox(width: 8.w),
                     Expanded(
                       child: TextButton.icon(
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          if (_isNavigating) return;
+                          _isNavigating = true;
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const NotificationPreferencesScreen(),
                             ),
                           );
+                          _isNavigating = false;
                         },
                         icon: Icon(
-                          Icons.settings_outlined,
+                          Icons.tune,
                           size: 16.sp,
                           color: colors.textSecondary,
                         ),
                         label: Text(
-                          'Settings',
+                          'Preferences',
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s12,
                             fontWeight: FontWeightManager.medium,
