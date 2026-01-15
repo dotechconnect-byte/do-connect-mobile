@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub add:*)",
+      "Bash(flutter clean:*)",
+      "Bash(flutter pub remove:*)",
+      "Bash(flutter build:*)",
+      "Bash(findstr:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(git restore:*)",
+      "Bash(git commit:*)",
+      "Bash(dart analyze:*)",
+      "Bash(done)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(while read file)",
+      "Bash(do if ! grep -q \"ThemeHelper\" \"$file\")",
+      "Bash(then echo \"$file\")",
+      "Bash(fi)",
+      "Bash(for:*)",
+      "Bash(do if grep -q \"ColorManager\\\\|Widget\\\\|StatelessWidget\\\\|StatefulWidget\" \"$file\")",
+      "Bash(do echo \"$file\")",
+      "Bash(dir:*)"
+    ]
+  }
+}
