@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
 import '../../../../core/utils/theme_helper.dart';
@@ -16,6 +19,43 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
   String _selectedFilter = 'All';
   List<Map<String, dynamic>> _upcomingInterviews = [];
   final List<Map<String, dynamic>> _pastInterviews = [];
+
+
+Future<void> launchGoogleMeet(String? meetingLink) async {
+  try {
+    Uri uri;
+
+    final isValidMeetLink =
+        meetingLink != null &&
+        meetingLink.trim().isNotEmpty &&
+        meetingLink.startsWith('http');
+
+    if (Platform.isAndroid) {
+      if (isValidMeetLink) {
+        uri = Uri.parse(meetingLink);
+      } else {
+        uri = Uri.parse(
+          'intent://meet.google.com/#Intent;scheme=https;package=com.google.android.apps.meetings;end',
+        );
+      }
+
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (Platform.isIOS) {
+      uri = isValidMeetLink
+          ? Uri.parse(meetingLink)
+          : Uri.parse('https://meet.google.com');
+
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  } catch (e) {
+    // Final browser fallback
+    await launchUrl(
+      Uri.parse('https://meet.google.com'),
+      mode: LaunchMode.platformDefault,
+    );
+  }
+}
+
 
   @override
   void initState() {
@@ -153,7 +193,8 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
             child: ListView(
               padding: EdgeInsets.all(16.w),
               children: [
-                if (_selectedFilter == 'All' || _selectedFilter == 'Upcoming') ...[
+                if (_selectedFilter == 'All' ||
+                    _selectedFilter == 'Upcoming') ...[
                   Text(
                     'Upcoming Interviews (${_upcomingInterviews.length})',
                     style: FontConstants.getPoppinsStyle(
@@ -164,7 +205,12 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                   ),
                   SizedBox(height: 16.h),
                   ..._upcomingInterviews.asMap().entries.map((entry) {
-                    return _buildInterviewCard(entry.value, colors, entry.key, true);
+                    return _buildInterviewCard(
+                      entry.value,
+                      colors,
+                      entry.key,
+                      true,
+                    );
                   }),
                 ],
                 if (_selectedFilter == 'All') SizedBox(height: 24.h),
@@ -179,7 +225,12 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                   ),
                   SizedBox(height: 16.h),
                   ..._pastInterviews.asMap().entries.map((entry) {
-                    return _buildInterviewCard(entry.value, colors, entry.key, false);
+                    return _buildInterviewCard(
+                      entry.value,
+                      colors,
+                      entry.key,
+                      false,
+                    );
                   }),
                 ],
               ],
@@ -220,10 +271,11 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
   }
 
   Widget _buildInterviewCard(
-      Map<String, dynamic> interview,
-      ThemeHelper colors,
-      int index,
-      bool isFromUpcomingList) {
+    Map<String, dynamic> interview,
+    ThemeHelper colors,
+    int index,
+    bool isFromUpcomingList,
+  ) {
     final isUpcoming = interview['status'] == 'scheduled';
 
     return Container(
@@ -232,9 +284,10 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
         color: colors.cardBackground,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: isUpcoming
-              ? ColorManager.warning.withValues(alpha: 0.3)
-              : ColorManager.success.withValues(alpha: 0.3),
+          color:
+              isUpcoming
+                  ? ColorManager.warning.withValues(alpha: 0.3)
+                  : ColorManager.success.withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
@@ -253,15 +306,16 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: isUpcoming
-                    ? [
-                        ColorManager.warning.withValues(alpha: 0.15),
-                        ColorManager.warning.withValues(alpha: 0.05),
-                      ]
-                    : [
-                        ColorManager.success.withValues(alpha: 0.15),
-                        ColorManager.success.withValues(alpha: 0.05),
-                      ],
+                colors:
+                    isUpcoming
+                        ? [
+                          ColorManager.warning.withValues(alpha: 0.15),
+                          ColorManager.warning.withValues(alpha: 0.05),
+                        ]
+                        : [
+                          ColorManager.success.withValues(alpha: 0.15),
+                          ColorManager.success.withValues(alpha: 0.05),
+                        ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -317,7 +371,10 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     color: interview['statusColor'],
                     borderRadius: BorderRadius.circular(20.r),
@@ -426,9 +483,14 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                           Container(
                             padding: EdgeInsets.all(6.w),
                             decoration: BoxDecoration(
-                              color: interview['type'] == 'Video Interview'
-                                  ? ColorManager.success.withValues(alpha: 0.1)
-                                  : ColorManager.warning.withValues(alpha: 0.1),
+                              color:
+                                  interview['type'] == 'Video Interview'
+                                      ? ColorManager.success.withValues(
+                                        alpha: 0.1,
+                                      )
+                                      : ColorManager.warning.withValues(
+                                        alpha: 0.1,
+                                      ),
                               borderRadius: BorderRadius.circular(6.r),
                             ),
                             child: Icon(
@@ -436,9 +498,10 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                                   ? Icons.videocam
                                   : Icons.location_on,
                               size: 16.sp,
-                              color: interview['type'] == 'Video Interview'
-                                  ? ColorManager.success
-                                  : ColorManager.warning,
+                              color:
+                                  interview['type'] == 'Video Interview'
+                                      ? ColorManager.success
+                                      : ColorManager.warning,
                             ),
                           ),
                           SizedBox(width: 10.w),
@@ -458,7 +521,11 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                         SizedBox(height: 8.h),
                         Row(
                           children: [
-                            Icon(Icons.place, size: 16.sp, color: colors.textSecondary),
+                            Icon(
+                              Icons.place,
+                              size: 16.sp,
+                              color: colors.textSecondary,
+                            ),
                             SizedBox(width: 10.w),
                             Expanded(
                               child: Text(
@@ -482,7 +549,11 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.people, size: 16.sp, color: colors.textSecondary),
+                    Icon(
+                      Icons.people,
+                      size: 16.sp,
+                      color: colors.textSecondary,
+                    ),
                     SizedBox(width: 8.w),
                     Expanded(
                       child: Text(
@@ -498,7 +569,8 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                 ),
 
                 // Notes
-                if (interview['notes'] != null && interview['notes'].isNotEmpty) ...[
+                if (interview['notes'] != null &&
+                    interview['notes'].isNotEmpty) ...[
                   SizedBox(height: 12.h),
                   Container(
                     width: double.infinity,
@@ -534,10 +606,7 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                       height: 48.h,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [
-                            ColorManager.success,
-                            Color(0xFF2ECC71),
-                          ],
+                          colors: [ColorManager.success, Color(0xFF2ECC71)],
                         ),
                         borderRadius: BorderRadius.circular(12.r),
                         boxShadow: [
@@ -550,7 +619,7 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                       ),
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          // TODO: Join meeting functionality
+                          launchGoogleMeet(interview['meetingLink']);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
@@ -581,7 +650,9 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
-                              color: ColorManager.primary.withValues(alpha: 0.3),
+                              color: ColorManager.primary.withValues(
+                                alpha: 0.3,
+                              ),
                               width: 1.5,
                             ),
                           ),
@@ -674,7 +745,10 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
       text: existingInterview?['interviewers'] ?? '',
     );
     final locationController = TextEditingController(
-      text: existingInterview?['meetingLink'] ?? existingInterview?['location'] ?? '',
+      text:
+          existingInterview?['meetingLink'] ??
+          existingInterview?['location'] ??
+          '',
     );
     final notesController = TextEditingController(
       text: existingInterview?['notes'] ?? '',
@@ -700,61 +774,344 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          height: MediaQuery.of(context).size.height * 0.85,
-          decoration: BoxDecoration(
-            color: colors.cardBackground,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(24.r),
-              topRight: Radius.circular(24.r),
-            ),
-          ),
-          child: Column(
-            children: [
-              // Header
-              Container(
-                padding: EdgeInsets.all(20.w),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: colors.grey5),
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setModalState) => Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      isEditing ? 'Update Interview' : 'Schedule New Interview',
-                      style: FontConstants.getPoppinsStyle(
-                        fontSize: FontSize.s18,
-                        fontWeight: FontWeightManager.bold,
-                        color: colors.textPrimary,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.85,
+                    decoration: BoxDecoration(
+                      color: colors.cardBackground,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24.r),
+                        topRight: Radius.circular(24.r),
                       ),
                     ),
-                    const Spacer(),
-                    IconButton(
-                      icon: Icon(Icons.close, color: colors.textPrimary),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Form Content
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
                     children: [
-                      // Candidate & Position Row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                      // Header
+                      Container(
+                        padding: EdgeInsets.all(20.w),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: colors.grey5),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              isEditing
+                                  ? 'Update Interview'
+                                  : 'Schedule New Interview',
+                              style: FontConstants.getPoppinsStyle(
+                                fontSize: FontSize.s18,
+                                fontWeight: FontWeightManager.bold,
+                                color: colors.textPrimary,
+                              ),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                color: colors.textPrimary,
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Form Content
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.all(20.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Candidate & Position Row
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Candidate *',
+                                          style: FontConstants.getPoppinsStyle(
+                                            fontSize: FontSize.s13,
+                                            fontWeight:
+                                                FontWeightManager.medium,
+                                            color: colors.textPrimary,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        _buildTextField(
+                                          candidateController,
+                                          'Enter candidate name',
+                                          colors,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Position *',
+                                          style: FontConstants.getPoppinsStyle(
+                                            fontSize: FontSize.s13,
+                                            fontWeight:
+                                                FontWeightManager.medium,
+                                            color: colors.textPrimary,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        _buildTextField(
+                                          positionController,
+                                          'Enter position',
+                                          colors,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16.h),
+
+                              // Interview Type
+                              Text(
+                                'Interview Type *',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s13,
+                                  fontWeight: FontWeightManager.medium,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              _buildDropdownField(
+                                selectedType,
+                                [
+                                  'Select type',
+                                  'Video Interview',
+                                  'In-Person Interview',
+                                  'Phone Interview',
+                                ],
+                                (value) {
+                                  if (value != null) {
+                                    setModalState(() => selectedType = value);
+                                  }
+                                },
+                                colors,
+                              ),
+                              SizedBox(height: 16.h),
+
+                              // Date & Time Row
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Date *',
+                                          style: FontConstants.getPoppinsStyle(
+                                            fontSize: FontSize.s13,
+                                            fontWeight:
+                                                FontWeightManager.medium,
+                                            color: colors.textPrimary,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        InkWell(
+                                          onTap: () async {
+                                            final DateTime? picked =
+                                                await showDatePicker(
+                                                  context: context,
+                                                  initialDate: selectedDate,
+                                                  firstDate: DateTime.now(),
+                                                  lastDate: DateTime.now().add(
+                                                    const Duration(days: 365),
+                                                  ),
+                                                );
+                                            if (picked != null) {
+                                              setModalState(
+                                                () => selectedDate = picked,
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 12.w,
+                                              vertical: 14.h,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: colors.grey6,
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              border: Border.all(
+                                                color: colors.grey4,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.calendar_today,
+                                                  size: 16.sp,
+                                                  color: colors.textSecondary,
+                                                ),
+                                                SizedBox(width: 8.w),
+                                                Text(
+                                                  '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                                                  style:
+                                                      FontConstants.getPoppinsStyle(
+                                                        fontSize: FontSize.s13,
+                                                        fontWeight:
+                                                            FontWeightManager
+                                                                .regular,
+                                                        color:
+                                                            colors.textPrimary,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Time *',
+                                          style: FontConstants.getPoppinsStyle(
+                                            fontSize: FontSize.s13,
+                                            fontWeight:
+                                                FontWeightManager.medium,
+                                            color: colors.textPrimary,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        InkWell(
+                                          onTap: () async {
+                                            final TimeOfDay? picked =
+                                                await showTimePicker(
+                                                  context: context,
+                                                  initialTime: selectedTime,
+                                                );
+                                            if (picked != null) {
+                                              setModalState(
+                                                () => selectedTime = picked,
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 12.w,
+                                              vertical: 14.h,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: colors.grey6,
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              border: Border.all(
+                                                color: colors.grey4,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.access_time,
+                                                  size: 16.sp,
+                                                  color: colors.textSecondary,
+                                                ),
+                                                SizedBox(width: 8.w),
+                                                Text(
+                                                  selectedTime.format(context),
+                                                  style:
+                                                      FontConstants.getPoppinsStyle(
+                                                        fontSize: FontSize.s13,
+                                                        fontWeight:
+                                                            FontWeightManager
+                                                                .regular,
+                                                        color:
+                                                            colors.textPrimary,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16.h),
+
+                              // Duration
+                              Text(
+                                'Duration *',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s13,
+                                  fontWeight: FontWeightManager.medium,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              _buildDropdownField(
+                                selectedDuration,
+                                [
+                                  'Select duration',
+                                  '30 minutes',
+                                  '45 minutes',
+                                  '1 hour',
+                                  '1.5 hours',
+                                  '2 hours',
+                                ],
+                                (value) {
+                                  if (value != null) {
+                                    setModalState(
+                                      () => selectedDuration = value,
+                                    );
+                                  }
+                                },
+                                colors,
+                              ),
+                              SizedBox(height: 16.h),
+
+                              // Interviewers
+                              Text(
+                                'Interviewers *',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s13,
+                                  fontWeight: FontWeightManager.medium,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              _buildTextField(
+                                interviewersController,
+                                'Enter interviewer names (e.g., John Doe, Jane Smith)',
+                                colors,
+                              ),
+                              SizedBox(height: 16.h),
+
+                              // Location / Meeting Link (only for Video Interview)
+                              if (selectedType == 'Video Interview') ...[
                                 Text(
-                                  'Candidate *',
+                                  'Meeting Link *',
                                   style: FontConstants.getPoppinsStyle(
                                     fontSize: FontSize.s13,
                                     fontWeight: FontWeightManager.medium,
@@ -763,20 +1120,15 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                                 ),
                                 SizedBox(height: 8.h),
                                 _buildTextField(
-                                  candidateController,
-                                  'Enter candidate name',
+                                  locationController,
+                                  'Enter video meeting link',
                                   colors,
                                 ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                                SizedBox(height: 16.h),
+                              ] else if (selectedType ==
+                                  'In-Person Interview') ...[
                                 Text(
-                                  'Position *',
+                                  'Location *',
                                   style: FontConstants.getPoppinsStyle(
                                     fontSize: FontSize.s13,
                                     fontWeight: FontWeightManager.medium,
@@ -785,407 +1137,249 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
                                 ),
                                 SizedBox(height: 8.h),
                                 _buildTextField(
-                                  positionController,
-                                  'Enter position',
+                                  locationController,
+                                  'Enter office location (e.g., Office - Meeting Room 3)',
                                   colors,
                                 ),
+                                SizedBox(height: 16.h),
                               ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16.h),
 
-                      // Interview Type
-                      Text(
-                        'Interview Type *',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s13,
-                          fontWeight: FontWeightManager.medium,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      _buildDropdownField(
-                        selectedType,
-                        ['Select type', 'Video Interview', 'In-Person Interview', 'Phone Interview'],
-                        (value) {
-                          if (value != null) {
-                            setModalState(() => selectedType = value);
-                          }
-                        },
-                        colors,
-                      ),
-                      SizedBox(height: 16.h),
-
-                      // Date & Time Row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Date *',
-                                  style: FontConstants.getPoppinsStyle(
+                              // Notes
+                              Text(
+                                'Notes',
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s13,
+                                  fontWeight: FontWeightManager.medium,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              TextField(
+                                controller: notesController,
+                                maxLines: 3,
+                                decoration: InputDecoration(
+                                  hintText:
+                                      'Add any notes or instructions for the interview...',
+                                  hintStyle: FontConstants.getPoppinsStyle(
                                     fontSize: FontSize.s13,
-                                    fontWeight: FontWeightManager.medium,
-                                    color: colors.textPrimary,
+                                    fontWeight: FontWeightManager.regular,
+                                    color: colors.textSecondary,
                                   ),
-                                ),
-                                SizedBox(height: 8.h),
-                                InkWell(
-                                  onTap: () async {
-                                    final DateTime? picked = await showDatePicker(
-                                      context: context,
-                                      initialDate: selectedDate,
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                                    );
-                                    if (picked != null) {
-                                      setModalState(() => selectedDate = picked);
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
-                                    decoration: BoxDecoration(
-                                      color: colors.grey6,
-                                      borderRadius: BorderRadius.circular(10.r),
-                                      border: Border.all(color: colors.grey4),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.calendar_today, size: 16.sp, color: colors.textSecondary),
-                                        SizedBox(width: 8.w),
-                                        Text(
-                                          '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                                          style: FontConstants.getPoppinsStyle(
-                                            fontSize: FontSize.s13,
-                                            fontWeight: FontWeightManager.regular,
-                                            color: colors.textPrimary,
-                                          ),
-                                        ),
-                                      ],
+                                  filled: true,
+                                  fillColor: colors.grey6,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    borderSide: BorderSide(color: colors.grey4),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    borderSide: BorderSide(color: colors.grey4),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    borderSide: BorderSide(
+                                      color: ColorManager.primary,
                                     ),
                                   ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 12.h,
+                                  ),
                                 ),
-                              ],
-                            ),
+                                style: FontConstants.getPoppinsStyle(
+                                  fontSize: FontSize.s13,
+                                  fontWeight: FontWeightManager.regular,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
+                              SizedBox(height: 24.h),
+                            ],
                           ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Time *',
+                        ),
+                      ),
+
+                      // Bottom Actions
+                      Container(
+                        padding: EdgeInsets.all(20.w),
+                        decoration: BoxDecoration(
+                          color: colors.cardBackground,
+                          border: Border(top: BorderSide(color: colors.grey5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: () => Navigator.pop(context),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: colors.textPrimary,
+                                  side: BorderSide(color: colors.grey4),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                ),
+                                child: Text(
+                                  'Cancel',
                                   style: FontConstants.getPoppinsStyle(
-                                    fontSize: FontSize.s13,
-                                    fontWeight: FontWeightManager.medium,
-                                    color: colors.textPrimary,
+                                    fontSize: FontSize.s14,
+                                    fontWeight: FontWeightManager.semiBold,
                                   ),
                                 ),
-                                SizedBox(height: 8.h),
-                                InkWell(
-                                  onTap: () async {
-                                    final TimeOfDay? picked = await showTimePicker(
-                                      context: context,
-                                      initialTime: selectedTime,
-                                    );
-                                    if (picked != null) {
-                                      setModalState(() => selectedTime = picked);
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
-                                    decoration: BoxDecoration(
-                                      color: colors.grey6,
-                                      borderRadius: BorderRadius.circular(10.r),
-                                      border: Border.all(color: colors.grey4),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.access_time, size: 16.sp, color: colors.textSecondary),
-                                        SizedBox(width: 8.w),
-                                        Text(
-                                          selectedTime.format(context),
-                                          style: FontConstants.getPoppinsStyle(
-                                            fontSize: FontSize.s13,
-                                            fontWeight: FontWeightManager.regular,
-                                            color: colors.textPrimary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16.h),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              flex: 2,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Validate fields
+                                  if (candidateController.text.isEmpty ||
+                                      positionController.text.isEmpty ||
+                                      selectedType == 'Select type' ||
+                                      selectedDuration == 'Select duration' ||
+                                      interviewersController.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Please fill all required fields',
+                                        ),
+                                        backgroundColor: ColorManager.error,
+                                      ),
+                                    );
+                                    return;
+                                  }
 
-                      // Duration
-                      Text(
-                        'Duration *',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s13,
-                          fontWeight: FontWeightManager.medium,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      _buildDropdownField(
-                        selectedDuration,
-                        ['Select duration', '30 minutes', '45 minutes', '1 hour', '1.5 hours', '2 hours'],
-                        (value) {
-                          if (value != null) {
-                            setModalState(() => selectedDuration = value);
-                          }
-                        },
-                        colors,
-                      ),
-                      SizedBox(height: 16.h),
+                                  // Check location/meeting link for video and in-person interviews
+                                  if ((selectedType == 'Video Interview' ||
+                                          selectedType ==
+                                              'In-Person Interview') &&
+                                      locationController.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          selectedType == 'Video Interview'
+                                              ? 'Please enter meeting link'
+                                              : 'Please enter location',
+                                        ),
+                                        backgroundColor: ColorManager.error,
+                                      ),
+                                    );
+                                    return;
+                                  }
 
-                      // Interviewers
-                      Text(
-                        'Interviewers *',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s13,
-                          fontWeight: FontWeightManager.medium,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      _buildTextField(
-                        interviewersController,
-                        'Enter interviewer names (e.g., John Doe, Jane Smith)',
-                        colors,
-                      ),
-                      SizedBox(height: 16.h),
+                                  // Get avatar initials from candidate name
+                                  final nameParts = candidateController.text
+                                      .trim()
+                                      .split(' ');
+                                  final avatar =
+                                      nameParts.length >= 2
+                                          ? '${nameParts[0][0]}${nameParts[1][0]}'
+                                          : nameParts[0].substring(
+                                            0,
+                                            nameParts[0].length >= 2 ? 2 : 1,
+                                          );
 
-                      // Location / Meeting Link (only for Video Interview)
-                      if (selectedType == 'Video Interview') ...[
-                        Text(
-                          'Meeting Link *',
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s13,
-                            fontWeight: FontWeightManager.medium,
-                            color: colors.textPrimary,
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                        _buildTextField(
-                          locationController,
-                          'Enter video meeting link',
-                          colors,
-                        ),
-                        SizedBox(height: 16.h),
-                      ] else if (selectedType == 'In-Person Interview') ...[
-                        Text(
-                          'Location *',
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s13,
-                            fontWeight: FontWeightManager.medium,
-                            color: colors.textPrimary,
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                        _buildTextField(
-                          locationController,
-                          'Enter office location (e.g., Office - Meeting Room 3)',
-                          colors,
-                        ),
-                        SizedBox(height: 16.h),
-                      ],
+                                  // Format date
+                                  final months = [
+                                    'Jan',
+                                    'Feb',
+                                    'Mar',
+                                    'Apr',
+                                    'May',
+                                    'Jun',
+                                    'Jul',
+                                    'Aug',
+                                    'Sep',
+                                    'Oct',
+                                    'Nov',
+                                    'Dec',
+                                  ];
+                                  final days = [
+                                    'Sun',
+                                    'Mon',
+                                    'Tue',
+                                    'Wed',
+                                    'Thu',
+                                    'Fri',
+                                    'Sat',
+                                  ];
+                                  final formattedDate =
+                                      '${days[selectedDate.weekday % 7]}, ${months[selectedDate.month - 1]} ${selectedDate.day}';
 
-                      // Notes
-                      Text(
-                        'Notes',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s13,
-                          fontWeight: FontWeightManager.medium,
-                          color: colors.textPrimary,
+                                  // Format time
+                                  final formattedTime =
+                                      '${selectedTime.format(context)} (${selectedDuration.replaceAll('Select duration', '1 hour')})';
+
+                                  // Create new interview
+                                  final newInterview = {
+                                    'name': candidateController.text.trim(),
+                                    'title': positionController.text.trim(),
+                                    'date': formattedDate,
+                                    'time': formattedTime,
+                                    'type': selectedType,
+                                    'interviewers':
+                                        interviewersController.text.trim(),
+                                    'notes': notesController.text.trim(),
+                                    'avatar': avatar.toUpperCase(),
+                                    'status': 'scheduled',
+                                    'statusColor': ColorManager.warning,
+                                    if (selectedType == 'Video Interview')
+                                      'meetingLink':
+                                          locationController.text.trim(),
+                                    if (selectedType == 'In-Person Interview')
+                                      'location':
+                                          locationController.text.trim(),
+                                  };
+
+                                  // Add to list or update existing
+                                  if (isEditing && interviewIndex != null) {
+                                    _updateInterview(
+                                      interviewIndex,
+                                      newInterview,
+                                    );
+                                  } else {
+                                    _addNewInterview(newInterview);
+                                  }
+
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        isEditing
+                                            ? 'Interview updated successfully!'
+                                            : 'Interview scheduled successfully!',
+                                      ),
+                                      backgroundColor: ColorManager.success,
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorManager.primary,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                ),
+                                child: Text(
+                                  isEditing
+                                      ? 'Update Interview'
+                                      : 'Schedule Interview',
+                                  style: FontConstants.getPoppinsStyle(
+                                    fontSize: FontSize.s14,
+                                    fontWeight: FontWeightManager.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 8.h),
-                      TextField(
-                        controller: notesController,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          hintText: 'Add any notes or instructions for the interview...',
-                          hintStyle: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s13,
-                            fontWeight: FontWeightManager.regular,
-                            color: colors.textSecondary,
-                          ),
-                          filled: true,
-                          fillColor: colors.grey6,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                            borderSide: BorderSide(color: colors.grey4),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                            borderSide: BorderSide(color: colors.grey4),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                            borderSide: BorderSide(color: ColorManager.primary),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-                        ),
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s13,
-                          fontWeight: FontWeightManager.regular,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 24.h),
                     ],
                   ),
                 ),
               ),
-
-              // Bottom Actions
-              Container(
-                padding: EdgeInsets.all(20.w),
-                decoration: BoxDecoration(
-                  color: colors.cardBackground,
-                  border: Border(
-                    top: BorderSide(color: colors.grey5),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: colors.textPrimary,
-                          side: BorderSide(color: colors.grey4),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                        ),
-                        child: Text(
-                          'Cancel',
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s14,
-                            fontWeight: FontWeightManager.semiBold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      flex: 2,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Validate fields
-                          if (candidateController.text.isEmpty ||
-                              positionController.text.isEmpty ||
-                              selectedType == 'Select type' ||
-                              selectedDuration == 'Select duration' ||
-                              interviewersController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please fill all required fields'),
-                                backgroundColor: ColorManager.error,
-                              ),
-                            );
-                            return;
-                          }
-
-                          // Check location/meeting link for video and in-person interviews
-                          if ((selectedType == 'Video Interview' || selectedType == 'In-Person Interview') &&
-                              locationController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(selectedType == 'Video Interview'
-                                    ? 'Please enter meeting link'
-                                    : 'Please enter location'),
-                                backgroundColor: ColorManager.error,
-                              ),
-                            );
-                            return;
-                          }
-
-                          // Get avatar initials from candidate name
-                          final nameParts = candidateController.text.trim().split(' ');
-                          final avatar = nameParts.length >= 2
-                              ? '${nameParts[0][0]}${nameParts[1][0]}'
-                              : nameParts[0].substring(0, nameParts[0].length >= 2 ? 2 : 1);
-
-                          // Format date
-                          final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                          final days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                          final formattedDate = '${days[selectedDate.weekday % 7]}, ${months[selectedDate.month - 1]} ${selectedDate.day}';
-
-                          // Format time
-                          final formattedTime = '${selectedTime.format(context)} (${selectedDuration.replaceAll('Select duration', '1 hour')})';
-
-                          // Create new interview
-                          final newInterview = {
-                            'name': candidateController.text.trim(),
-                            'title': positionController.text.trim(),
-                            'date': formattedDate,
-                            'time': formattedTime,
-                            'type': selectedType,
-                            'interviewers': interviewersController.text.trim(),
-                            'notes': notesController.text.trim(),
-                            'avatar': avatar.toUpperCase(),
-                            'status': 'scheduled',
-                            'statusColor': ColorManager.warning,
-                            if (selectedType == 'Video Interview')
-                              'meetingLink': locationController.text.trim(),
-                            if (selectedType == 'In-Person Interview')
-                              'location': locationController.text.trim(),
-                          };
-
-                          // Add to list or update existing
-                          if (isEditing && interviewIndex != null) {
-                            _updateInterview(interviewIndex, newInterview);
-                          } else {
-                            _addNewInterview(newInterview);
-                          }
-
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(isEditing
-                                  ? 'Interview updated successfully!'
-                                  : 'Interview scheduled successfully!'),
-                              backgroundColor: ColorManager.success,
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorManager.primary,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                        ),
-                        child: Text(
-                          isEditing ? 'Update Interview' : 'Schedule Interview',
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s14,
-                            fontWeight: FontWeightManager.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
           ),
-        ),
-      ),
     );
   }
 
@@ -1213,21 +1407,23 @@ class _InterviewSchedulerScreenState extends State<InterviewSchedulerScreen> {
             color: colors.textPrimary,
           ),
           dropdownColor: colors.cardBackground,
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(
-                item,
-                style: FontConstants.getPoppinsStyle(
-                  fontSize: FontSize.s13,
-                  fontWeight: FontWeightManager.regular,
-                  color: item == value && item.startsWith('Select')
-                      ? colors.textSecondary
-                      : colors.textPrimary,
-                ),
-              ),
-            );
-          }).toList(),
+          items:
+              items.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s13,
+                      fontWeight: FontWeightManager.regular,
+                      color:
+                          item == value && item.startsWith('Select')
+                              ? colors.textSecondary
+                              : colors.textPrimary,
+                    ),
+                  ),
+                );
+              }).toList(),
           onChanged: onChanged,
         ),
       ),

@@ -6,6 +6,7 @@ import '../../../../core/utils/theme_helper.dart';
 import '../widgets/full_time_jobs_content.dart';
 import 'talent_pool_screen.dart';
 import 'interview_scheduler_screen.dart';
+import 'post_new_job_screen.dart';
 
 class FullTimeJobsScreen extends StatefulWidget {
   const FullTimeJobsScreen({super.key});
@@ -21,6 +22,7 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
   String _selectedPoster = 'All Posters';
   String _selectedLocation = 'All Locations';
   String _selectedSort = 'Most recent';
+  bool _isNavigating = false; // Prevent double-tap crashes
 
   final List<String> _tabs = ['Scheduled', 'Active', 'Expired', 'Draft'];
   final List<int> _tabCounts = [2, 2, 1, 0]; // Sample counts
@@ -80,34 +82,40 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.calendar_month, color: colors.textPrimary),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              if (_isNavigating) return;
+              _isNavigating = true;
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const InterviewSchedulerScreen(),
                 ),
               );
+              _isNavigating = false;
             },
             tooltip: 'Interview Scheduler',
           ),
           IconButton(
             icon: Icon(Icons.people, color: colors.textPrimary),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              if (_isNavigating) return;
+              _isNavigating = true;
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const TalentPoolScreen(),
                 ),
               );
+              _isNavigating = false;
             },
             tooltip: 'Talent Pool',
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(56.h),
+          preferredSize: Size.fromHeight(68.h),
           child: Container(
             color: colors.cardBackground,
-            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
             child: Row(
               children: [
                 // Balance display - half width
@@ -159,8 +167,16 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
                   child: SizedBox(
                     height: 44.h,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        // Navigate to post new job screen
+                      onPressed: () async {
+                        if (_isNavigating) return;
+                        _isNavigating = true;
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PostNewJobScreen(),
+                          ),
+                        );
+                        _isNavigating = false;
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorManager.primary,
@@ -205,15 +221,9 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
                   final count = _tabCounts[index];
                   return Padding(
                     padding: EdgeInsets.only(right: 8.w),
-                    child: _buildTabChip(
-                      _tabs[index],
-                      count,
-                      isSelected,
-                      () {
-                        setState(() => _selectedTabIndex = index);
-                      },
-                      colors,
-                    ),
+                    child: _buildTabChip(_tabs[index], count, isSelected, () {
+                      setState(() => _selectedTabIndex = index);
+                    }, colors),
                   );
                 }),
               ),
@@ -255,19 +265,20 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
                             size: 20.sp,
                             color: colors.textSecondary,
                           ),
-                          suffixIcon: _searchQuery.isNotEmpty
-                              ? IconButton(
-                                  icon: Icon(
-                                    Icons.clear,
-                                    size: 18.sp,
-                                    color: colors.textSecondary,
-                                  ),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    setState(() => _searchQuery = '');
-                                  },
-                                )
-                              : null,
+                          suffixIcon:
+                              _searchQuery.isNotEmpty
+                                  ? IconButton(
+                                    icon: Icon(
+                                      Icons.clear,
+                                      size: 18.sp,
+                                      color: colors.textSecondary,
+                                    ),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      setState(() => _searchQuery = '');
+                                    },
+                                  )
+                                  : null,
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 12.w,
@@ -296,7 +307,13 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
                   // Location filter dropdown
                   _buildFilterDropdown(
                     _selectedLocation,
-                    ['All Locations', 'Remote', 'New York, NY', 'Austin, TX', 'San Francisco, CA'],
+                    [
+                      'All Locations',
+                      'Remote',
+                      'New York, NY',
+                      'Austin, TX',
+                      'San Francisco, CA',
+                    ],
                     (value) => setState(() => _selectedLocation = value!),
                     colors,
                   ),
@@ -305,7 +322,12 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
                   // Sort dropdown
                   _buildFilterDropdown(
                     _selectedSort,
-                    ['Most recent', 'Oldest first', 'Most views', 'Most applications'],
+                    [
+                      'Most recent',
+                      'Oldest first',
+                      'Most views',
+                      'Most applications',
+                    ],
                     (value) => setState(() => _selectedSort = value!),
                     colors,
                   ),
@@ -315,7 +337,10 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
                   TextButton(
                     onPressed: _resetFilters,
                     style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
                     ),
                     child: Text(
                       'Reset Filters',
@@ -373,9 +398,10 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? ColorManager.white.withValues(alpha: 0.2)
-                      : colors.grey5,
+                  color:
+                      isSelected
+                          ? ColorManager.white.withValues(alpha: 0.2)
+                          : colors.grey5,
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: Text(
@@ -383,7 +409,8 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.semiBold,
-                    color: isSelected ? ColorManager.white : colors.textSecondary,
+                    color:
+                        isSelected ? ColorManager.white : colors.textSecondary,
                   ),
                 ),
               ),
@@ -393,7 +420,10 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
               label,
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s13,
-                fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
+                fontWeight:
+                    isSelected
+                        ? FontWeightManager.semiBold
+                        : FontWeightManager.medium,
                 color: isSelected ? ColorManager.white : colors.textSecondary,
               ),
             ),
@@ -420,19 +450,20 @@ class _FullTimeJobsScreenState extends State<FullTimeJobsScreen> {
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(
-                item,
-                style: FontConstants.getPoppinsStyle(
-                  fontSize: FontSize.s13,
-                  fontWeight: FontWeightManager.regular,
-                  color: colors.textPrimary,
-                ),
-              ),
-            );
-          }).toList(),
+          items:
+              items.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s13,
+                      fontWeight: FontWeightManager.regular,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                );
+              }).toList(),
           onChanged: onChanged,
           icon: Icon(
             Icons.arrow_drop_down,

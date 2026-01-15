@@ -9,6 +9,7 @@ import '../widgets/auth_button.dart';
 import '../widgets/account_type_selector.dart';
 import 'get_demo_screen.dart';
 import 'access_code_registration_screen.dart';
+import 'forgot_password_screen.dart';
 import '../../../home/presentation/pages/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -81,7 +82,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void _navigateToForgotPassword() {
-    // TODO: Navigate to forgot password screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ForgotPasswordScreen(),
+      ),
+    );
   }
 
   void _navigateToGetDemo() {

@@ -14,33 +14,36 @@ class NotificationPreferencesScreen extends StatefulWidget {
 
 class _NotificationPreferencesScreenState
     extends State<NotificationPreferencesScreen> {
-  // Invoice Notifications
-  bool _muteInvoiceNotifications = false;
-  bool _invoiceSendToEmail = true;
-  bool _invoiceSendToWhatsApp = false;
+  // Master Toggle
+  bool _enableAllNotifications = true;
 
-  // Full-Time Job Notifications
-  bool _muteJobNotifications = false;
-  bool _jobSendToEmail = true;
-  bool _jobSendToWhatsApp = true;
+  // Notification Types
+  bool _pushNotifications = true;
+  bool _emailNotifications = true;
+  bool _whatsAppNotifications = true;
 
-  // DOER Status Updates
-  bool _muteStatusNotifications = false;
-  bool _statusSendToEmail = false;
-  bool _statusSendToWhatsApp = true;
-
-  // Slot & Assignment Notifications
-  bool _muteSlotNotifications = false;
-  bool _slotSendToEmail = true;
-  bool _slotSendToWhatsApp = true;
+  // Categories
+  bool _invoiceNotifications = true;
+  bool _jobNotifications = true;
+  bool _doerStatusNotifications = true;
+  bool _slotAssignmentNotifications = true;
+  bool _paymentNotifications = true;
 
   void _savePreferences() {
-    // TODO: Implement save functionality
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Notification preferences saved successfully!'),
+      SnackBar(
+        content: Text(
+          'Preferences saved',
+          style: FontConstants.getPoppinsStyle(
+            fontSize: FontSize.s14,
+            fontWeight: FontWeightManager.medium,
+            color: ColorManager.white,
+          ),
+        ),
         backgroundColor: ColorManager.success,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
       ),
     );
   }
@@ -51,181 +54,155 @@ class _NotificationPreferencesScreenState
 
     return Scaffold(
       backgroundColor: colors.background,
+      appBar: AppBar(
+        backgroundColor: colors.cardBackground,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 20.sp,
+            color: colors.textPrimary,
+          ),
+        ),
+        title: Text(
+          'Notifications',
+          style: FontConstants.getPoppinsStyle(
+            fontSize: FontSize.s18,
+            fontWeight: FontWeightManager.semiBold,
+            color: colors.textPrimary,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
-          // Custom Header with Close Button
-          Container(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 16.h,
-              left: 20.w,
-              right: 20.w,
-              bottom: 20.h,
-            ),
-            decoration: BoxDecoration(
-              color: colors.cardBackground,
-              border: Border(
-                bottom: BorderSide(color: colors.grey5),
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Notification Preferences',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s20,
-                          fontWeight: FontWeightManager.bold,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        'Manage how you receive notifications for different categories',
-                        style: FontConstants.getPoppinsStyle(
-                          fontSize: FontSize.s13,
-                          fontWeight: FontWeightManager.regular,
-                          color: colors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.close, color: colors.textPrimary, size: 24.sp),
-                  padding: EdgeInsets.all(8.w),
-                ),
-              ],
-            ),
-          ),
-
-          // Scrollable Content
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Invoice Notifications
-                  _buildNotificationCategory(
-                    colors,
-                    'Invoice Notifications',
-                    _muteInvoiceNotifications,
-                    (value) => setState(() => _muteInvoiceNotifications = value),
-                    _invoiceSendToEmail,
-                    (value) => setState(() => _invoiceSendToEmail = value),
-                    _invoiceSendToWhatsApp,
-                    (value) => setState(() => _invoiceSendToWhatsApp = value),
-                    'Mute all invoice notifications',
-                  ),
+            child: ListView(
+              padding: EdgeInsets.all(16.w),
+              children: [
+                // Master Toggle
+                _buildMasterToggle(colors),
 
-                  SizedBox(height: 24.h),
+                SizedBox(height: 24.h),
 
-                  // Full-Time Job Notifications
-                  _buildNotificationCategory(
-                    colors,
-                    'Full-Time Job Notifications',
-                    _muteJobNotifications,
-                    (value) => setState(() => _muteJobNotifications = value),
-                    _jobSendToEmail,
-                    (value) => setState(() => _jobSendToEmail = value),
-                    _jobSendToWhatsApp,
-                    (value) => setState(() => _jobSendToWhatsApp = value),
-                    'Mute all job notifications',
-                  ),
+                // Delivery Methods
+                _buildSectionLabel('Delivery Methods', colors),
+                SizedBox(height: 8.h),
+                _buildCard(
+                  colors,
+                  children: [
+                    _buildToggleItem(
+                      colors,
+                      icon: Icons.notifications_outlined,
+                      title: 'Push Notifications',
+                      value: _pushNotifications,
+                      onChanged: (v) => setState(() => _pushNotifications = v),
+                    ),
+                    _buildToggleItem(
+                      colors,
+                      icon: Icons.email_outlined,
+                      title: 'Email',
+                      value: _emailNotifications,
+                      onChanged: (v) => setState(() => _emailNotifications = v),
+                    ),
+                    _buildToggleItem(
+                      colors,
+                      icon: Icons.chat_bubble_outline,
+                      title: 'WhatsApp',
+                      value: _whatsAppNotifications,
+                      onChanged: (v) => setState(() => _whatsAppNotifications = v),
+                      isLast: true,
+                    ),
+                  ],
+                ),
 
-                  SizedBox(height: 24.h),
+                SizedBox(height: 24.h),
 
-                  // DOER Status Updates
-                  _buildNotificationCategory(
-                    colors,
-                    'DOER Status Updates',
-                    _muteStatusNotifications,
-                    (value) => setState(() => _muteStatusNotifications = value),
-                    _statusSendToEmail,
-                    (value) => setState(() => _statusSendToEmail = value),
-                    _statusSendToWhatsApp,
-                    (value) => setState(() => _statusSendToWhatsApp = value),
-                    'Mute all status notifications',
-                  ),
+                // Categories
+                _buildSectionLabel('Categories', colors),
+                SizedBox(height: 8.h),
+                _buildCard(
+                  colors,
+                  children: [
+                    _buildToggleItem(
+                      colors,
+                      icon: Icons.receipt_long_outlined,
+                      title: 'Invoices',
+                      value: _invoiceNotifications,
+                      onChanged: (v) => setState(() => _invoiceNotifications = v),
+                    ),
+                    _buildToggleItem(
+                      colors,
+                      icon: Icons.work_outline,
+                      title: 'Jobs',
+                      value: _jobNotifications,
+                      onChanged: (v) => setState(() => _jobNotifications = v),
+                    ),
+                    _buildToggleItem(
+                      colors,
+                      icon: Icons.person_outline,
+                      title: 'DOER Status',
+                      value: _doerStatusNotifications,
+                      onChanged: (v) => setState(() => _doerStatusNotifications = v),
+                    ),
+                    _buildToggleItem(
+                      colors,
+                      icon: Icons.event_available_outlined,
+                      title: 'Slots & Assignments',
+                      value: _slotAssignmentNotifications,
+                      onChanged: (v) => setState(() => _slotAssignmentNotifications = v),
+                    ),
+                    _buildToggleItem(
+                      colors,
+                      icon: Icons.payments_outlined,
+                      title: 'Payments',
+                      value: _paymentNotifications,
+                      onChanged: (v) => setState(() => _paymentNotifications = v),
+                      isLast: true,
+                    ),
+                  ],
+                ),
 
-                  SizedBox(height: 24.h),
-
-                  // Slot & Assignment Notifications
-                  _buildNotificationCategory(
-                    colors,
-                    'Slot & Assignment Notifications',
-                    _muteSlotNotifications,
-                    (value) => setState(() => _muteSlotNotifications = value),
-                    _slotSendToEmail,
-                    (value) => setState(() => _slotSendToEmail = value),
-                    _slotSendToWhatsApp,
-                    (value) => setState(() => _slotSendToWhatsApp = value),
-                    'Mute all slot notifications',
-                  ),
-                ],
-              ),
+                SizedBox(height: 32.h),
+              ],
             ),
           ),
 
-          // Bottom Actions
+          // Save Button
           Container(
-            padding: EdgeInsets.all(20.w),
+            padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               color: colors.cardBackground,
               border: Border(
-                top: BorderSide(color: colors.grey5),
+                top: BorderSide(color: colors.grey5, width: 1),
               ),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: colors.textPrimary,
-                      side: BorderSide(color: colors.grey4, width: 1.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
+            child: SafeArea(
+              top: false,
+              child: SizedBox(
+                width: double.infinity,
+                height: 48.h,
+                child: ElevatedButton(
+                  onPressed: _savePreferences,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.primary,
+                    foregroundColor: ColorManager.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: Text(
-                      'Cancel',
-                      style: FontConstants.getPoppinsStyle(
-                        fontSize: FontSize.s15,
-                        fontWeight: FontWeightManager.semiBold,
-                      ),
+                  ),
+                  child: Text(
+                    'Save',
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s15,
+                      fontWeight: FontWeightManager.semiBold,
+                      color: ColorManager.white,
                     ),
                   ),
                 ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
-                    onPressed: _savePreferences,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      'Save Preferences',
-                      style: FontConstants.getPoppinsStyle(
-                        fontSize: FontSize.s15,
-                        fontWeight: FontWeightManager.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
@@ -233,109 +210,142 @@ class _NotificationPreferencesScreenState
     );
   }
 
-  Widget _buildNotificationCategory(
-    ThemeHelper colors,
-    String title,
-    bool muteValue,
-    Function(bool) onMuteChanged,
-    bool emailValue,
-    Function(bool) onEmailChanged,
-    bool whatsAppValue,
-    Function(bool) onWhatsAppChanged,
-    String muteLabel,
-  ) {
+  Widget _buildMasterToggle(ThemeHelper colors) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: colors.grey4),
+        border: Border.all(color: colors.grey5),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          // Category Title
-          Text(
-            title,
-            style: FontConstants.getPoppinsStyle(
-              fontSize: FontSize.s16,
-              fontWeight: FontWeightManager.bold,
-              color: colors.textPrimary,
+          Container(
+            width: 44.w,
+            height: 44.w,
+            decoration: BoxDecoration(
+              color: _enableAllNotifications
+                  ? colors.primary.withValues(alpha: 0.1)
+                  : colors.grey5,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Icon(
+              _enableAllNotifications
+                  ? Icons.notifications_active_outlined
+                  : Icons.notifications_off_outlined,
+              size: 22.sp,
+              color: _enableAllNotifications ? colors.primary : colors.grey2,
             ),
           ),
-          SizedBox(height: 16.h),
-
-          // Mute All Option
-          _buildNotificationOption(
-            colors,
-            Icons.notifications_off_outlined,
-            muteLabel,
-            muteValue,
-            onMuteChanged,
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'All Notifications',
+                  style: FontConstants.getPoppinsStyle(
+                    fontSize: FontSize.s15,
+                    fontWeight: FontWeightManager.semiBold,
+                    color: colors.textPrimary,
+                  ),
+                ),
+                Text(
+                  _enableAllNotifications ? 'Enabled' : 'Disabled',
+                  style: FontConstants.getPoppinsStyle(
+                    fontSize: FontSize.s12,
+                    fontWeight: FontWeightManager.regular,
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
           ),
-
-          SizedBox(height: 12.h),
-
-          // Send to Email Option
-          _buildNotificationOption(
-            colors,
-            Icons.email_outlined,
-            'Send to Email',
-            emailValue,
-            onEmailChanged,
-          ),
-
-          SizedBox(height: 12.h),
-
-          // Send to WhatsApp Option
-          _buildNotificationOption(
-            colors,
-            Icons.chat_bubble_outline,
-            'Send to WhatsApp',
-            whatsAppValue,
-            onWhatsAppChanged,
+          Switch(
+            value: _enableAllNotifications,
+            onChanged: (value) => setState(() => _enableAllNotifications = value),
+            activeThumbColor: ColorManager.white,
+            activeTrackColor: colors.primary,
+            inactiveThumbColor: colors.grey3,
+            inactiveTrackColor: colors.grey4,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildNotificationOption(
-    ThemeHelper colors,
-    IconData icon,
-    String label,
-    bool value,
-    Function(bool) onChanged,
-  ) {
-    return Row(
+  Widget _buildSectionLabel(String title, ThemeHelper colors) {
+    return Text(
+      title,
+      style: FontConstants.getPoppinsStyle(
+        fontSize: FontSize.s13,
+        fontWeight: FontWeightManager.semiBold,
+        color: colors.textSecondary,
+      ),
+    );
+  }
+
+  Widget _buildCard(ThemeHelper colors, {required List<Widget> children}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.cardBackground,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: colors.grey5),
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  Widget _buildToggleItem(
+    ThemeHelper colors, {
+    required IconData icon,
+    required String title,
+    required bool value,
+    required Function(bool) onChanged,
+    bool isLast = false,
+  }) {
+    final isEnabled = _enableAllNotifications;
+
+    return Column(
       children: [
-        Icon(
-          icon,
-          size: 20.sp,
-          color: colors.textSecondary,
-        ),
-        SizedBox(width: 12.w),
-        Expanded(
-          child: Text(
-            label,
-            style: FontConstants.getPoppinsStyle(
-              fontSize: FontSize.s14,
-              fontWeight: FontWeightManager.regular,
-              color: colors.textPrimary,
-            ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 22.sp,
+                color: isEnabled ? colors.textPrimary : colors.grey3,
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Text(
+                  title,
+                  style: FontConstants.getPoppinsStyle(
+                    fontSize: FontSize.s14,
+                    fontWeight: FontWeightManager.medium,
+                    color: isEnabled ? colors.textPrimary : colors.grey3,
+                  ),
+                ),
+              ),
+              Switch(
+                value: value,
+                onChanged: isEnabled ? onChanged : null,
+                activeThumbColor: ColorManager.white,
+                activeTrackColor: colors.primary,
+                inactiveThumbColor: colors.grey3,
+                inactiveTrackColor: colors.grey4,
+              ),
+            ],
           ),
         ),
-        Transform.scale(
-          scale: 0.9,
-          child: Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: Colors.white,
-            activeTrackColor: ColorManager.primary,
-            inactiveThumbColor: Colors.white,
-            inactiveTrackColor: colors.grey4,
+        if (!isLast)
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: colors.grey5,
+            indent: 50.w,
           ),
-        ),
       ],
     );
   }
