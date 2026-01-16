@@ -254,25 +254,6 @@ class _TalentPoolScreenState extends State<TalentPoolScreen> {
                         (value) => setState(() => _selectedLocation = value!),
                         colors,
                       ),
-                      SizedBox(width: 12.w),
-                      TextButton.icon(
-                        onPressed: () {
-                          // Advanced filters
-                        },
-                        icon: Icon(
-                          Icons.tune,
-                          size: 16.sp,
-                          color: ColorManager.primary,
-                        ),
-                        label: Text(
-                          'Advanced Filters',
-                          style: FontConstants.getPoppinsStyle(
-                            fontSize: FontSize.s13,
-                            fontWeight: FontWeightManager.medium,
-                            color: ColorManager.primary,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

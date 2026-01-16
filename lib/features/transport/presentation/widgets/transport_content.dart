@@ -15,10 +15,10 @@ class TransportContent extends StatefulWidget {
   });
 
   @override
-  State<TransportContent> createState() => _TransportContentState();
+  TransportContentState createState() => TransportContentState();
 }
 
-class _TransportContentState extends State<TransportContent> {
+class TransportContentState extends State<TransportContent> {
   DateTime _selectedDate = DateTime.now();
 
   // Filter states
@@ -140,8 +140,17 @@ class _TransportContentState extends State<TransportContent> {
   }
 
   int get _totalStaff => _allStaff.length;
-  int get _externalStaff => 0;
+  int _externalStaffCount = 0;
+  int get _externalStaff => _externalStaffCount;
   int get _transportUnits => 3;
+
+  // Public method to add staff from parent widget
+  void addStaff(TransportStaffModel staff) {
+    setState(() {
+      _allStaff.add(staff);
+      _externalStaffCount++;
+    });
+  }
   int get _totalAssigned {
     int count = 0;
     for (var staff in _allStaff) {

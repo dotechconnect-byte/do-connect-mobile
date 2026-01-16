@@ -13,7 +13,6 @@ import '../../../dashboard/presentation/bloc/dashboard_event.dart';
 import '../../../slots/presentation/widgets/slots_content.dart';
 import '../../../status/presentation/widgets/status_content.dart';
 import '../../../attendance/presentation/widgets/attendance_content.dart';
-import '../../../profile/presentation/widgets/profile_content.dart';
 import '../../../more/presentation/widgets/more_content.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'Slots Management',
     'DOER Status',
     'Attendance',
-    'Profile',
     'More',
   ];
 
@@ -43,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'Manage all current and upcoming shift slots',
     'Monitor DOER attendance and shift status in real-time',
     'Track and manage DOER attendance',
-    'Manage your profile',
     'Additional options',
   ];
 
@@ -291,7 +288,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     searchQuery: _searchQuery,
                     initialDate: _attendanceFilterDate,
                   ),
-                  const ProfileContent(),
                   const MoreContent(),
                 ],
               ),
@@ -340,24 +336,26 @@ class _HomeScreenState extends State<HomeScreen> {
         color: colors.cardBackground,
         boxShadow: [
           BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            color: ColorManager.black.withValues(alpha: 0.08),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: const Offset(0, -4),
           ),
         ],
       ),
       child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        top: false,
+        child: Container(
+          height: 65.h,
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildNavItem(Icons.dashboard_outlined, 'Dashboard', 0),
-              _buildNavItem(Icons.calendar_today_outlined, 'Slots', 1),
-              _buildNavItem(Icons.assessment_outlined, 'Status', 2),
-              _buildNavItem(Icons.fact_check_outlined, 'Attendance', 3),
-              _buildNavItem(Icons.person_outline, 'Profile', 4),
-              _buildNavItem(Icons.more_horiz, 'More', 5),
+              _buildNavItem(Icons.dashboard_outlined, Icons.dashboard_rounded, 'Dashboard', 0),
+              _buildNavItem(Icons.calendar_today_outlined, Icons.calendar_today_rounded, 'Slots', 1),
+              _buildNavItem(Icons.assessment_outlined, Icons.assessment_rounded, 'Status', 2),
+              _buildNavItem(Icons.fact_check_outlined, Icons.fact_check_rounded, 'Attend', 3),
+              _buildNavItem(Icons.more_horiz, Icons.more_horiz_rounded, 'More', 4),
             ],
           ),
         ),
@@ -365,29 +363,70 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(IconData inactiveIcon, IconData activeIcon, String label, int index) {
+    final colors = ThemeHelper.of(context);
     final isActive = _selectedIndex == index;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedIndex = index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? ColorManager.primary : ColorManager.textSecondary,
-            size: 22.sp,
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            style: FontConstants.getPoppinsStyle(
-              fontSize: FontSize.s10,
-              fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.regular,
-              color: isActive ? ColorManager.primary : ColorManager.textSecondary,
+
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            if (_selectedIndex != index) {
+              setState(() => _selectedIndex = index);
+            }
+          },
+          borderRadius: BorderRadius.circular(12.r),
+          splashColor: ColorManager.primary.withValues(alpha: 0.1),
+          highlightColor: ColorManager.primary.withValues(alpha: 0.05),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 2.w),
+            margin: EdgeInsets.symmetric(horizontal: 2.w),
+            decoration: BoxDecoration(
+              color: isActive ? ColorManager.primary.withValues(alpha: 0.1) : Colors.transparent,
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            overflow: TextOverflow.ellipsis,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isActive ? activeIcon : inactiveIcon,
+                  color: isActive ? ColorManager.primary : colors.textSecondary,
+                  size: 22.sp,
+                ),
+                SizedBox(height: 2.h),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s10,
+                      fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.medium,
+                      color: isActive ? ColorManager.primary : colors.textSecondary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                // Active indicator dot
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  margin: EdgeInsets.only(top: 2.h),
+                  height: 3.h,
+                  width: isActive ? 3.w : 0,
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }

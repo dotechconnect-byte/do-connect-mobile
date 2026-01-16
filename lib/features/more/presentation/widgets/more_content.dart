@@ -12,6 +12,7 @@ import '../../../manage/presentation/pages/manage_screen.dart';
 import '../../../transport/presentation/pages/transport_screen.dart';
 import '../../../full_time_jobs/presentation/pages/full_time_jobs_screen.dart';
 import '../../../profile/presentation/pages/notification_preferences_screen.dart';
+import '../../../profile/presentation/pages/profile_screen.dart';
 import '../../../auth/presentation/pages/login_screen.dart';
 
 class MoreContent extends StatefulWidget {
@@ -611,8 +612,31 @@ class _MoreContentState extends State<MoreContent> {
           SizedBox(height: 12.h),
           _buildOptionCard(
             context,
-            icon: Icons.receipt_long,
+            icon: Icons.person_outline,
             iconColor: colors.primary,
+            title: 'Profile',
+            subtitle: 'Manage your company profile',
+            cardColor: colors.cardBackground,
+            textPrimaryColor: colors.textPrimary,
+            textSecondaryColor: colors.textSecondary,
+            borderColor: colors.grey5,
+            onTap: () async {
+              if (_isNavigating) return;
+              _isNavigating = true;
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+              _isNavigating = false;
+            },
+          ),
+          SizedBox(height: 12.h),
+          _buildOptionCard(
+            context,
+            icon: Icons.receipt_long,
+            iconColor: colors.success,
             title: 'Invoices',
             subtitle: 'Manage invoices and billing',
             cardColor: colors.cardBackground,

@@ -16,7 +16,7 @@ class ViewApplicantsScreen extends StatefulWidget {
 }
 
 class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
-  String _selectedFilter = '';
+  String _selectedFilter = 'All';
   final TextEditingController _searchController = TextEditingController();
   final String _searchQuery = '';
   late List<Map<String, dynamic>> _applicants;
@@ -25,7 +25,6 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
   void initState() {
     super.initState();
     _applicants = _getInitialApplicants();
-    _selectedFilter = 'All Applications (${_applicants.length})';
   }
 
   @override
@@ -164,11 +163,10 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
     }
 
     // Apply status filter
-    if (!_selectedFilter.startsWith('All Applications')) {
-      final status = _selectedFilter.split(' (')[0];
+    if (_selectedFilter != 'All') {
       applicants =
           applicants.where((applicant) {
-            return applicant['status'] == status;
+            return applicant['status'] == _selectedFilter;
           }).toList();
     }
 
@@ -324,20 +322,32 @@ class _ViewApplicantsScreenState extends State<ViewApplicantsScreen> {
                         fontSize: FontSize.s14,
                         color: colors.textPrimary,
                       ),
-                      items:
-                          [
-                            'All Applications (${statusCounts['total']})',
-                            'Pending (${statusCounts['pending']})',
-                            'Shortlist (${statusCounts['shortlist']})',
-                            'Interview scheduled (${statusCounts['interviews']})',
-                            'Rejected (${statusCounts['rejected']})',
-                            'Hired (${statusCounts['hired']})',
-                          ].map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                      items: [
+                        DropdownMenuItem(
+                          value: 'All',
+                          child: Text('All Applications (${statusCounts['total']})'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Pending',
+                          child: Text('Pending (${statusCounts['pending']})'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Shortlist',
+                          child: Text('Shortlist (${statusCounts['shortlist']})'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Interview scheduled',
+                          child: Text('Interview scheduled (${statusCounts['interviews']})'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Rejected',
+                          child: Text('Rejected (${statusCounts['rejected']})'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Hired',
+                          child: Text('Hired (${statusCounts['hired']})'),
+                        ),
+                      ],
                       onChanged: (String? newValue) {
                         if (newValue != null) {
                           setState(() {
