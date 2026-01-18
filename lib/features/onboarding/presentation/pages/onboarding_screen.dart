@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/onboarding_model.dart';
 import '../widgets/onboarding_content.dart';
 import '../widgets/page_indicator.dart';
@@ -87,8 +88,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -123,7 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s14,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ),
@@ -179,7 +181,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               child: Container(
                                 height: 56.h,
                                 decoration: BoxDecoration(
-                                  color: ColorManager.grey5,
+                                  color: colors.grey5,
                                   borderRadius: BorderRadius.circular(16.r),
                                 ),
                                 child: Center(
@@ -188,7 +190,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                     style: FontConstants.getPoppinsStyle(
                                       fontSize: FontSize.s16,
                                       fontWeight: FontWeightManager.semiBold,
-                                      color: ColorManager.textPrimary,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                 ),

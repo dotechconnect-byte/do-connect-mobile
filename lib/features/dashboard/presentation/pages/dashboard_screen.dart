@@ -214,7 +214,7 @@ class _TopBar extends StatelessWidget {
                   const Text('DOER'),
                 ],
               ),
-            ),
+            ),  
           ),
         ],
       ),

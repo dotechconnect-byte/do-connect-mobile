@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/slot_model.dart';
 
 class SlotCard extends StatelessWidget {
@@ -16,12 +17,14 @@ class SlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4, width: 1),
+        border: Border.all(color: colors.grey4, width: 1),
         boxShadow: [
           BoxShadow(
             color: ColorManager.black.withValues(alpha: 0.03),
@@ -36,7 +39,7 @@ class SlotCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              color: ColorManager.grey6,
+              color: colors.grey6,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.r),
                 topRight: Radius.circular(12.r),
@@ -47,7 +50,7 @@ class SlotCard extends StatelessWidget {
                 Icon(
                   Icons.access_time,
                   size: 18.sp,
-                  color: ColorManager.primary,
+                  color: colors.primary,
                 ),
                 SizedBox(width: 8.w),
                 Expanded(
@@ -56,7 +59,7 @@ class SlotCard extends StatelessWidget {
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s14,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -65,16 +68,16 @@ class SlotCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: ColorManager.white,
+                    color: colors.cardBackground,
                     borderRadius: BorderRadius.circular(6.r),
-                    border: Border.all(color: ColorManager.primary, width: 1),
+                    border: Border.all(color: colors.primary, width: 1),
                   ),
                   child: Text(
                     slot.position,
                     style: FontConstants.getPoppinsStyle(
                       fontSize: FontSize.s11,
                       fontWeight: FontWeightManager.semiBold,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -93,7 +96,7 @@ class SlotCard extends StatelessWidget {
                     Icon(
                       Icons.location_on_outlined,
                       size: 16.sp,
-                      color: ColorManager.textSecondary,
+                      color: colors.textSecondary,
                     ),
                     SizedBox(width: 6.w),
                     Expanded(
@@ -102,7 +105,7 @@ class SlotCard extends StatelessWidget {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -122,8 +125,8 @@ class SlotCard extends StatelessWidget {
                         padding: EdgeInsets.all(10.w),
                         decoration: BoxDecoration(
                           color: slot.isFilled
-                              ? ColorManager.success.withValues(alpha: 0.1)
-                              : ColorManager.primary.withValues(alpha: 0.1),
+                              ? colors.success.withValues(alpha: 0.1)
+                              : colors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Row(
@@ -132,7 +135,7 @@ class SlotCard extends StatelessWidget {
                             Icon(
                               Icons.people_outline,
                               size: 18.sp,
-                              color: slot.isFilled ? ColorManager.success : ColorManager.primary,
+                              color: slot.isFilled ? colors.success : colors.primary,
                             ),
                             SizedBox(width: 6.w),
                             Text(
@@ -140,7 +143,7 @@ class SlotCard extends StatelessWidget {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s16,
                                 fontWeight: FontWeightManager.bold,
-                                color: slot.isFilled ? ColorManager.success : ColorManager.primary,
+                                color: slot.isFilled ? colors.success : colors.primary,
                               ),
                             ),
                             SizedBox(width: 4.w),
@@ -149,7 +152,7 @@ class SlotCard extends StatelessWidget {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s12,
                                 fontWeight: FontWeightManager.medium,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -189,7 +192,7 @@ class SlotCard extends StatelessWidget {
                     onPressed: onTap,
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 10.h),
-                      side: BorderSide(color: ColorManager.grey3, width: 1),
+                      side: BorderSide(color: colors.grey3, width: 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
@@ -199,7 +202,7 @@ class SlotCard extends StatelessWidget {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s13,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -224,10 +227,12 @@ class _InfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(6.r),
       ),
       child: Column(
@@ -237,7 +242,7 @@ class _InfoItem extends StatelessWidget {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s11,
               fontWeight: FontWeightManager.medium,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -248,7 +253,7 @@ class _InfoItem extends StatelessWidget {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s15,
               fontWeight: FontWeightManager.bold,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
         ],

@@ -2,25 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/slot_model.dart';
 import 'slot_card.dart';
 import 'slot_details_modal.dart';
-
-class DateItem {
-  final DateTime date;
-  final String label;
-  final bool isToday;
-  final bool isYesterday;
-  final bool isTomorrow;
-
-  DateItem({
-    required this.date,
-    required this.label,
-    this.isToday = false,
-    this.isYesterday = false,
-    this.isTomorrow = false,
-  });
-}
 
 class SlotsContent extends StatefulWidget {
   final String searchQuery;
@@ -32,80 +17,7 @@ class SlotsContent extends StatefulWidget {
 }
 
 class _SlotsContentState extends State<SlotsContent> {
-  late final List<DateItem> _dates;
-  late int _selectedDateIndex;
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _dates = _generateDates();
-    _selectedDateIndex = _dates.indexWhere((date) => date.isToday);
-
-    // Auto-scroll to Today after the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients && _selectedDateIndex >= 0) {
-        final double itemWidth = 80.w;
-        final double offset = (_selectedDateIndex - 1) * itemWidth;
-        _scrollController.animateTo(
-          offset.clamp(0.0, _scrollController.position.maxScrollExtent),
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-  }
-
-  List<DateItem> _generateDates() {
-    final now = DateTime.now();
-    final List<DateItem> dates = [];
-
-    // Generate dates from 3 days ago to 7 days ahead
-    for (int i = -3; i <= 7; i++) {
-      final date = now.add(Duration(days: i));
-      String label;
-
-      if (i == -1) {
-        label = 'Yesterday';
-      } else if (i == 0) {
-        label = 'Today';
-      } else if (i == 1) {
-        label = 'Tomorrow';
-      } else {
-        label = '${_getMonthAbbr(date.month)} ${date.day}';
-      }
-
-      dates.add(DateItem(
-        date: date,
-        label: label,
-        isToday: i == 0,
-        isYesterday: i == -1,
-        isTomorrow: i == 1,
-      ));
-    }
-
-    return dates;
-  }
-
-  String _getMonthAbbr(int month) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months[month - 1];
-  }
-
-  String _getFullDate(DateTime date) {
-    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'];
-
-    return '${weekdays[date.weekday % 7]}, ${months[date.month - 1]} ${date.day}, ${date.year}';
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
+  DateTime _selectedDate = DateTime.now();
 
   final List<SlotModel> _slots = [
     SlotModel(
@@ -180,85 +92,34 @@ class _SlotsContentState extends State<SlotsContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     final filteredSlots = _filteredSlots;
 
     return Column(
       children: [
-        // Date Selector
-        Container(
-          height: 50.h,
-          color: ColorManager.white,
-          child: ListView.builder(
-            controller: _scrollController,
-            padding: EdgeInsets.symmetric(horizontal: 12.w),
-            scrollDirection: Axis.horizontal,
-            itemCount: _dates.length,
-            itemBuilder: (context, index) {
-              final isSelected = _selectedDateIndex == index;
-              return GestureDetector(
-                onTap: () => setState(() => _selectedDateIndex = index),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  decoration: BoxDecoration(
-                    color: isSelected ? ColorManager.primary : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      color: isSelected ? ColorManager.primary : ColorManager.grey3,
-                      width: 1,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      _dates[index].label,
-                      style: FontConstants.getPoppinsStyle(
-                        fontSize: FontSize.s13,
-                        fontWeight: isSelected ? FontWeightManager.semiBold : FontWeightManager.medium,
-                        color: isSelected ? ColorManager.white : ColorManager.textSecondary,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+        // Date Filter
+        _buildDateFilter(),
 
-        // Date Header
-        Container(
-          padding: EdgeInsets.all(16.w),
-          color: ColorManager.backgroundColor,
-          child: Row(
-            children: [
-              Icon(
-                Icons.calendar_today,
-                size: 18.sp,
-                color: ColorManager.primary,
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Text(
-                  _getFullDate(_dates[_selectedDateIndex].date),
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s15,
-                    fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+        // Search Results Count
+        if (widget.searchQuery.isNotEmpty)
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            color: colors.background,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${filteredSlots.length} slot${filteredSlots.length != 1 ? 's' : ''} found',
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s13,
+                      fontWeight: FontWeightManager.semiBold,
+                      color: colors.primary,
+                    ),
                   ),
                 ),
-              ),
-              if (widget.searchQuery.isNotEmpty)
-                Text(
-                  '${filteredSlots.length} result${filteredSlots.length != 1 ? 's' : ''}',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s12,
-                    fontWeight: FontWeightManager.medium,
-                    color: ColorManager.primary,
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
-        ),
 
         // Slots List
         Expanded(
@@ -270,7 +131,7 @@ class _SlotsContentState extends State<SlotsContent> {
                       Icon(
                         Icons.search_off,
                         size: 64.sp,
-                        color: ColorManager.grey3,
+                        color: colors.grey3,
                       ),
                       SizedBox(height: 16.h),
                       Text(
@@ -278,7 +139,7 @@ class _SlotsContentState extends State<SlotsContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s16,
                           fontWeight: FontWeightManager.semiBold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 8.h),
@@ -287,7 +148,7 @@ class _SlotsContentState extends State<SlotsContent> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -315,5 +176,183 @@ class _SlotsContentState extends State<SlotsContent> {
         ),
       ],
     );
+  }
+
+  Widget _buildDateFilter() {
+    final colors = ThemeHelper.of(context);
+
+    return Container(
+      color: colors.cardBackground,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      child: Row(
+        children: [
+          // Previous Day Button
+          InkWell(
+            onTap: () {
+              setState(() {
+                _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+              });
+            },
+            borderRadius: BorderRadius.circular(8.r),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: colors.grey6,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: colors.grey4),
+              ),
+              child: Icon(
+                Icons.chevron_left,
+                size: 20.sp,
+                color: colors.textPrimary,
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+
+          // Date Display with Calendar Picker
+          Expanded(
+            child: InkWell(
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: _selectedDate,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2030),
+                  builder: (context, child) {
+                    final pickerColors = ThemeHelper.of(context);
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        colorScheme: isDark
+                            ? ColorScheme.dark(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              )
+                            : ColorScheme.light(
+                                primary: pickerColors.primary,
+                                onPrimary: ColorManager.white,
+                                surface: pickerColors.cardBackground,
+                                onSurface: pickerColors.textPrimary,
+                              ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+                if (picked != null && picked != _selectedDate) {
+                  setState(() {
+                    _selectedDate = picked;
+                  });
+                }
+              },
+              borderRadius: BorderRadius.circular(12.r),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: colors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: colors.primary),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 18.sp,
+                      color: colors.primary,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      _formatDate(_selectedDate),
+                      style: FontConstants.getPoppinsStyle(
+                        fontSize: FontSize.s14,
+                        fontWeight: FontWeightManager.semiBold,
+                        color: colors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+
+          // Next Day Button
+          InkWell(
+            onTap: () {
+              setState(() {
+                _selectedDate = _selectedDate.add(const Duration(days: 1));
+              });
+            },
+            borderRadius: BorderRadius.circular(8.r),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: colors.grey6,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: colors.grey4),
+              ),
+              child: Icon(
+                Icons.chevron_right,
+                size: 20.sp,
+                color: colors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final tomorrow = today.add(const Duration(days: 1));
+    final selectedDay = DateTime(date.year, date.month, date.day);
+
+    if (selectedDay == today) {
+      return 'Today, ${_getMonthName(date.month)} ${date.day}';
+    } else if (selectedDay == yesterday) {
+      return 'Yesterday, ${_getMonthName(date.month)} ${date.day}';
+    } else if (selectedDay == tomorrow) {
+      return 'Tomorrow, ${_getMonthName(date.month)} ${date.day}';
+    } else {
+      return '${_getDayName(date.weekday)}, ${_getMonthName(date.month)} ${date.day}, ${date.year}';
+    }
+  }
+
+  String _getDayName(int weekday) {
+    switch (weekday) {
+      case 1: return 'Monday';
+      case 2: return 'Tuesday';
+      case 3: return 'Wednesday';
+      case 4: return 'Thursday';
+      case 5: return 'Friday';
+      case 6: return 'Saturday';
+      case 7: return 'Sunday';
+      default: return '';
+    }
+  }
+
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1: return 'Jan';
+      case 2: return 'Feb';
+      case 3: return 'Mar';
+      case 4: return 'Apr';
+      case 5: return 'May';
+      case 6: return 'Jun';
+      case 7: return 'Jul';
+      case 8: return 'Aug';
+      case 9: return 'Sep';
+      case 10: return 'Oct';
+      case 11: return 'Nov';
+      case 12: return 'Dec';
+      default: return '';
+    }
   }
 }

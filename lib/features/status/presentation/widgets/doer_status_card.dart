@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../data/models/doer_status_model.dart';
 
 class DoerStatusCard extends StatelessWidget {
@@ -18,10 +19,12 @@ class DoerStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -37,7 +40,7 @@ class DoerStatusCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(14.w),
             decoration: BoxDecoration(
-              color: ColorManager.grey6,
+              color: colors.grey6,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.r),
                 topRight: Radius.circular(12.r),
@@ -50,14 +53,14 @@ class DoerStatusCard extends StatelessWidget {
                   width: 40.w,
                   height: 40.w,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFE5DC),
+                    color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Center(
                     child: Icon(
                       Icons.person,
                       size: 24.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -72,7 +75,7 @@ class DoerStatusCard extends StatelessWidget {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s15,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -81,7 +84,7 @@ class DoerStatusCard extends StatelessWidget {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s12,
                           fontWeight: FontWeightManager.regular,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -104,7 +107,7 @@ class DoerStatusCard extends StatelessWidget {
                     Icon(
                       Icons.access_time,
                       size: 16.sp,
-                      color: ColorManager.primary,
+                      color: colors.primary,
                     ),
                     SizedBox(width: 8.w),
                     Text(
@@ -112,7 +115,7 @@ class DoerStatusCard extends StatelessWidget {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s13,
                         fontWeight: FontWeightManager.medium,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -134,7 +137,7 @@ class DoerStatusCard extends StatelessWidget {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ),
@@ -150,7 +153,7 @@ class DoerStatusCard extends StatelessWidget {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
                         fontWeight: FontWeightManager.medium,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                     Text(
@@ -158,7 +161,7 @@ class DoerStatusCard extends StatelessWidget {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -173,7 +176,7 @@ class DoerStatusCard extends StatelessWidget {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
                         fontWeight: FontWeightManager.medium,
-                        color: ColorManager.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                     Text(
@@ -181,7 +184,7 @@ class DoerStatusCard extends StatelessWidget {
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
                         fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -193,7 +196,7 @@ class DoerStatusCard extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFD1FAE5),
+                      color: colors.success.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Row(
@@ -201,7 +204,7 @@ class DoerStatusCard extends StatelessWidget {
                         Icon(
                           Icons.check_circle,
                           size: 16.sp,
-                          color: const Color(0xFF10B981),
+                          color: colors.success,
                         ),
                         SizedBox(width: 8.w),
                         Text(
@@ -209,7 +212,7 @@ class DoerStatusCard extends StatelessWidget {
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s12,
                             fontWeight: FontWeightManager.semiBold,
-                            color: const Color(0xFF059669),
+                            color: colors.success,
                           ),
                         ),
                       ],
@@ -229,11 +232,11 @@ class DoerStatusCard extends StatelessWidget {
                         label: const Text('Ping'),
                         style: OutlinedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 10.h),
-                          side: BorderSide(color: ColorManager.grey3),
+                          side: BorderSide(color: colors.grey3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),
                           ),
-                          foregroundColor: ColorManager.textPrimary,
+                          foregroundColor: colors.textPrimary,
                           textStyle: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s13,
                             fontWeight: FontWeightManager.semiBold,
@@ -245,18 +248,20 @@ class DoerStatusCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: onMessage,
-                        icon: Icon(Icons.message_outlined, size: 16.sp),
-                        label: const Text('Message'),
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
-                          side: BorderSide(color: ColorManager.grey3),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          foregroundColor: ColorManager.textPrimary,
-                          textStyle: FontConstants.getPoppinsStyle(
+                        icon: Icon(Icons.chat, size: 16.sp, color: const Color(0xFF25D366)),
+                        label: Text(
+                          'WhatsApp',
+                          style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s13,
                             fontWeight: FontWeightManager.semiBold,
+                            color: const Color(0xFF25D366),
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          side: const BorderSide(color: Color(0xFF25D366)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
                         ),
                       ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
+import '../../../profile/presentation/pages/notification_preferences_screen.dart';
 
 enum NotificationCategory { all, jobs, bills, work, money, alerts }
 
@@ -14,6 +16,7 @@ class NotificationPanel extends StatefulWidget {
 
 class _NotificationPanelState extends State<NotificationPanel> {
   NotificationCategory _selectedCategory = NotificationCategory.all;
+  bool _isNavigating = false; // Prevent double-tap crashes
 
   List<NotificationItem> _notifications = [
     NotificationItem(
@@ -121,11 +124,14 @@ class _NotificationPanelState extends State<NotificationPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
+      backgroundColor: colors.background,
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(color: ColorManager.white),
+        decoration: BoxDecoration(color: colors.background),
         child: SafeArea(
           child: Column(
             children: [
@@ -137,7 +143,7 @@ class _NotificationPanelState extends State<NotificationPanel> {
                     Icon(
                       Icons.notifications,
                       size: 24.sp,
-                      color: ColorManager.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     SizedBox(width: 8.w),
                     Expanded(
@@ -146,7 +152,7 @@ class _NotificationPanelState extends State<NotificationPanel> {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s20,
                           fontWeight: FontWeightManager.bold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ),
@@ -157,7 +163,7 @@ class _NotificationPanelState extends State<NotificationPanel> {
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: ColorManager.error,
+                          color: colors.error,
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Text(
@@ -171,7 +177,7 @@ class _NotificationPanelState extends State<NotificationPanel> {
                       ),
                     SizedBox(width: 8.w),
                     IconButton(
-                      icon: Icon(Icons.close, size: 24.sp),
+                      icon: Icon(Icons.close, size: 24.sp, color: colors.textPrimary),
                       onPressed: () => Navigator.pop(context),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -193,8 +199,8 @@ class _NotificationPanelState extends State<NotificationPanel> {
                           size: 16.sp,
                           color:
                               _unreadCount > 0
-                                  ? ColorManager.primary
-                                  : ColorManager.grey3,
+                                  ? colors.primary
+                                  : colors.grey3,
                         ),
                         label: Text(
                           'Mark all read',
@@ -203,8 +209,8 @@ class _NotificationPanelState extends State<NotificationPanel> {
                             fontWeight: FontWeightManager.medium,
                             color:
                                 _unreadCount > 0
-                                    ? ColorManager.primary
-                                    : ColorManager.grey3,
+                                    ? colors.primary
+                                    : colors.grey3,
                           ),
                         ),
                         style: TextButton.styleFrom(
@@ -215,18 +221,28 @@ class _NotificationPanelState extends State<NotificationPanel> {
                     SizedBox(width: 8.w),
                     Expanded(
                       child: TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () async {
+                          if (_isNavigating) return;
+                          _isNavigating = true;
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationPreferencesScreen(),
+                            ),
+                          );
+                          _isNavigating = false;
+                        },
                         icon: Icon(
-                          Icons.settings_outlined,
+                          Icons.tune,
                           size: 16.sp,
-                          color: ColorManager.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         label: Text(
-                          'Settings',
+                          'Preferences',
                           style: FontConstants.getPoppinsStyle(
                             fontSize: FontSize.s12,
                             fontWeight: FontWeightManager.medium,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                         style: TextButton.styleFrom(
@@ -245,17 +261,17 @@ class _NotificationPanelState extends State<NotificationPanel> {
                 margin: EdgeInsets.symmetric(horizontal: 16.w),
                 height: 40.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.grey6,
+                  color: colors.grey6,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Row(
                   children: [
-                    _buildTab('All', NotificationCategory.all),
-                    _buildTab('Jobs', NotificationCategory.jobs),
-                    _buildTab('Bills', NotificationCategory.bills),
-                    _buildTab('Work', NotificationCategory.work),
-                    _buildTab('Money', NotificationCategory.money),
-                    _buildTab('Alerts', NotificationCategory.alerts),
+                    _buildTab('All', NotificationCategory.all, colors),
+                    _buildTab('Jobs', NotificationCategory.jobs, colors),
+                    _buildTab('Bills', NotificationCategory.bills, colors),
+                    _buildTab('Work', NotificationCategory.work, colors),
+                    _buildTab('Money', NotificationCategory.money, colors),
+                    _buildTab('Alerts', NotificationCategory.alerts, colors),
                   ],
                 ),
               ),
@@ -269,7 +285,7 @@ class _NotificationPanelState extends State<NotificationPanel> {
                   itemCount: _filteredNotifications.length,
                   itemBuilder: (context, index) {
                     final notification = _filteredNotifications[index];
-                    return _NotificationCard(notification: notification);
+                    return _NotificationCard(notification: notification, colors: colors);
                   },
                 ),
               ),
@@ -280,7 +296,7 @@ class _NotificationPanelState extends State<NotificationPanel> {
     );
   }
 
-  Widget _buildTab(String label, NotificationCategory category) {
+  Widget _buildTab(String label, NotificationCategory category, ThemeHelper colors) {
     final isSelected = _selectedCategory == category;
     final count = _getCategoryCount(category);
     return Expanded(
@@ -290,13 +306,13 @@ class _NotificationPanelState extends State<NotificationPanel> {
           duration: const Duration(milliseconds: 200),
           margin: EdgeInsets.all(4.w),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.white : Colors.transparent,
+            color: isSelected ? colors.cardBackground : Colors.transparent,
             borderRadius: BorderRadius.circular(6.r),
             boxShadow:
                 isSelected
                     ? [
                       BoxShadow(
-                        color: ColorManager.black.withValues(alpha: 0.05),
+                        color: colors.grey3.withValues(alpha: 0.1),
                         blurRadius: 4,
                       ),
                     ]
@@ -316,8 +332,8 @@ class _NotificationPanelState extends State<NotificationPanel> {
                             : FontWeightManager.medium,
                     color:
                         isSelected
-                            ? ColorManager.textPrimary
-                            : ColorManager.textSecondary,
+                            ? colors.textPrimary
+                            : colors.textSecondary,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -329,7 +345,7 @@ class _NotificationPanelState extends State<NotificationPanel> {
                       vertical: 1.h,
                     ),
                     decoration: BoxDecoration(
-                      color: ColorManager.primary,
+                      color: colors.primary,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
@@ -353,8 +369,9 @@ class _NotificationPanelState extends State<NotificationPanel> {
 
 class _NotificationCard extends StatelessWidget {
   final NotificationItem notification;
+  final ThemeHelper colors;
 
-  const _NotificationCard({required this.notification});
+  const _NotificationCard({required this.notification, required this.colors});
 
   @override
   Widget build(BuildContext context) {
@@ -364,14 +381,14 @@ class _NotificationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color:
             notification.isUnread
-                ? ColorManager.primary.withValues(alpha: 0.03)
-                : ColorManager.white,
+                ? colors.primary.withValues(alpha: 0.03)
+                : colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color:
               notification.isUnread
-                  ? ColorManager.primary.withValues(alpha: 0.1)
-                  : ColorManager.grey4,
+                  ? colors.primary.withValues(alpha: 0.1)
+                  : colors.grey4,
           width: 1,
         ),
       ),
@@ -403,7 +420,7 @@ class _NotificationCard extends StatelessWidget {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.semiBold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -414,7 +431,7 @@ class _NotificationCard extends StatelessWidget {
                         width: 8.w,
                         height: 8.w,
                         decoration: BoxDecoration(
-                          color: ColorManager.primary,
+                          color: colors.primary,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -426,7 +443,7 @@ class _NotificationCard extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s12,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -437,7 +454,7 @@ class _NotificationCard extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary.withValues(alpha: 0.7),
+                    color: colors.textSecondary.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -448,7 +465,7 @@ class _NotificationCard extends StatelessWidget {
             icon: Icon(
               Icons.more_vert,
               size: 18.sp,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
             padding: EdgeInsets.zero,
             itemBuilder:
@@ -459,7 +476,7 @@ class _NotificationCard extends StatelessWidget {
                       'Mark as read',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
-                        color: ColorManager.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -469,7 +486,7 @@ class _NotificationCard extends StatelessWidget {
                       'Delete',
                       style: FontConstants.getPoppinsStyle(
                         fontSize: FontSize.s12,
-                        color: ColorManager.error,
+                        color: colors.error,
                       ),
                     ),
                   ),

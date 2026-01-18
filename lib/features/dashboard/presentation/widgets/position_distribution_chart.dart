@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class PositionDistributionChart extends StatelessWidget {
   const PositionDistributionChart({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     final positions = [
-      {'name': 'Server', 'count': 12, 'color': ColorManager.primary},
-      {'name': 'Barman', 'count': 8, 'color': ColorManager.success},
+      {'name': 'Server', 'count': 12, 'color': colors.primary},
+      {'name': 'Barman', 'count': 8, 'color': colors.success},
       {'name': 'Security Guard', 'count': 6, 'color': Color(0xFFFBBF24)},
-      {'name': 'Concierge', 'count': 4, 'color': ColorManager.error},
+      {'name': 'Concierge', 'count': 4, 'color': colors.error},
     ];
 
     final maxCount = positions.map((e) => e['count'] as int).reduce((a, b) => a > b ? a : b);
@@ -20,9 +22,9 @@ class PositionDistributionChart extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4, width: 1),
+        border: Border.all(color: colors.grey4, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +34,7 @@ class PositionDistributionChart extends StatelessWidget {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s16,
               fontWeight: FontWeightManager.semiBold,
-              color: ColorManager.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           SizedBox(height: 4.h),
@@ -41,7 +43,7 @@ class PositionDistributionChart extends StatelessWidget {
             style: FontConstants.getPoppinsStyle(
               fontSize: FontSize.s12,
               fontWeight: FontWeightManager.regular,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
           ),
           SizedBox(height: 20.h),
@@ -60,7 +62,7 @@ class PositionDistributionChart extends StatelessWidget {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.medium,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       Text(
@@ -68,7 +70,7 @@ class PositionDistributionChart extends StatelessWidget {
                         style: FontConstants.getPoppinsStyle(
                           fontSize: FontSize.s13,
                           fontWeight: FontWeightManager.semiBold,
-                          color: ColorManager.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],
@@ -79,7 +81,7 @@ class PositionDistributionChart extends StatelessWidget {
                       Container(
                         height: 8.h,
                         decoration: BoxDecoration(
-                          color: ColorManager.grey5,
+                          color: colors.grey5,
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                       ),

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/navigation_service.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../../../dashboard/presentation/widgets/notification_panel.dart';
 import '../../../dashboard/presentation/widgets/request_doer_bottom_sheet.dart';
 import '../../../dashboard/presentation/widgets/dashboard_content.dart';
@@ -10,6 +12,8 @@ import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../../dashboard/presentation/bloc/dashboard_event.dart';
 import '../../../slots/presentation/widgets/slots_content.dart';
 import '../../../status/presentation/widgets/status_content.dart';
+import '../../../attendance/presentation/widgets/attendance_content.dart';
+import '../../../more/presentation/widgets/more_content.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,40 +26,87 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  String? _attendanceFilterDate;
 
   final List<String> _titles = [
     'Analytics Dashboard',
     'Slots Management',
-    'Status',
-    'Profile',
+    'DOER Status',
+    'Attendance',
     'More',
   ];
 
   final List<String> _subtitles = [
     'Real-time insights and workforce analytics',
     'Manage all current and upcoming shift slots',
-    'Track your work status',
-    'Manage your profile',
+    'Monitor DOER attendance and shift status in real-time',
+    'Track and manage DOER attendance',
     'Additional options',
   ];
 
   @override
+  void initState() {
+    super.initState();
+
+    // Listen for tab switch requests
+    NavigationService().tabSwitchNotifier.addListener(_handleTabSwitch);
+  }
+
+  @override
   void dispose() {
+    NavigationService().tabSwitchNotifier.removeListener(_handleTabSwitch);
     _searchController.dispose();
     super.dispose();
   }
 
+  void _handleTabSwitch() {
+    final tabData = NavigationService().tabSwitchNotifier.value;
+    if (tabData != null && tabData['tab'] != null) {
+      setState(() {
+        _selectedIndex = tabData['tab'] as int;
+        // Set the attendance filter date if provided
+        if (tabData['date'] != null) {
+          _attendanceFilterDate = tabData['date'] as String;
+        }
+      });
+
+      // Show snackbar with the date
+      if (tabData['date'] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Viewing attendance for ${tabData['date']}',
+              style: FontConstants.getPoppinsStyle(
+                fontSize: FontSize.s13,
+                fontWeight: FontWeightManager.medium,
+                color: ColorManager.white,
+              ),
+            ),
+            backgroundColor: ColorManager.success,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+
+      // Clear the notification
+      NavigationService().clearTabSwitch();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.backgroundColor,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Column(
           children: [
             // Common Header
             Container(
               padding: EdgeInsets.all(16.w),
-              color: ColorManager.white,
+              color: colors.cardBackground,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -92,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s16,
                                 fontWeight: FontWeightManager.bold,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -103,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s12,
                                 fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -138,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               );
                             },
-                            color: ColorManager.textPrimary,
+                            color: colors.textPrimary,
                             padding: EdgeInsets.all(8.w),
                             constraints: const BoxConstraints(),
                           ),
@@ -160,12 +211,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Search Bar (only show for specific tabs)
-                  if (_selectedIndex == 1 || _selectedIndex == 2) ...[
+                  if (_selectedIndex == 1 || _selectedIndex == 2 || _selectedIndex == 3) ...[
                     SizedBox(height: 16.h),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12.w),
                       decoration: BoxDecoration(
-                        color: ColorManager.grey6,
+                        color: colors.grey6,
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Row(
@@ -173,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Icon(
                             Icons.search,
                             size: 20.sp,
-                            color: ColorManager.textSecondary,
+                            color: colors.textSecondary,
                           ),
                           SizedBox(width: 8.w),
                           Expanded(
@@ -187,14 +238,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: FontConstants.getPoppinsStyle(
                                 fontSize: FontSize.s13,
                                 fontWeight: FontWeightManager.regular,
-                                color: ColorManager.textPrimary,
+                                color: colors.textPrimary,
                               ),
                               decoration: InputDecoration(
                                 hintText: 'Search DOER, shifts, invoices...',
                                 hintStyle: FontConstants.getPoppinsStyle(
                                   fontSize: FontSize.s13,
                                   fontWeight: FontWeightManager.regular,
-                                  color: ColorManager.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.symmetric(vertical: 10.h),
@@ -206,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: Icon(
                                 Icons.clear,
                                 size: 20.sp,
-                                color: ColorManager.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -233,8 +284,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   _DashboardTab(),
                   _SlotsTab(searchQuery: _searchQuery),
                   _StatusTab(searchQuery: _searchQuery),
-                  _PlaceholderTab(title: 'Profile'),
-                  _PlaceholderTab(title: 'More'),
+                  _AttendanceTab(
+                    searchQuery: _searchQuery,
+                    initialDate: _attendanceFilterDate,
+                  ),
+                  const MoreContent(),
                 ],
               ),
             ),
@@ -275,28 +329,33 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBottomNavBar() {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         boxShadow: [
           BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            color: ColorManager.black.withValues(alpha: 0.08),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: const Offset(0, -4),
           ),
         ],
       ),
       child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        top: false,
+        child: Container(
+          height: 65.h,
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildNavItem(Icons.dashboard_outlined, 'Dashboard', 0),
-              _buildNavItem(Icons.calendar_today_outlined, 'Slots', 1),
-              _buildNavItem(Icons.assessment_outlined, 'Status', 2),
-              _buildNavItem(Icons.person_outline, 'Profile', 3),
-              _buildNavItem(Icons.more_horiz, 'More', 4),
+              _buildNavItem(Icons.dashboard_outlined, Icons.dashboard_rounded, 'Dashboard', 0),
+              _buildNavItem(Icons.calendar_today_outlined, Icons.calendar_today_rounded, 'Slots', 1),
+              _buildNavItem(Icons.assessment_outlined, Icons.assessment_rounded, 'Status', 2),
+              _buildNavItem(Icons.fact_check_outlined, Icons.fact_check_rounded, 'Attend', 3),
+              _buildNavItem(Icons.more_horiz, Icons.more_horiz_rounded, 'More', 4),
             ],
           ),
         ),
@@ -304,29 +363,70 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(IconData inactiveIcon, IconData activeIcon, String label, int index) {
+    final colors = ThemeHelper.of(context);
     final isActive = _selectedIndex == index;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedIndex = index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? ColorManager.primary : ColorManager.textSecondary,
-            size: 22.sp,
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            style: FontConstants.getPoppinsStyle(
-              fontSize: FontSize.s10,
-              fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.regular,
-              color: isActive ? ColorManager.primary : ColorManager.textSecondary,
+
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            if (_selectedIndex != index) {
+              setState(() => _selectedIndex = index);
+            }
+          },
+          borderRadius: BorderRadius.circular(12.r),
+          splashColor: ColorManager.primary.withValues(alpha: 0.1),
+          highlightColor: ColorManager.primary.withValues(alpha: 0.05),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 2.w),
+            margin: EdgeInsets.symmetric(horizontal: 2.w),
+            decoration: BoxDecoration(
+              color: isActive ? ColorManager.primary.withValues(alpha: 0.1) : Colors.transparent,
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            overflow: TextOverflow.ellipsis,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isActive ? activeIcon : inactiveIcon,
+                  color: isActive ? ColorManager.primary : colors.textSecondary,
+                  size: 22.sp,
+                ),
+                SizedBox(height: 2.h),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    style: FontConstants.getPoppinsStyle(
+                      fontSize: FontSize.s10,
+                      fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.medium,
+                      color: isActive ? ColorManager.primary : colors.textSecondary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                // Active indicator dot
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  margin: EdgeInsets.only(top: 2.h),
+                  height: 3.h,
+                  width: isActive ? 3.w : 0,
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -364,6 +464,25 @@ class _StatusTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatusContent(searchQuery: searchQuery);
+  }
+}
+
+// Attendance Tab Content
+class _AttendanceTab extends StatelessWidget {
+  final String searchQuery;
+  final String? initialDate;
+
+  const _AttendanceTab({
+    this.searchQuery = '',
+    this.initialDate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AttendanceContent(
+      searchQuery: searchQuery,
+      initialDate: initialDate,
+    );
   }
 }
 

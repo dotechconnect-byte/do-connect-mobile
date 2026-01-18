@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_event.dart';
 import '../bloc/dashboard_state.dart';
@@ -45,11 +46,6 @@ class DashboardContent extends StatelessWidget {
 
                   // Stats Grid
                   _StatsGrid(stats: state.stats),
-
-                  SizedBox(height: 20.h),
-
-                  // AI Insights
-                  _AIInsights(),
 
                   SizedBox(height: 20.h),
 
@@ -121,125 +117,6 @@ class _StatsGrid extends StatelessWidget {
   }
 }
 
-class _AIInsights extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12.w),
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: ColorManager.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.auto_awesome, size: 18.sp, color: ColorManager.primary),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Text(
-                  'AI-Powered Insights',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s15,
-                    fontWeight: FontWeightManager.bold,
-                    color: ColorManager.textPrimary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  'Ask AI',
-                  style: FontConstants.getPoppinsStyle(
-                    fontSize: FontSize.s11,
-                    fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 6.h),
-          Text(
-            'Smart observations and suggestions for your workforce',
-            style: FontConstants.getPoppinsStyle(
-              fontSize: FontSize.s11,
-              fontWeight: FontWeightManager.regular,
-              color: ColorManager.textSecondary,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: 12.h),
-          _InsightItem(
-            icon: Icons.trending_up,
-            iconColor: const Color(0xFF10B981),
-            text: '80% of your DOER today are repeat hires with ratings above 4.5',
-          ),
-          SizedBox(height: 8.h),
-          _InsightItem(
-            icon: Icons.info_outline,
-            iconColor: const Color(0xFF3B82F6),
-            text: '3 DOER scanned in late at Downtown Office yesterday',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InsightItem extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String text;
-
-  const _InsightItem({
-    required this.icon,
-    required this.iconColor,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(6.w),
-          decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(6.r),
-          ),
-          child: Icon(icon, size: 14.sp, color: iconColor),
-        ),
-        SizedBox(width: 10.w),
-        Expanded(
-          child: Text(
-            text,
-            style: FontConstants.getPoppinsStyle(
-              fontSize: FontSize.s12,
-              fontWeight: FontWeightManager.regular,
-              color: ColorManager.textPrimary,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _BottomTabs extends StatelessWidget {
   final List<dynamic> shifts;
   final int selectedTab;
@@ -248,20 +125,22 @@ class _BottomTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 12.w),
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: colors.cardBackground,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.grey4, width: 1),
+        border: Border.all(color: colors.grey4, width: 1),
       ),
       child: Column(
         children: [
           Container(
             height: 36.h,
             decoration: BoxDecoration(
-              color: ColorManager.grey6,
+              color: colors.grey6,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Row(
@@ -295,7 +174,9 @@ class _TabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
     final isActive = selectedTab == index;
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -305,10 +186,10 @@ class _TabItem extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           margin: EdgeInsets.all(4.w),
           decoration: BoxDecoration(
-            color: isActive ? ColorManager.white : Colors.transparent,
+            color: isActive ? colors.cardBackground : Colors.transparent,
             borderRadius: BorderRadius.circular(6.r),
             boxShadow: isActive
-                ? [BoxShadow(color: ColorManager.black.withValues(alpha: 0.05), blurRadius: 4)]
+                ? [BoxShadow(color: colors.grey3.withValues(alpha: 0.1), blurRadius: 4)]
                 : [],
           ),
           child: Center(
@@ -317,7 +198,7 @@ class _TabItem extends StatelessWidget {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s12,
                 fontWeight: isActive ? FontWeightManager.semiBold : FontWeightManager.medium,
-                color: isActive ? ColorManager.textPrimary : ColorManager.textSecondary,
+                color: isActive ? colors.textPrimary : colors.textSecondary,
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -335,11 +216,13 @@ class _ShiftItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(
@@ -347,10 +230,10 @@ class _ShiftItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
-              color: ColorManager.primary.withValues(alpha: 0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6.r),
             ),
-            child: Icon(Icons.calendar_today, size: 16.sp, color: ColorManager.primary),
+            child: Icon(Icons.calendar_today, size: 16.sp, color: colors.primary),
           ),
           SizedBox(width: 10.w),
           Expanded(
@@ -362,7 +245,7 @@ class _ShiftItem extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -373,7 +256,7 @@ class _ShiftItem extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -384,7 +267,7 @@ class _ShiftItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
             decoration: BoxDecoration(
-              color: ColorManager.primary.withValues(alpha: 0.1),
+              color: colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6.r),
             ),
             child: Text(
@@ -392,7 +275,7 @@ class _ShiftItem extends StatelessWidget {
               style: FontConstants.getPoppinsStyle(
                 fontSize: FontSize.s10,
                 fontWeight: FontWeightManager.semiBold,
-                color: ColorManager.primary,
+                color: colors.primary,
               ),
             ),
           ),
@@ -474,10 +357,12 @@ class _PendingActionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(
@@ -491,7 +376,7 @@ class _PendingActionItem extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s13,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.textPrimary,
+                    color: colors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -502,7 +387,7 @@ class _PendingActionItem extends StatelessWidget {
                   style: FontConstants.getPoppinsStyle(
                     fontSize: FontSize.s11,
                     fontWeight: FontWeightManager.regular,
-                    color: ColorManager.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -514,7 +399,7 @@ class _PendingActionItem extends StatelessWidget {
           ElevatedButton(
             onPressed: onTap,
             style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.primary,
+              backgroundColor: colors.primary,
               foregroundColor: ColorManager.white,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               minimumSize: Size.zero,
@@ -548,13 +433,15 @@ class _QuickExportItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8.r),
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: ColorManager.grey6,
+          color: colors.grey6,
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Row(
@@ -562,13 +449,13 @@ class _QuickExportItem extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: ColorManager.primary.withValues(alpha: 0.1),
+                color: colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6.r),
               ),
               child: Icon(
                 icon,
                 size: 18.sp,
-                color: ColorManager.primary,
+                color: colors.primary,
               ),
             ),
             SizedBox(width: 12.w),
@@ -578,7 +465,7 @@ class _QuickExportItem extends StatelessWidget {
                 style: FontConstants.getPoppinsStyle(
                   fontSize: FontSize.s13,
                   fontWeight: FontWeightManager.medium,
-                  color: ColorManager.textPrimary,
+                  color: colors.textPrimary,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -587,7 +474,7 @@ class _QuickExportItem extends StatelessWidget {
             Icon(
               Icons.chevron_right,
               size: 18.sp,
-              color: ColorManager.textSecondary,
+              color: colors.textSecondary,
             ),
           ],
         ),

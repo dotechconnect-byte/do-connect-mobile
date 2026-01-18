@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/consts/color_manager.dart';
 import '../../../../core/consts/font_manager.dart';
+import '../../../../core/utils/theme_helper.dart';
 
 class AccountTypeSelector extends StatelessWidget {
   final String selectedType;
@@ -15,10 +15,12 @@ class AccountTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ThemeHelper.of(context);
+
     return Container(
       height: 48.h,
       decoration: BoxDecoration(
-        color: ColorManager.grey6,
+        color: colors.grey6,
         borderRadius: BorderRadius.circular(12.r),
       ),
       padding: EdgeInsets.all(4.w),
@@ -26,6 +28,7 @@ class AccountTypeSelector extends StatelessWidget {
         children: [
           Expanded(
             child: _buildTab(
+              colors: colors,
               text: 'Personal',
               isSelected: selectedType == 'personal',
               onTap: () => onTypeChanged('personal'),
@@ -33,6 +36,7 @@ class AccountTypeSelector extends StatelessWidget {
           ),
           Expanded(
             child: _buildTab(
+              colors: colors,
               text: 'Employer',
               isSelected: selectedType == 'employer',
               onTap: () => onTypeChanged('employer'),
@@ -44,6 +48,7 @@ class AccountTypeSelector extends StatelessWidget {
   }
 
   Widget _buildTab({
+    required ThemeHelper colors,
     required String text,
     required bool isSelected,
     required VoidCallback onTap,
@@ -53,12 +58,12 @@ class AccountTypeSelector extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.white : Colors.transparent,
+          color: isSelected ? colors.cardBackground : Colors.transparent,
           borderRadius: BorderRadius.circular(8.r),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: ColorManager.black.withValues(alpha: 0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -74,8 +79,8 @@ class AccountTypeSelector extends StatelessWidget {
                   ? FontWeightManager.semiBold
                   : FontWeightManager.medium,
               color: isSelected
-                  ? ColorManager.textPrimary
-                  : ColorManager.textSecondary,
+                  ? colors.textPrimary
+                  : colors.textSecondary,
             ),
           ),
         ),
