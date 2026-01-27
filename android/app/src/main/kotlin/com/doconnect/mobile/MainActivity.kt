@@ -1,4 +1,4 @@
-package com.example.do_connect_application
+package com.doconnect.mobile
 
 import android.content.Intent
 import android.net.Uri

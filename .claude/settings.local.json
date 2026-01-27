@@ -25,7 +25,11 @@
       "Bash(for:*)",
       "Bash(do if grep -q \"ColorManager\\\\|Widget\\\\|StatelessWidget\\\\|StatefulWidget\" \"$file\")",
       "Bash(do echo \"$file\")",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(ls:*)",
+      "Bash(dart pub global activate:*)",
+      "Bash(flutterfire configure:*)",
+      "Bash(dart pub global run flutterfire_cli:flutterfire configure:*)"
     ]
   }
 }

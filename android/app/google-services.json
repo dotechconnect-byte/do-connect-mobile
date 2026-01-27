@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "905841223949",
+    "project_id": "com-doconnect-mobile",
+    "storage_bucket": "com-doconnect-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905841223949:android:3d1a3b0d9dd069bb632844",
+        "android_client_info": {
+          "package_name": "com.doconnect.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr-g9tRH8eN4ouJ-4v_3l8ooAAv4hBli0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
